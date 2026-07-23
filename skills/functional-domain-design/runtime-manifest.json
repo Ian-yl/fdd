@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "skill": "functional-domain-design",
+  "entrypoint": "SKILL.md",
+  "scripts": [
+    "scripts/import-productforge.mjs",
+    "scripts/scaffold-package.mjs",
+    "scripts/review-package.mjs",
+    "scripts/validate-package.mjs",
+    "scripts/migrate-package.mjs",
+    "scripts/build-implementation-handoff.mjs",
+    "scripts/review-implementation-handoff.mjs",
+    "scripts/lib/visual-release.mjs",
+    "scripts/lib/frontend-semantics.mjs",
+    "scripts/lib/aggregate-submission.mjs"
+  ],
+  "references": [
+    "references/input-contract.md",
+    "references/package-contract.md",
+    "references/implementation-handoff.md",
+    "references/frontend-semantics.md",
+    "references/capability-synthesis.md",
+    "references/reviewer-gates.md",
+    "references/fixtures/"
+  ]
+}

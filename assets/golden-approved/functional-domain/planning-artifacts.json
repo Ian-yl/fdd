@@ -1,0 +1,1532 @@
+{
+  "schemaVersion": "1.1",
+  "method": "bmad-planning",
+  "evidencePriority": [
+    "confirmed",
+    "documented",
+    "observed",
+    "designed",
+    "inferred",
+    "blocked"
+  ],
+  "phases": [
+    {
+      "id": "project-understanding",
+      "status": "completed",
+      "outputs": {
+        "project": {
+          "id": "project-7b76dd31",
+          "name": "灵灵生图站：新架构2",
+          "brief": "主要是有四个模块，照片级Ai商品图，万物穿搭上身，营销场景设计，电商素材生成四个模块，点击对应的模块可以进入对应的页面，在对应的页面可以实现不同的生成操作",
+          "goals": [
+            "为商家提供一站式AI电商视觉生成平台，快速完成商品图、上身效果图、营销场景图和素材图制作。降低拍摄与设计成本，提升商品展示效率和营销素材产出速度。"
+          ],
+          "users": [
+            "电商商家、品牌运营和店铺美工，需高频制作商品展示图与营销素材。也适合服饰、美妆、家居等类目的中小卖家和内容投放团队使用。"
+          ],
+          "needs": [
+            "用户需要按不同业务场景快速进入对应模块，并通过简单操作生成可直接用于上架、投放和活动页的图片。用户还需要生成效果真实、风格统一、可反复调整的电商视觉素材，以减少外包和人工修图成本。"
+          ],
+          "problemStatement": "主要是有四个模块，照片级Ai商品图，万物穿搭上身，营销场景设计，电商素材生成四个模块，点击对应的模块可以进入对应的页面，在对应的页面可以实现不同的生成操作",
+          "evidence": {
+            "status": "documented",
+            "sources": [
+              "product-context:brief",
+              "product-context:goals",
+              "product-context:users",
+              "product-context:needs"
+            ]
+          }
+        },
+        "pages": [
+          {
+            "id": "pg-1r",
+            "title": "首页",
+            "description": "为商家提供四个AI电商视觉模块的统一入口，展示各模块用途、最近生成记录入口与当前工作上下文。"
+          },
+          {
+            "id": "pg-1s",
+            "title": "照片级AI商品图",
+            "description": "左侧是功能列表的菜单栏。宽度占屏幕10%，中间是商品套图，占屏幕的20%（组件比较多，可上下滚动），右边是创作结果，占屏幕的70%（结果展示原图、01 商拍图、02卖点海报、03 场景海报 、04细节海报等等根据数量判定（如果很多可以横向滚动），下面展示横向缩略图列表，主页面展示放大图，默认展示第一张生成的，可以放大缩小，下载，重生成）。\n\n"
+          },
+          {
+            "id": "pg-1t",
+            "title": "万物穿搭上身",
+            "description": "左侧是功能列表的菜单栏。宽度占屏幕10%，中间是万物上身，占屏幕的20%（组件比较多，可上下滚动），右边是创作结果，占屏幕的70%（结果展示原图、01 上身图、02上身图、等等根据数量判定（如果很多可以横向滚动），下面展示横向缩略图列表，主页面展示放大图，默认展示第一张生成的，可以放大缩小，下载，重生成）。"
+          },
+          {
+            "id": "pg-1u",
+            "title": "营销场景设计",
+            "description": "左侧是功能列表的菜单栏。宽度占屏幕10%，中间是高转化主图，占屏幕的20%（组件比较多，可上下滚动），右边是创作结果，占屏幕的70%（结果展示原图、01 转化图、02转化图、等等根据数量判定（如果很多可以横向滚动），下面展示横向缩略图列表，主页面展示放大图，默认展示第一张生成的，可以放大缩小，下载，重生成）。"
+          },
+          {
+            "id": "pg-1v",
+            "title": "电商素材生成",
+            "description": "左侧是功能列表的菜单栏。宽度占屏幕10%，中间是参数板块，占屏幕的20%（组件比较多，可上下滚动），右边是创作结果，占屏幕的70%（结果展示原图、01 参数板块、02参数板块、等等根据数量判定（如果很多可以横向滚动），下面展示横向缩略图列表，主页面展示放大图，默认展示第一张生成的，可以放大缩小，下载，重生成）。"
+          }
+        ],
+        "frontendSemanticInventory": "frontend-semantic-inventory.json"
+      }
+    },
+    {
+      "id": "requirements-analysis",
+      "status": "completed",
+      "outputs": {
+        "capabilityIds": [
+          "cap-pg-1s-mod-xm",
+          "cap-pg-1s-mod-xn",
+          "cap-pg-1s-mod-xo",
+          "cap-pg-1s-mod-xp",
+          "cap-pg-1s-mod-xq",
+          "cap-pg-1s-mod-xr",
+          "cap-pg-1s-mod-xs",
+          "cap-pg-1s-mod-xt",
+          "cap-pg-1s-mod-xu",
+          "cap-pg-1s-mod-xv",
+          "cap-pg-1s-mod-xw",
+          "cap-pg-1s-mod-xx",
+          "cap-pg-1s-mod-xy",
+          "cap-pg-1s-mod-xz",
+          "cap-pg-1s-mod-y0",
+          "cap-pg-1s-mod-y1",
+          "cap-pg-1s-mod-yh",
+          "cap-pg-1s-mod-y6",
+          "cap-pg-1s-mod-y7",
+          "cap-pg-1s-mod-y8",
+          "cap-pg-1s-mod-y9-embedded-1",
+          "cap-pg-1s-mod-ym-download",
+          "cap-pg-1s-mod-ym-retry",
+          "cap-pg-1t-mod-z3",
+          "cap-pg-1t-mod-z4",
+          "cap-pg-1t-mod-z5",
+          "cap-pg-1t-mod-z6",
+          "cap-pg-1t-mod-z7",
+          "cap-pg-1t-mod-z8",
+          "cap-pg-1t-mod-z9",
+          "cap-pg-1t-mod-za",
+          "cap-pg-1t-mod-zb",
+          "cap-pg-1t-mod-zc",
+          "cap-pg-1t-mod-zd",
+          "cap-pg-1t-mod-ze",
+          "cap-pg-1t-mod-zf",
+          "cap-pg-1t-mod-zg",
+          "cap-pg-1t-mod-yv",
+          "cap-pg-1t-mod-yw",
+          "cap-pg-1t-mod-yx-embedded-1",
+          "cap-pg-1t-mod-yy-embedded-1",
+          "cap-pg-1t-mod-yu-download",
+          "cap-pg-1t-mod-yu-retry",
+          "cap-pg-1u-mod-w9",
+          "cap-pg-1u-mod-zi",
+          "cap-pg-1u-mod-zj",
+          "cap-pg-1u-mod-zk",
+          "cap-pg-1u-mod-zl",
+          "cap-pg-1u-mod-zm",
+          "cap-pg-1u-mod-103",
+          "cap-pg-1u-mod-104",
+          "cap-pg-1u-mod-105",
+          "cap-pg-1u-mod-zh-download",
+          "cap-pg-1u-mod-zh-retry",
+          "cap-pg-1v-mod-zx",
+          "cap-pg-1v-mod-zy",
+          "cap-pg-1v-mod-zz",
+          "cap-pg-1v-mod-100",
+          "cap-pg-1v-mod-101",
+          "cap-pg-1v-mod-102",
+          "cap-pg-1v-mod-zo",
+          "cap-pg-1v-mod-zp",
+          "cap-pg-1v-mod-zn-download",
+          "cap-pg-1v-mod-zn-retry"
+        ],
+        "architectureLeafClassifications": [
+          {
+            "pageId": "pg-1r",
+            "moduleId": "mod-uo",
+            "leafId": "mod-up",
+            "name": "照片级AI商品图入口卡片：说明适用商品静物主图、详情图、白底图生成",
+            "classification": "navigation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1r",
+              "page-module:mod-uo",
+              "page-module:mod-up"
+            ]
+          },
+          {
+            "pageId": "pg-1r",
+            "moduleId": "mod-uo",
+            "leafId": "mod-uq",
+            "name": "万物穿搭上身入口卡片：说明适用服饰配件上身效果生成",
+            "classification": "navigation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1r",
+              "page-module:mod-uo",
+              "page-module:mod-uq"
+            ]
+          },
+          {
+            "pageId": "pg-1r",
+            "moduleId": "mod-uo",
+            "leafId": "mod-ur",
+            "name": "营销场景设计入口卡片：说明适用活动海报、营销场景、节日氛围图生成",
+            "classification": "navigation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1r",
+              "page-module:mod-uo",
+              "page-module:mod-ur"
+            ]
+          },
+          {
+            "pageId": "pg-1r",
+            "moduleId": "mod-uo",
+            "leafId": "mod-us",
+            "name": "电商素材生成入口卡片：说明适用贴片、角标、背景素材、详情配图生成",
+            "classification": "navigation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1r",
+              "page-module:mod-uo",
+              "page-module:mod-us"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xm",
+            "name": "商品套图生成",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xm"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xn",
+            "name": "电商详情页",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xn"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xo",
+            "name": "商品主图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xo"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xp",
+            "name": "爆款复刻",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xp"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xq",
+            "name": "商品SKU图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xq"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xr",
+            "name": "百变服饰图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xr"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xs",
+            "name": "平铺转3D",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xs"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xt",
+            "name": "面料上身",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xt"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xu",
+            "name": "一键种草图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xu"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xv",
+            "name": "商品图合成",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xv"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xw",
+            "name": "商品换背景",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xw"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xx",
+            "name": "图片翻译",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xx"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xy",
+            "name": "商品白底图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xy"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-xz",
+            "name": "商品多视角图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-xz"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-y0",
+            "name": "商品细节图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-y0"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-y1",
+            "name": "印花提取",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-y1"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-xl",
+            "leafId": "mod-yh",
+            "name": "我的生成记录",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-xl",
+              "page-module:mod-yh"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-y6",
+            "name": "新建任务",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-y6"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-y7",
+            "name": "上传商品图（必填）",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-y7"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-y8",
+            "name": "上传其他图（非必填）",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-y8"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-y9",
+            "name": "商品卖点&要求（必填）",
+            "classification": "input-field",
+            "embeddedOperations": [
+              {
+                "label": "有个ai帮写按钮",
+                "evidence": "page-module:mod-y9"
+              }
+            ],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-y9"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-ya",
+            "name": "规避内容补充",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-ya"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-yb",
+            "name": "创作模式",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-yb"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-yc",
+            "name": "视觉风格（非必填）",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-yc"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-yd",
+            "name": "生成比例（必选）",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-yd"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-ye",
+            "name": "生成张数",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-ye"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-y5",
+            "leafId": "mod-yf",
+            "name": "分辨率",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-y5",
+              "page-module:mod-yf"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-yg",
+            "leafId": "mod-yi",
+            "name": "顶部展示创作结果四个字",
+            "classification": "display-requirement",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-yg",
+              "page-module:mod-yi"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-yg",
+            "leafId": "mod-yj",
+            "name": "中间放放大的图片",
+            "classification": "local-control",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-yg",
+              "page-module:mod-yj"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-yg",
+            "leafId": "mod-yk",
+            "name": "下面放原图 01 商拍图 02 卖点海报 03 场景海报 04 细节海报 这几个的缩略图",
+            "classification": "display-requirement",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-yg",
+              "page-module:mod-yk"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-yg",
+            "leafId": "mod-yl",
+            "name": "点击某个图片可以在中间展示放大后的图片",
+            "classification": "local-control",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-yg",
+              "page-module:mod-yl"
+            ]
+          },
+          {
+            "pageId": "pg-1s",
+            "moduleId": "mod-yg",
+            "leafId": "mod-ym",
+            "name": "还有放大，缩小，下载，重新生成几个悬浮按钮",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1s",
+              "page-module:mod-yg",
+              "page-module:mod-ym"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-z3",
+            "name": "万物上身",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-z3"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-z4",
+            "name": "AI试戴",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-z4"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-z5",
+            "name": "手持商品",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-z5"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-z6",
+            "name": "平铺/人台试衣",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-z6"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-z7",
+            "name": "AI换模特",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-z7"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-z8",
+            "name": "真人图试衣",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-z8"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-z9",
+            "name": "模特换姿势",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-z9"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-za",
+            "name": "鞋靴试穿",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-za"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-zb",
+            "name": "AI换脸",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-zb"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-zc",
+            "name": "模拍换景",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-zc"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-zd",
+            "name": "服饰换色",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-zd"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-ze",
+            "name": "服饰商拍套图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-ze"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-zf",
+            "name": "服饰种草图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-zf"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yn",
+            "leafId": "mod-zg",
+            "name": "我的生成记录",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yn",
+              "page-module:mod-zg"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yo",
+            "leafId": "mod-yv",
+            "name": "新建任务",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yo",
+              "page-module:mod-yv"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yo",
+            "leafId": "mod-yw",
+            "name": "上传图（必填）",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yo",
+              "page-module:mod-yw"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yo",
+            "leafId": "mod-yx",
+            "name": "商品卖点&要求",
+            "classification": "input-field",
+            "embeddedOperations": [
+              {
+                "label": "有个ai帮写按钮",
+                "evidence": "page-module:mod-yx"
+              }
+            ],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yo",
+              "page-module:mod-yx"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yo",
+            "leafId": "mod-yy",
+            "name": "参考模特",
+            "classification": "input-field",
+            "embeddedOperations": [
+              {
+                "label": "一键生成匹配的模特图",
+                "evidence": "page-module:mod-yy"
+              }
+            ],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yo",
+              "page-module:mod-yy"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yo",
+            "leafId": "mod-yz",
+            "name": "额外描述",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yo",
+              "page-module:mod-yz"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yo",
+            "leafId": "mod-z0",
+            "name": "生成比例（必选）",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yo",
+              "page-module:mod-z0"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yo",
+            "leafId": "mod-z1",
+            "name": "生成张数",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yo",
+              "page-module:mod-z1"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yo",
+            "leafId": "mod-z2",
+            "name": "分辨率",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yo",
+              "page-module:mod-z2"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yp",
+            "leafId": "mod-yq",
+            "name": "顶部展示创作结果四个字",
+            "classification": "display-requirement",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yp",
+              "page-module:mod-yq"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yp",
+            "leafId": "mod-yr",
+            "name": "中间放放大的图片",
+            "classification": "local-control",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yp",
+              "page-module:mod-yr"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yp",
+            "leafId": "mod-ys",
+            "name": "下面放原图 01 上身图 02 上身图 这几个的缩略图",
+            "classification": "display-requirement",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yp",
+              "page-module:mod-ys"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yp",
+            "leafId": "mod-yt",
+            "name": "点击某个图片可以在中间展示放大后的图片",
+            "classification": "local-control",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yp",
+              "page-module:mod-yt"
+            ]
+          },
+          {
+            "pageId": "pg-1t",
+            "moduleId": "mod-yp",
+            "leafId": "mod-yu",
+            "name": "还有放大，缩小，下载，重新生成几个悬浮按钮",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1t",
+              "page-module:mod-yp",
+              "page-module:mod-yu"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-w8",
+            "leafId": "mod-w9",
+            "name": "高转化主图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-w8",
+              "page-module:mod-w9"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-w8",
+            "leafId": "mod-zi",
+            "name": "节日海报",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-w8",
+              "page-module:mod-zi"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-w8",
+            "leafId": "mod-zj",
+            "name": "横版Banner",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-w8",
+              "page-module:mod-zj"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-w8",
+            "leafId": "mod-zk",
+            "name": "促销弹窗",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-w8",
+              "page-module:mod-zk"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-w8",
+            "leafId": "mod-zl",
+            "name": "直播背景图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-w8",
+              "page-module:mod-zl"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-w8",
+            "leafId": "mod-zm",
+            "name": "社媒种草图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-w8",
+              "page-module:mod-zm"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-w8",
+            "leafId": "mod-103",
+            "name": "我的生成记录",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-w8",
+              "page-module:mod-103"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wd",
+            "leafId": "mod-104",
+            "name": "新建任务",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wd",
+              "page-module:mod-104"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wd",
+            "leafId": "mod-105",
+            "name": "上传商品图（必填）",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wd",
+              "page-module:mod-105"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wd",
+            "leafId": "mod-106",
+            "name": "主推卖点",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wd",
+              "page-module:mod-106"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wd",
+            "leafId": "mod-107",
+            "name": "生成比例（必选）",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wd",
+              "page-module:mod-107"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wd",
+            "leafId": "mod-108",
+            "name": "生成张数",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wd",
+              "page-module:mod-108"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wd",
+            "leafId": "mod-109",
+            "name": "分辨率",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wd",
+              "page-module:mod-109"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wp",
+            "leafId": "mod-wq",
+            "name": "顶部展示创作结果四个字",
+            "classification": "display-requirement",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wp",
+              "page-module:mod-wq"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wp",
+            "leafId": "mod-wr",
+            "name": "中间放放大的图片",
+            "classification": "local-control",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wp",
+              "page-module:mod-wr"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wp",
+            "leafId": "mod-ws",
+            "name": "下面放原图 01 转化图 02 转化图 这几个的缩略图",
+            "classification": "display-requirement",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wp",
+              "page-module:mod-ws"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wp",
+            "leafId": "mod-wt",
+            "name": "点击某个图片可以在中间展示放大后的图片",
+            "classification": "local-control",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wp",
+              "page-module:mod-wt"
+            ]
+          },
+          {
+            "pageId": "pg-1u",
+            "moduleId": "mod-wp",
+            "leafId": "mod-zh",
+            "name": "还有放大，缩小，下载，重新生成几个悬浮按钮",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1u",
+              "page-module:mod-wp",
+              "page-module:mod-zh"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wu",
+            "leafId": "mod-zx",
+            "name": "参数板块",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wu",
+              "page-module:mod-zx"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wu",
+            "leafId": "mod-zy",
+            "name": "卖点堆叠",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wu",
+              "page-module:mod-zy"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wu",
+            "leafId": "mod-zz",
+            "name": "使用场景",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wu",
+              "page-module:mod-zz"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wu",
+            "leafId": "mod-100",
+            "name": "对比图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wu",
+              "page-module:mod-100"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wu",
+            "leafId": "mod-101",
+            "name": "尺码图",
+            "classification": "business-capability",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wu",
+              "page-module:mod-101"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wu",
+            "leafId": "mod-102",
+            "name": "我的生成记录",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wu",
+              "page-module:mod-102"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wz",
+            "leafId": "mod-zo",
+            "name": "新建任务",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wz",
+              "page-module:mod-zo"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wz",
+            "leafId": "mod-zp",
+            "name": "上传商品图（必填）",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wz",
+              "page-module:mod-zp"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wz",
+            "leafId": "mod-zq",
+            "name": "行业模板（必选）",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wz",
+              "page-module:mod-zq"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wz",
+            "leafId": "mod-zr",
+            "name": "板式",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wz",
+              "page-module:mod-zr"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wz",
+            "leafId": "mod-zs",
+            "name": "配色主题",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wz",
+              "page-module:mod-zs"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wz",
+            "leafId": "mod-zt",
+            "name": "参数项",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wz",
+              "page-module:mod-zt"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wz",
+            "leafId": "mod-zu",
+            "name": "生成比例（必选）",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wz",
+              "page-module:mod-zu"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wz",
+            "leafId": "mod-zv",
+            "name": "生成张数",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wz",
+              "page-module:mod-zv"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-wz",
+            "leafId": "mod-zw",
+            "name": "分辨率",
+            "classification": "input-field",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-wz",
+              "page-module:mod-zw"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-xb",
+            "leafId": "mod-xc",
+            "name": "顶部展示创作结果四个字",
+            "classification": "display-requirement",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-xb",
+              "page-module:mod-xc"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-xb",
+            "leafId": "mod-xd",
+            "name": "中间放放大的图片",
+            "classification": "local-control",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-xb",
+              "page-module:mod-xd"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-xb",
+            "leafId": "mod-xe",
+            "name": "下面放原图 01 参数图 02 参数图 这几个的缩略图",
+            "classification": "display-requirement",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-xb",
+              "page-module:mod-xe"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-xb",
+            "leafId": "mod-xf",
+            "name": "点击某个图片可以在中间展示放大后的图片",
+            "classification": "local-control",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-xb",
+              "page-module:mod-xf"
+            ]
+          },
+          {
+            "pageId": "pg-1v",
+            "moduleId": "mod-xb",
+            "leafId": "mod-zn",
+            "name": "还有放大，缩小，下载，重新生成几个悬浮按钮",
+            "classification": "operation",
+            "embeddedOperations": [],
+            "evidence": [
+              "page:pg-1v",
+              "page-module:mod-xb",
+              "page-module:mod-zn"
+            ]
+          }
+        ],
+        "observedInteractions": "observed-interactions.json",
+        "userDecisionIds": [],
+        "unresolvedItemIds": []
+      }
+    },
+    {
+      "id": "domain-design",
+      "status": "completed",
+      "outputs": {
+        "domainIds": [
+          "domain-pg-1s",
+          "domain-pg-1t",
+          "domain-pg-1u",
+          "domain-pg-1v"
+        ],
+        "entityIds": [
+          "entity-pg-1s-task",
+          "entity-pg-1s-resource",
+          "entity-pg-1s-asset",
+          "entity-pg-1s-result",
+          "entity-pg-1t-task",
+          "entity-pg-1t-resource",
+          "entity-pg-1t-asset",
+          "entity-pg-1t-result",
+          "entity-pg-1u-task",
+          "entity-pg-1u-resource",
+          "entity-pg-1u-asset",
+          "entity-pg-1u-result",
+          "entity-pg-1v-task",
+          "entity-pg-1v-resource",
+          "entity-pg-1v-asset",
+          "entity-pg-1v-result"
+        ],
+        "relationshipIds": [
+          "relation-pg-1s-task-results",
+          "relation-pg-1s-task-assets",
+          "relation-pg-1t-task-results",
+          "relation-pg-1t-task-assets",
+          "relation-pg-1u-task-results",
+          "relation-pg-1u-task-assets",
+          "relation-pg-1v-task-results",
+          "relation-pg-1v-task-assets"
+        ],
+        "journeyIds": [
+          "journey-pg-1s",
+          "journey-pg-1t",
+          "journey-pg-1u",
+          "journey-pg-1v"
+        ],
+        "controlCapabilityMap": "control-capability-map.json"
+      }
+    },
+    {
+      "id": "independent-domain-review",
+      "status": "completed",
+      "outputs": {
+        "reviewerAgentId": "codex-domain-reviewer-semantic",
+        "result": "approved"
+      }
+    }
+  ]
+}

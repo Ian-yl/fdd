@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "2.1",
+  "packageType": "functional-domain",
+  "projectId": "project-7b76dd31",
+  "projectName": "灵灵生图站：新架构2",
+  "status": "approved",
+  "deliveryMode": "complete",
+  "productCompletionClaim": "complete",
+  "authorAgentId": "codex-domain-author-semantic",
+  "sourceDirectory": "1 - 架构",
+  "sourceContract": {
+    "requiredFiles": [
+      "page architecture JSON",
+      "system architecture JSON",
+      "product context JSON",
+      "AI Restore release"
+    ],
+    "optionalFiles": []
+  },
+  "planning": {
+    "manifest": "planning-manifest.json",
+    "artifacts": "planning-artifacts.json",
+    "capabilityDefinitions": "capability-definitions.json"
+  },
+  "semanticArtifacts": [
+    "frontend-semantic-inventory.json",
+    "observed-interactions.json",
+    "control-capability-map.json"
+  ],
+  "capabilitySummary": {
+    "total": 64,
+    "complete": 64,
+    "planned": 0,
+    "designed": 64,
+    "blockedCapabilities": 0,
+    "openBlockers": 0
+  },
+  "visualReleaseDigest": "66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd",
+  "approval": {
+    "method": "independent-agent-review",
+    "reviewerAgentId": "codex-domain-reviewer-semantic",
+    "reviewedAt": "2026-07-23T10:32:07.659Z"
+  }
+}

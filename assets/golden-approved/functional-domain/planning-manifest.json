@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.1",
+  "packageType": "fdd-bmad-planning",
+  "status": "approved",
+  "authorAgentId": "codex-domain-author-semantic",
+  "synthesisInputDigest": "5ad73d26c8ebcc285fd58fb37f2e33eac32a1439bd8d93b935e4e116018bc507",
+  "inputDigests": {
+    "pageArchitecture": "261fe58d8f58e832e109708f6500cfda0652f02b745f0d68b1d54014faec02c3",
+    "systemArchitecture": "3d1566061ca52ebe2f6fefe8a50ba1ccce4844fcd7e7c331781a9905ad1271d7",
+    "productContext": "48921ca2dbb971b50eec6d34af430e4134b98e9542183b8a890c20c5bf5beb91",
+    "visualRelease": "66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd",
+    "userDecisions": null
+  },
+  "artifacts": [
+    "planning-artifacts.json",
+    "capability-definitions.json",
+    "frontend-semantic-inventory.json",
+    "observed-interactions.json",
+    "control-capability-map.json"
+  ]
+}

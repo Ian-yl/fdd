@@ -1,0 +1,369 @@
+{
+  "schemaVersion": "1.0",
+  "releaseDigest": "66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd",
+  "interactions": [
+    {
+      "id": "interaction-1",
+      "kind": "submit",
+      "pageId": "pg-1s",
+      "controlId": "button-104-1mbxw8",
+      "event": "submit",
+      "handlerSummary": "onSubmit={(e) => { e.preventDefault(); setStatus(\"任务已提交\"); }",
+      "stateReads": [],
+      "stateWrites": [
+        "status"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 13765,
+        "digest": "1cb38f55c5893c2da6a233659864feec605a74f81fd1a34c84b1d3e2f5480e92"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-2",
+      "kind": "click",
+      "pageId": null,
+      "controlId": null,
+      "event": "click",
+      "handlerSummary": "onClick={() => input.current.click()}",
+      "stateReads": [
+        "input"
+      ],
+      "stateWrites": [],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 3986,
+        "digest": "ee87b8b666d9436a7fdefed21a04fdc2ccbf568db8c09fab5e702d33c99741ca"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-3",
+      "kind": "click",
+      "pageId": "pg-1s",
+      "controlId": "button-134-1byvpl",
+      "event": "click",
+      "handlerSummary": "onClick={() => setValue(value + \"，突出商品质感与自然光影。\")}",
+      "stateReads": [
+        "value"
+      ],
+      "stateWrites": [
+        "value"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 5351,
+        "digest": "a56ea6478cc23aae84f977857f421fd935bfbc7fcecf609c25977d34878410a7"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-4",
+      "kind": "click",
+      "pageId": null,
+      "controlId": null,
+      "event": "click",
+      "handlerSummary": "onClick={() => setActive(i)}",
+      "stateReads": [],
+      "stateWrites": [
+        "active"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 6038,
+        "digest": "fde0744ecbb5faefd1dc0ce404e0ce7652949a6d46898f58d262647d7da80dbc"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-5",
+      "kind": "click",
+      "pageId": null,
+      "controlId": null,
+      "event": "click",
+      "handlerSummary": "onClick={() => setCount(Math.max(1, count - 1))}",
+      "stateReads": [
+        "count"
+      ],
+      "stateWrites": [
+        "count"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 6406,
+        "digest": "e2295e230b3741f6d110450be3b76747a53cc0915fd07bacde34c7b8eafdc516"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-6",
+      "kind": "click",
+      "pageId": "pg-1s",
+      "controlId": "button-179-16kjoy",
+      "event": "click",
+      "handlerSummary": "onClick={() => setCount(Math.min(8, count + 1))}",
+      "stateReads": [
+        "count"
+      ],
+      "stateWrites": [
+        "count"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 6557,
+        "digest": "499ead356de1b83548beb6ee95ad72e062b6a09f846a40ddabef11a2c1b388dc"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-7",
+      "kind": "click",
+      "pageId": null,
+      "controlId": null,
+      "event": "click",
+      "handlerSummary": "onClick={() => setZoom(Math.min(1.5, zoom + 0.1))}",
+      "stateReads": [
+        "zoom"
+      ],
+      "stateWrites": [
+        "zoom"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 11433,
+        "digest": "2180f33ecf9ef76b4af77ee77aa9d23b0cac9f724659096fa008a1d54e019cd0"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-8",
+      "kind": "click",
+      "pageId": null,
+      "controlId": null,
+      "event": "click",
+      "handlerSummary": "onClick={() => setZoom(Math.max(0.7, zoom - 0.1))}",
+      "stateReads": [
+        "zoom"
+      ],
+      "stateWrites": [
+        "zoom"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 11574,
+        "digest": "de53d92c4547b69ff8d6f3c8fd8c7538714393384a8727b0260a6e109b62e90b"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-9",
+      "kind": "click",
+      "pageId": null,
+      "controlId": null,
+      "event": "click",
+      "handlerSummary": "onClick={onGenerate}",
+      "stateReads": [],
+      "stateWrites": [],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 11820,
+        "digest": "c9e3fdbb02a378c3e460e9354dcba99e25e7c19c020c377b48c7f04f6c0749b0"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-10",
+      "kind": "click",
+      "pageId": "pg-1s",
+      "controlId": null,
+      "event": "click",
+      "handlerSummary": "onClick={() => setActive(i)}",
+      "stateReads": [],
+      "stateWrites": [
+        "active"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 12227,
+        "digest": "fde0744ecbb5faefd1dc0ce404e0ce7652949a6d46898f58d262647d7da80dbc"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-11",
+      "kind": "click",
+      "pageId": null,
+      "controlId": null,
+      "event": "click",
+      "handlerSummary": "onClick={() => { setActive(i); setStatus(`已切换到${x}",
+      "stateReads": [],
+      "stateWrites": [
+        "active",
+        "status"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 13345,
+        "digest": "c48ae1ad69cc4d85c05be2461fcfa72fe21dc205320e0d39aa6b1f6dd1c08722"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-12",
+      "kind": "click",
+      "pageId": "pg-1s",
+      "controlId": "button-111-osz9b5",
+      "event": "click",
+      "handlerSummary": "onClick={() => setStatus(\"已新建任务\")}",
+      "stateReads": [],
+      "stateWrites": [
+        "status"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 13971,
+        "digest": "102de9fdbd9d42efca474f23a252d6689eb68d69f143ec9fc0117aa55a8f5191"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-13",
+      "kind": "change",
+      "pageId": "pg-1s",
+      "controlId": "button-134-1byvpl",
+      "event": "change",
+      "handlerSummary": "onChange={(e) => setFiles([...e.target.files])}",
+      "stateReads": [
+        "files"
+      ],
+      "stateWrites": [
+        "files"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 4964,
+        "digest": "4a6303c89582b19b45b9028aa966ff795745f3869b8d56ac32b776075faf217a"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    },
+    {
+      "id": "interaction-14",
+      "kind": "change",
+      "pageId": null,
+      "controlId": null,
+      "event": "change",
+      "handlerSummary": "onChange={(e) => setValue(e.target.value)}",
+      "stateReads": [
+        "value"
+      ],
+      "stateWrites": [
+        "value"
+      ],
+      "network": null,
+      "source": {
+        "file": "src/main.jsx",
+        "offset": 5490,
+        "digest": "7c7e5459db22cb55bbc5aa8152a215d5cd693f9b198084d4d0d559d63916abc7"
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-source:src/main.jsx",
+          "visual-release:66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd"
+        ]
+      }
+    }
+  ]
+}

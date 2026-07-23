@@ -1,0 +1,4 @@
+interface:
+  display_name: "功能与领域设计"
+  short_description: "内部运行BMAD规划，产出完整领域包与实现交接包"
+  default_prompt: "Use $functional-domain-design to run FDD-owned BMAD planning over the architecture JSON, AI Restore release, and optional user decisions, then produce an approved functional domain package and implementation handoff."

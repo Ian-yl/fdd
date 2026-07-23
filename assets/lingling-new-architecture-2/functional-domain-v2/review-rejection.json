@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "status": "rejected",
+  "authorAgentId": "functional-author-root-v2",
+  "reviewerAgentId": "functional-reviewer-independent-v2",
+  "reviewedAt": "2026-07-23T02:34:28.000Z",
+  "findings": [
+    "The five fixture files exist and are locked, but they are screenshots rather than clean acceptance inputs: product-reference and model-reference contain page controls/UI; background-reference still contains the product; pattern-reference is a composed apparel marketing image with text rather than a clean fabric/pattern input.",
+    "cap-pg-1s-mod-xn: 商品多角度图 uses product-reference plus background-reference, but background-reference is another near-identical product composition rather than a verified second product angle.",
+    "cap-pg-1s-mod-xo: 背景类型 is a generic full composition sentence rather than an enumerated background type.",
+    "cap-pg-1s-mod-xq: each SKU reference reuses unrelated common images, and 统一背景 is generic composition prose rather than a background specification.",
+    "cap-pg-1s-mod-xr: 变化维度 contains camera views and 场景风格 also contains camera views; neither represents the declared variation dimension or scene style.",
+    "cap-pg-1s-mod-xt: 服装品类 and 款式描述 are identical generic composition prose rather than garment type and construction details.",
+    "cap-pg-1s-mod-xu: 使用场景 contains camera views and 内容平台 is 天猫 despite the content-seeding/social use case.",
+    "cap-pg-1s-mod-xv: 道具图, 位置与尺度要求 and 光线方向 are all identical generic composition prose instead of typed image, geometry and lighting values.",
+    "cap-pg-1s-mod-xx: 文字区域策略 is generic composition prose rather than replace-in-place, preserve-layout, or reflow behavior.",
+    "cap-pg-1s-mod-xy: 白底标准, 边距 and 阴影样式 are all identical generic prose, so background RGB, subject occupancy and shadow rule cannot be tested.",
+    "cap-pg-1s-mod-xz: 商品多角度参考图 is prose rather than image references, and 相机高度 is prose rather than a camera-height value.",
+    "cap-pg-1s-mod-y0: 商品高清图 is prose rather than an image, 关注细节列表 contains camera views rather than product details, and 标注选项 is not a boolean or annotation policy.",
+    "cap-pg-1s-mod-y1: 提取区域, 背景透明选项 and 平铺修复选项 are generic prose rather than a mask/region and booleans.",
+    "cap-pg-1t-mod-z5: 手持方式 is generic composition prose rather than a grip/pose instruction.",
+    "cap-pg-1t-mod-z7: 姿态策略 is generic composition prose rather than preserve/change pose behavior.",
+    "cap-pg-1t-mod-z8: 尺码信息 and 穿着方式 are generic composition prose rather than garment/body sizing and dressing rules.",
+    "cap-pg-1t-mod-z9: target pose and both preserve options are generic prose rather than a pose reference and booleans.",
+    "cap-pg-1t-mod-za: 尺码 is generic prose and 穿着场景 contains camera views rather than a use scene.",
+    "cap-pg-1t-mod-zb: 表情策略 is generic prose and 保留发型选项 contains product-preservation labels rather than a boolean/policy; the example also reuses the same model fixture for source and target face.",
+    "cap-pg-1t-mod-zc: 保留人物阴影选项 is an image path rather than a boolean/policy.",
+    "cap-pg-1t-mod-zd: 保持材质选项 is generic prose rather than a boolean or preservation policy.",
+    "cap-pg-1t-mod-zf: 穿搭主题 is a visual style and 生活场景 contains camera views; 内容平台 is 天猫 rather than a social-content platform.",
+    "Assertions remain abstract booleans such as quality.结构一致=true without an evaluator, metric, tolerance, or expected extracted value. They are machine-shaped but not independently executable acceptance tests.",
+    "The structural review script still cannot detect field-type or domain-semantic mismatch, fixture suitability, or whether an assertion has an executable evaluator; its zero exit status is insufficient for approval."
+  ]
+}
