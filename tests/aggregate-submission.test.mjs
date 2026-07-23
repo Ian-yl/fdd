@@ -34,6 +34,7 @@ test('scaffold emits one final submit, keeps upload independent, and closes reso
   assert.equal(result.status, 0, result.stderr);
   const spec = read(`${output}/functional-spec.json`); const aggregate = spec.capabilities.find((item) => item.aggregateSubmission); const upload = spec.capabilities.find((item) => item.operations?.[0]?.resourceTransfer);
   assert.ok(aggregate); assert.equal(aggregate.specificationStatus, 'complete'); assert.equal(aggregate.operations.length, 1); assert.ok(upload);
+  assert.equal(aggregate.resultPresentation.targetRegion, 'container-002-9x5lc'); assert.equal(aggregate.resultPresentation.bindings[0].count.mode, 'response-cardinality'); assert.equal(aggregate.resultPresentation.states.success.requiresBoundElements, true);
   const sectionFields = aggregate.aggregateSubmission.sections.flatMap((item) => item.fields.map((field) => field.id));
   assert.ok(sectionFields.every((field) => Object.hasOwn(aggregate.operations[0].request.bodySchema.properties, field)));
   assert.ok(aggregate.operations[0].dataDependencies?.some((item) => item.sourceOperationId === upload.operations[0].id && item.targetOperationId === aggregate.operations[0].id));
@@ -41,6 +42,17 @@ test('scaffold emits one final submit, keeps upload independent, and closes reso
   const config = spec.entities.find((item) => item.id === aggregate.aggregateSubmission.configurationAggregate.entityId); assert.equal(config.aggregateRoot, true);
   const validation = spawnSync('node', [path.join(root, 'scripts/validate-package.mjs'), output], { encoding: 'utf8' }); assert.equal(validation.status, 0, validation.stderr);
   const review = spawnSync('node', [path.join(root, 'scripts/review-package.mjs'), '--package', output, '--reviewer-agent', 'aggregate-reviewer'], { encoding: 'utf8' }); assert.equal(review.status, 0, review.stderr);
+})));
+
+for (const [name, mutate, expected] of [
+  ['missing resultPresentation', (capability) => { delete capability.resultPresentation; delete capability.presentation.surface.contentContract.resultContract; }, 'without resultPresentation'],
+  ['unrecognized result region', (capability) => { capability.resultPresentation.targetRegion = 'invented-region'; capability.presentation.surface.contentContract.resultContract.targetRegion = 'invented-region'; }, 'unrecognized frontend region'],
+  ['status text instead of result elements', (capability) => { capability.resultPresentation.states.success.elementSemantic = 'status-text'; capability.presentation.surface.contentContract.resultContract.states.success.elementSemantic = 'status-text'; }, 'only a status message'],
+]) test(`validator rejects ${name}`, () => withTemp((input) => withTemp((output) => {
+  writeAggregateArchitecture(input); const scaffold = spawnSync('node', [path.join(root, 'scripts/scaffold-package.mjs'), '--input', input, '--visual-release', release, '--output', output, '--author-agent', 'aggregate-author'], { encoding: 'utf8' }); assert.equal(scaffold.status, 0, scaffold.stderr);
+  const spec = read(`${output}/functional-spec.json`); const capability = spec.capabilities.find((item) => item.aggregateSubmission); mutate(capability); write(`${output}/functional-spec.json`, spec);
+  const definitions = read(`${output}/capability-definitions.json`); definitions.capabilities = spec.capabilities; write(`${output}/capability-definitions.json`, definitions);
+  const validation = spawnSync('node', [path.join(root, 'scripts/validate-package.mjs'), output], { encoding: 'utf8' }); assert.notEqual(validation.status, 0); assert.match(validation.stderr, new RegExp(expected));
 })));
 
 function syntheticEvidence({ actions }) {
