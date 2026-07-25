@@ -118,6 +118,10 @@ test('⑱ (wave5) an inconsistent quantity chain (count path vs finalProduct sou
   rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.finalProduct.quantity.sourceField = 'title'; })), /quantity chain is inconsistent/);
 });
 
+test('⑲ (fix) deleting the itemContract entirely from an independent-items capability is rejected', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.closure.resultDestination.itemContract; })), /omits resultDestination\.itemContract/);
+});
+
 test('the trusted 2.2 validator tree digest detects a tampered imported library on replay', () => {
   const temp = mkdtempSync(path.join(os.tmpdir(), 'fdd-22-tamper-'));
   try {

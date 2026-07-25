@@ -38,6 +38,10 @@ Under schema 2.2 the keyword classifiers, pattern detectors, and vocabulary list
 
 This removes the wordlist ceiling: a capability may be `complete` even when no classifier pattern matches its name, as long as its closure is authored from resolvable evidence anchors and passes structural validation. A capability stays `planned` only when the source genuinely does not answer a required business decision — recorded as a `missingDecision` citing the unanswered evidence — never merely because a regular expression failed to fire. An annotation such as “根据上传图片生成文案并回填文本域” is authored into a field-assist capability (`resultDestination.targetKind: 'field'`) rather than compressed into a button label and marked planned.
 
+## Hard constraint: agent autonomy
+
+Agent autonomy is a hard constraint. Deterministic tooling may require that a disposition, contract, or ledger entry exists, and may check structural completeness and reference validity — it never infers, defaults, or judges the entry's content. Every business judgment (what an input is for, how it maps, why something is excluded, what a capability means) belongs to the authoring agent, based on evidence; the honesty of those judgments is audited by the independent reviewer, not by scripts. No field-name heuristic or built-in default may substitute for an agent's decision.
+
 ## Media generation: loop per item until batch is confirmed
 
 When source evidence shows a capability produces N independent media results through an external provider, the author closes it with an `operation.providerContract` whose `outputMode` is `independent-items` and `oneProviderResultPerItem` is true. Unless the source explicitly confirms the provider supports batch generation (`n>1`), `batchSupportAssumed` is false and the implementation loops one provider call per item, each carrying the contract's single-item `perCallConstraints`. This contractualizes the established practice of single-item looping and prevents a single provider result (a collage) from being presented as N independent items.

@@ -55,3 +55,7 @@ Independent review owns discard-honesty auditing, the mirror image of closure fi
 ## Independent media item review
 
 For a capability declaring `itemContract.mode: 'independent-media'`, review confirms the closure is faithful to the source: that the source genuinely calls for N independent results (not one composite image), that the item schema exposes a distinct media resource per item, and that the quantity chain is honest. Review rejects an independent-media contract on a capability whose source describes a single composite/collage output (which must instead be a `composite-output` capability), a `finalProduct.quantity` that does not carry `nonDefaultValueRequired` alongside its non-default count binding, and a media `providerContract` that assumes batch support the source never confirms. Structural validation guarantees the contract is complete and internally consistent; whether the independence claim matches the source, and whether the runtime later proves per-item uniqueness, are the reviewer's and the runner's responsibilities respectively. A content-level collage cannot be caught mechanically and is bounded by provider `perCallConstraints`, integrated observation, and manual spot-check.
+
+## Constitution: division of judgment
+
+Scripts enforce that positions are taken; agents decide the positions; the reviewer audits that the positions are honest. A framework change that makes a validator infer business content, inject defaults, or encode product/field-name heuristics violates this contract and is itself grounds for rejection.
