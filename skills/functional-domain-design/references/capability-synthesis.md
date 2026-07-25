@@ -42,6 +42,14 @@ This removes the wordlist ceiling: a capability may be `complete` even when no c
 
 Agent autonomy is a hard constraint. Deterministic tooling may require that a disposition, contract, or ledger entry exists, and may check structural completeness and reference validity — it never infers, defaults, or judges the entry's content. Every business judgment (what an input is for, how it maps, why something is excluded, what a capability means) belongs to the authoring agent, based on evidence; the honesty of those judgments is audited by the independent reviewer, not by scripts. No field-name heuristic or built-in default may substitute for an agent's decision.
 
+## Dual-axis evidence taxonomy
+
+Evidence answers two different questions, and a complete capability's closure grounds both. **Intent evidence** — design exports, `#` annotations, product context, and confirmed decisions — answers *what to build and why*. **Anchor evidence** — release controls, regions, and observed interactions — answers *where it lands*. Validate checks only that a complete capability anchors at least one item of each axis and that every anchor resolves; whether the anchored semantics are faithful is the author's and reviewer's judgment.
+
+Only upstream-selected, finalized design exports enter the evidence index — the design-manifest records the selection provenance, and exploration proposals are never indexed, so they carry no bookkeeping or disposition burden. A design export is `documented`-tier evidence — a written statement of intent — sitting alongside annotations and product context on the intent axis.
+
+Conflict handling: when a design export contradicts the release or observed behavior, the closure never silently adopts either side — the conflict is always raised as an unresolved item citing both. The implementation anchor follows the release (the survivor of the adopted design, the actually-shipped surface), while the intent discrepancy awaits a product decision. This is a conflict-specific rule, not a reordering of the global evidence priority: a design export remains `documented`-tier evidence alongside annotations and product context.
+
 ## Media generation: loop per item until batch is confirmed
 
 When source evidence shows a capability produces N independent media results through an external provider, the author closes it with an `operation.providerContract` whose `outputMode` is `independent-items` and `oneProviderResultPerItem` is true. Unless the source explicitly confirms the provider supports batch generation (`n>1`), `batchSupportAssumed` is false and the implementation loops one provider call per item, each carrying the contract's single-item `perCallConstraints`. This contractualizes the established practice of single-item looping and prevents a single provider result (a collage) from being presented as N independent items.

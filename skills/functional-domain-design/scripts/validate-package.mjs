@@ -44,6 +44,7 @@ const approvalReceipt = docs['review-receipt.json'];
 const trustedValidators = new Map([
   ['fdd-validator-2.2.0', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.0/validate-package.mjs') }],
   ['fdd-validator-2.2.1', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.1/validate-package.mjs') }],
+  ['fdd-validator-2.2.2', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.2/validate-package.mjs') }],
 ]);
 const trustedValidator = approvalReceipt?.trustedValidatorId ? trustedValidators.get(approvalReceipt.trustedValidatorId) : null;
 if (requireApproved && !approvalReceipt?.contractVersion) errors.push('approved package requires a versioned trusted review receipt');
@@ -277,13 +278,26 @@ if (isSchema22) {
   const referenced = collectAnchorReferences(spec);
   const gaps = bookkeepingFindings(evidenceIndex, referenced, dispositions);
   if (gaps.length) errors.push(`evidence bookkeeping is incomplete: ${gaps.length} indexed evidence item(s) are neither referenced nor dispositioned`, ...gaps.slice(0, 60).map((gap) => `  - ${gap.id} [${gap.kind}]: ${gap.reason}`));
+  errors.push(...dualAxisFindings(spec, evidenceIndex));
+}
+
+// Design evidence integrity: the manifest's recorded digest must match the in-package image bytes (an
+// immutable binding at the same level as the release), and each entry is structurally complete. The gate
+// only re-hashes bytes — it never interprets a pixel.
+if (existsSync(`${dir}/design-manifest.json`)) {
+  const designManifest = readJSON(`${dir}/design-manifest.json`);
+  for (const image of designManifest.images || []) {
+    if (!image.id || !image.path || !image.sha256) { errors.push(`design-manifest entry is structurally incomplete: ${image.id || '(no id)'}`); continue; }
+    if (!existsSync(`${dir}/${image.path}`)) { errors.push(`design-manifest references a missing image file: ${image.path}`); continue; }
+    if (sha(readFileSync(`${dir}/${image.path}`)) !== image.sha256) errors.push(`design-manifest digest does not match the recorded image bytes: ${image.path}`);
+  }
 }
 
 if (errors.length) {
   console.error(errors.map((error) => `- ${error}`).join('\n'));
   process.exit(1);
 }
-const digestFiles = [...files, ...(existsSync(`${dir}/fixtures`) ? walkFiles(`${dir}/fixtures`).map((file) => file.slice(dir.length + 1)) : [])];
+const digestFiles = [...files, ...(existsSync(`${dir}/design-manifest.json`) ? ['design-manifest.json'] : []), ...(existsSync(`${dir}/designs`) ? walkFiles(`${dir}/designs`).map((file) => file.slice(dir.length + 1)) : []), ...(existsSync(`${dir}/fixtures`) ? walkFiles(`${dir}/fixtures`).map((file) => file.slice(dir.length + 1)) : [])];
 const digests = Object.fromEntries(digestFiles.map((file) => [file, sha(readFileSync(`${dir}/${file}`))]));
 if (checkLock) {
   if (!existsSync(`${dir}/package-lock.json`)) { console.error('- package-lock.json is missing'); process.exit(1); }
@@ -426,6 +440,28 @@ function inputUtilizationFindings(cap, anchorIds) {
     if (entry.disposition === 'provider-mapped' && resourceFields.has(inputId) && (!entry.resourceResolution || typeof entry.resourceResolution !== 'object' || !Object.keys(entry.resourceResolution).length)) findings.push(`provider-backed capability ${cap.id} provider-mapped resource input ${inputId} lacks a resourceResolution (how the resource id becomes bytes or a URL for the provider)`);
     if (entry.disposition === 'not-used' && !String(entry.reason || '').trim()) findings.push(`provider-backed capability ${cap.id} not-used input ${inputId} lacks a reason`);
     for (const anchor of entry.evidenceAnchors || []) if (!anchorIds.has(anchor)) findings.push(`provider-backed capability ${cap.id} input ${inputId} references an unknown evidence anchor: ${anchor}`);
+  }
+  return findings;
+}
+// Dual-axis evidence taxonomy: a complete capability's closure must anchor both axes structurally — an
+// intent-axis item (design/annotation/product-context: what to build and why) and an anchor-axis item
+// (release control/observed interaction: where it lands). Validate only checks both axes are anchored and
+// resolvable; whether the semantics are faithful is the author's and reviewer's judgment.
+function dualAxisFindings(spec, evidenceIndex) {
+  const findings = [];
+  const kind = new Map((evidenceIndex?.evidence || []).map((item) => [item.id, item.kind]));
+  const INTENT = new Set(['design', 'annotation', 'product-context']);
+  const ANCHOR = new Set(['control', 'observed-interaction']);
+  for (const cap of spec.capabilities || []) {
+    if (cap.specificationStatus !== 'complete') continue;
+    const anchors = new Set();
+    for (const field of ['userInput', 'systemBehavior', 'output', 'resultDestination', 'failures', 'downstreamUse']) for (const anchor of cap.closure?.[field]?.evidenceAnchors || []) anchors.add(anchor);
+    for (const anchor of cap.evidenceAnchors || []) anchors.add(anchor);
+    const kinds = [...anchors].map((anchor) => kind.get(anchor)).filter(Boolean);
+    if (!kinds.some((item) => INTENT.has(item))) findings.push(`complete capability ${cap.id} closure anchors no intent-axis evidence (design/annotation/product-context — what to build and why)`);
+    // The anchor axis (where it lands) applies only to non-headless capabilities; a headless capability has
+    // no UI landing point, so requiring a control/interaction anchor would force it to fabricate one.
+    if (cap.presentation?.mode !== 'headless' && !kinds.some((item) => ANCHOR.has(item))) findings.push(`non-headless complete capability ${cap.id} closure anchors no anchor-axis evidence (release control or observed interaction — where it lands)`);
   }
   return findings;
 }

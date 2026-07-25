@@ -29,7 +29,8 @@
             "page-module:category-field",
             "page-module:quantity-field",
             "product-context:users",
-            "product-context:needs"
+            "product-context:needs",
+            "design:submission"
           ]
         },
         "systemBehavior": {

@@ -25,10 +25,11 @@ description: Use internal BMAD planning to convert three architecture JSON input
      --visual-release <ai-restore-release> \
      --decisions <optional-user-business-decisions.json> \
      --output <workspace>/functional-domain \
-     --author-agent <stable-agent-id>
+     --author-agent <stable-agent-id> \
+     --designs <optional-finalized-design-export-directory>
    ```
 3. Read [input-contract.md](references/input-contract.md), [frontend-semantics.md](references/frontend-semantics.md), [capability-synthesis.md](references/capability-synthesis.md), [package-contract.md](references/package-contract.md), and [reviewer-gates.md](references/reviewer-gates.md). Classify architecture leaves before synthesizing capabilities.
-4. Refine capability intent, operations, schemas, entities, relationships, rules, permissions, consistency, presentation, failures, and executable acceptance from traceable evidence.
+4. Refine capability intent, operations, schemas, entities, relationships, rules, permissions, consistency, presentation, failures, and executable acceptance from traceable evidence. Read each anchored `design:<id>` export with vision and write the design's semantics — each mode's interface, fields, states, and flow — into the owning capability's closure, anchoring `design:<id>`; a complete capability grounds both evidence axes (intent and anchor). When a design export contradicts the release or observed behavior, do not silently choose — record an unresolved item citing both, and let the release/observed reading prevail.
 5. Design the complete business workflow independently of current visual coverage while preserving the immutable release and its semantic anchors.
 6. Mark implementation-safe designed semantics `complete`; use reachable `planned` contracts for insufficient but non-contradictory semantics; reserve blockers for contradictions requiring an authoritative decision.
 7. Record planned reasons and blockers in `unresolved-items.json`.

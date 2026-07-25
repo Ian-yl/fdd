@@ -58,6 +58,10 @@ Independent review likewise owns input-utilization honesty auditing, symmetric t
 
 For a capability declaring `itemContract.mode: 'independent-media'`, review confirms the closure is faithful to the source: that the source genuinely calls for N independent results (not one composite image), that the item schema exposes a distinct media resource per item, and that the quantity chain is honest. Review rejects an independent-media contract on a capability whose source describes a single composite/collage output (which must instead be a `composite-output` capability), a `finalProduct.quantity` that does not carry `nonDefaultValueRequired` alongside its non-default count binding, and a media `providerContract` that assumes batch support the source never confirms. Structural validation guarantees the contract is complete and internally consistent; whether the independence claim matches the source, and whether the runtime later proves per-item uniqueness, are the reviewer's and the runner's responsibilities respectively. A content-level collage cannot be caught mechanically and is bounded by provider `perCallConstraints`, integrated observation, and manual spot-check.
 
+## Design evidence review
+
+For a capability anchoring a `design:<id>` export, meaning-fidelity and discard-honesty auditing extend to the design: the reviewing agent — with vision — re-reads the finalized design export behind each anchor and confirms the authored closure faithfully preserves what the design shows (each mode's interface, fields, states, and flow), and that a design the source selected is not dropped under an out-of-scope/decorative label. A distortion or a dishonest discard is rejected with the offending evidence ids. Design-anchor fidelity is vision-against-vision and therefore carries lower confidence than a text anchor; key semantics are encouraged to carry dual anchors — a design export cross-proven by an annotation or observed interaction. This is a workflow role and does not run in CI.
+
 ## Constitution: division of judgment
 
 The framework carries four standing guarantees, and no change may weaken any of them:

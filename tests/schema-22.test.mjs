@@ -142,10 +142,34 @@ test('㉓s (wave7) minting a new approval against a superseded validator revisio
   const dir = mkdtempSync(path.join(os.tmpdir(), 'fdd-22-sign-'));
   try {
     cpSync(golden, dir, { recursive: true });
-    const result = spawnSync('node', [path.join(root, 'scripts/review-package.mjs'), '--package', dir, '--reviewer-agent', 'golden-domain-reviewer-22', '--validator-version', '2.2.0'], { encoding: 'utf8' });
+    const result = spawnSync('node', [path.join(root, 'scripts/review-package.mjs'), '--package', dir, '--reviewer-agent', 'golden-domain-reviewer-22', '--validator-version', '2.2.1'], { encoding: 'utf8' });
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /superseded validator revision/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('㉕ (wave8) a design evidence item neither anchored nor dispositioned fails bookkeeping', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.closure.userInput.evidenceAnchors = capability.closure.userInput.evidenceAnchors.filter((anchor) => anchor !== 'design:submission'); })), /bookkeeping is incomplete|design:submission/);
+});
+
+test('㉖ (wave8) a design-manifest whose recorded digest does not match the image bytes is rejected', () => {
+  rejects(withGolden(({ read, write }) => { const manifest = read('design-manifest.json'); manifest.images[0].sha256 = '0'.repeat(64); write('design-manifest.json', manifest); }), /design-manifest digest does not match/);
+});
+
+test('㉗d (wave8) a complete capability anchoring no intent-axis evidence is rejected (dual-axis)', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { const strip = (list) => (list || []).filter((anchor) => !/^(product-context|annotation|design):/.test(anchor)); for (const field of ['userInput', 'systemBehavior', 'output', 'resultDestination', 'failures', 'downstreamUse']) if (capability.closure[field]) capability.closure[field].evidenceAnchors = strip(capability.closure[field].evidenceAnchors); capability.evidenceAnchors = strip(capability.evidenceAnchors); })), /anchors no intent-axis evidence/);
+});
+
+const stripToIntent = (capability) => { const keepIntent = (list) => (list || []).filter((anchor) => /^(product-context|annotation|design):/.test(anchor)); for (const field of ['userInput', 'systemBehavior', 'output', 'resultDestination', 'failures', 'downstreamUse']) if (capability.closure[field]) capability.closure[field].evidenceAnchors = keepIntent(capability.closure[field].evidenceAnchors); capability.evidenceAnchors = keepIntent(capability.evidenceAnchors); };
+
+test('㉗a (wave8) a non-headless complete capability with no anchor-axis evidence is rejected (dual-axis)', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', stripToIntent)), /no anchor-axis evidence/);
+});
+
+test('㉗h (wave8) a headless complete capability is exempt from the anchor axis (intent-only is enough)', () => {
+  const dir = withGolden(({ cap }) => cap('cap-assist', (capability) => { capability.presentation.mode = 'headless'; capability.closure.resultDestination = { targetKind: 'headless', evidenceAnchors: [] }; stripToIntent(capability); }));
+  const result = validate(dir); rmSync(dir, { recursive: true, force: true });
+  assert.doesNotMatch(`${result.stdout}${result.stderr}`, /cap-assist closure anchors no anchor-axis/);
 });
 
 test('the trusted 2.2 validator tree digest detects a tampered imported library on replay', () => {
@@ -153,7 +177,7 @@ test('the trusted 2.2 validator tree digest detects a tampered imported library 
   try {
     for (const name of ['scripts', 'validators']) cpSync(path.join(root, name), path.join(temp, name), { recursive: true });
     cpSync(golden, path.join(temp, 'domain'), { recursive: true });
-    appendFileSync(path.join(temp, 'validators/fdd-2.2.1/lib/evidence-index.mjs'), '\n// tampered\n');
+    appendFileSync(path.join(temp, 'validators/fdd-2.2.2/lib/evidence-index.mjs'), '\n// tampered\n');
     const result = spawnSync('node', [path.join(temp, 'scripts/validate-package.mjs'), path.join(temp, 'domain'), '--require-approved'], { encoding: 'utf8' });
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /does not reference the immutable trusted repository validator/);
