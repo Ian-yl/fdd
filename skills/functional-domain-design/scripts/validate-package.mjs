@@ -36,8 +36,14 @@ const observedInteractions = docs['observed-interactions.json'] || {};
 const controlMap = docs['control-capability-map.json'] || {};
 const assetInventory = docs['asset-role-inventory.json'] || {};
 const approvalReceipt = docs['review-receipt.json'];
+// Replay registry pins each approved package to the immutable validator revision named in its receipt.
+// Multiple 2.2.x revisions coexist: a package approved under 2.2.0 keeps replaying against the frozen
+// 2.2.0 rules (semantic changes never retroactively invalidate an approved package), while packages
+// signed after a revision replay against the newer frozen rules. The signing path (review-package) always
+// pins the latest revision, so no new approval can select an older, weaker revision to evade a new rule.
 const trustedValidators = new Map([
   ['fdd-validator-2.2.0', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.0/validate-package.mjs') }],
+  ['fdd-validator-2.2.1', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.1/validate-package.mjs') }],
 ]);
 const trustedValidator = approvalReceipt?.trustedValidatorId ? trustedValidators.get(approvalReceipt.trustedValidatorId) : null;
 if (requireApproved && !approvalReceipt?.contractVersion) errors.push('approved package requires a versioned trusted review receipt');
@@ -163,6 +169,10 @@ for (const cap of capabilities.values()) {
         if (provider.oneProviderResultPerItem !== true) errors.push(`operation ${operation.id} independent-items provider must set oneProviderResultPerItem to true`);
         if (typeof provider.batchSupportAssumed !== 'boolean') errors.push(`operation ${operation.id} independent-items provider must declare batchSupportAssumed (loop per item when batch support is unconfirmed)`);
         if (!provider.perCallConstraints || typeof provider.perCallConstraints !== 'object' || !Object.keys(provider.perCallConstraints).length) errors.push(`operation ${operation.id} independent-items provider must declare per-call single-item output constraints`);
+        // Concurrency contract must exist so it is never silently omitted, but its values are the author's
+        // (maxParallel:1 serial is valid) — the framework infers no default. Only presence/structure here.
+        const concurrency = provider.concurrency;
+        if (!concurrency || typeof concurrency !== 'object' || !Number.isInteger(concurrency.maxParallel) || concurrency.maxParallel < 1 || !['index-ordered', 'unordered'].includes(concurrency.ordering) || !String(concurrency.failurePolicy || '').trim()) errors.push(`operation ${operation.id} independent-items provider must declare a concurrency contract (integer maxParallel >= 1, ordering index-ordered|unordered, failurePolicy) — values are the author's, only presence is required`);
       }
     }
     const effectEntities = new Set();
@@ -259,6 +269,7 @@ if (isSchema22) {
     if (cap.specificationStatus === 'complete') {
       errors.push(...concreteAcceptanceFindings(cap));
       errors.push(...resultDestinationFindings(cap, frontendInventory, inputFieldTypes));
+      errors.push(...inputUtilizationFindings(cap, anchorIds));
       const mapped = (controlMap.mappings || []).find((item) => item.capabilityId === cap.id);
       if (cap.presentation?.mode !== 'headless' && !mapped?.controlId) errors.push(`complete non-headless capability ${cap.id} has no observed release control binding (control provenance requires a release controlId)`);
     }
@@ -389,6 +400,32 @@ function itemContractFindings(cap, destination) {
   if (finalProduct?.quantity) {
     if (finalProduct.quantity.nonDefaultValueRequired !== true) findings.push(`capability ${cap.id} finalProduct.quantity must set nonDefaultValueRequired to match its independent-media count contract`);
     if (finalProduct.quantity.sourceField && countField && finalProduct.quantity.sourceField !== countField) findings.push(`capability ${cap.id} quantity chain is inconsistent: result count requestPath (${countField}) and finalProduct.quantity.sourceField (${finalProduct.quantity.sourceField}) differ`);
+  }
+  return findings;
+}
+// Input utilization ledger (net-new; hung under the closure of a provider-backed capability). Every declared
+// input field and every provider-bound resource dependency must carry an explicit disposition, so an input
+// that should reach the provider cannot be silently dropped. Validate only checks that a position exists and
+// is structurally complete (provider-mapped has a mapping, a provider-mapped resource has a resolution,
+// not-used has a reason, anchors resolve) — the disposition content is the author's, and the honesty of each
+// disposition is audited by the independent reviewer, not inferred here.
+function inputUtilizationFindings(cap, anchorIds) {
+  const findings = [];
+  const providerOp = (cap.operations || []).find((operation) => operation.providerContract);
+  if (!providerOp) return findings;
+  const ledger = cap.closure?.inputUtilization;
+  if (!Array.isArray(ledger) || !ledger.length) { findings.push(`provider-backed capability ${cap.id} closure lacks an inputUtilization ledger`); return findings; }
+  const byInput = new Map(ledger.map((entry) => [entry.inputId, entry]));
+  const resourceFields = new Set((providerOp.dataDependencies || []).map((dep) => String(dep.targetField || '').replace(/^request\./, '')).filter(Boolean));
+  const inputs = new Set([...Object.keys(cap.inputSchema?.properties || {}), ...resourceFields]);
+  for (const inputId of inputs) {
+    const entry = byInput.get(inputId);
+    if (!entry) { findings.push(`provider-backed capability ${cap.id} inputUtilization ledger omits a disposition for input: ${inputId}`); continue; }
+    if (!['provider-mapped', 'application-only', 'not-used'].includes(entry.disposition)) { findings.push(`provider-backed capability ${cap.id} input ${inputId} has an unrecognized disposition: ${entry.disposition}`); continue; }
+    if (entry.disposition === 'provider-mapped' && !String(entry.mapping?.providerParam || '').trim()) findings.push(`provider-backed capability ${cap.id} provider-mapped input ${inputId} lacks a mapping to a provider parameter`);
+    if (entry.disposition === 'provider-mapped' && resourceFields.has(inputId) && (!entry.resourceResolution || typeof entry.resourceResolution !== 'object' || !Object.keys(entry.resourceResolution).length)) findings.push(`provider-backed capability ${cap.id} provider-mapped resource input ${inputId} lacks a resourceResolution (how the resource id becomes bytes or a URL for the provider)`);
+    if (entry.disposition === 'not-used' && !String(entry.reason || '').trim()) findings.push(`provider-backed capability ${cap.id} not-used input ${inputId} lacks a reason`);
+    for (const anchor of entry.evidenceAnchors || []) if (!anchorIds.has(anchor)) findings.push(`provider-backed capability ${cap.id} input ${inputId} references an unknown evidence anchor: ${anchor}`);
   }
   return findings;
 }

@@ -106,7 +106,72 @@
             "product-context:goals",
             "page-module:result-region"
           ]
-        }
+        },
+        "inputUtilization": [
+          {
+            "inputId": "title",
+            "disposition": "application-only",
+            "evidenceAnchors": [
+              "page-module:identity-section",
+              "page-module:options-section",
+              "page-module:title-field",
+              "page-module:category-field",
+              "page-module:quantity-field",
+              "product-context:users",
+              "product-context:needs"
+            ],
+            "reason": "used only by the application (persisted as submission metadata / drives the item count), not forwarded to the external provider"
+          },
+          {
+            "inputId": "category",
+            "disposition": "application-only",
+            "evidenceAnchors": [
+              "page-module:identity-section",
+              "page-module:options-section",
+              "page-module:title-field",
+              "page-module:category-field",
+              "page-module:quantity-field",
+              "product-context:users",
+              "product-context:needs"
+            ],
+            "reason": "used only by the application (persisted as submission metadata / drives the item count), not forwarded to the external provider"
+          },
+          {
+            "inputId": "quantity",
+            "disposition": "application-only",
+            "evidenceAnchors": [
+              "page-module:identity-section",
+              "page-module:options-section",
+              "page-module:title-field",
+              "page-module:category-field",
+              "page-module:quantity-field",
+              "product-context:users",
+              "product-context:needs"
+            ],
+            "reason": "used only by the application (persisted as submission metadata / drives the item count), not forwarded to the external provider"
+          },
+          {
+            "inputId": "resourceIds",
+            "disposition": "provider-mapped",
+            "mapping": {
+              "providerParam": "provider.inputs",
+              "transform": "identity"
+            },
+            "evidenceAnchors": [
+              "page-module:identity-section",
+              "page-module:options-section",
+              "page-module:title-field",
+              "page-module:category-field",
+              "page-module:quantity-field",
+              "product-context:users",
+              "product-context:needs"
+            ],
+            "resourceResolution": {
+              "method": "asset-id-dereference",
+              "detail": "resolve each uploaded asset id to its stored bytes and hand the resource to the provider as a generation source"
+            }
+          }
+        ]
       },
       "presentation": {
         "mode": "reuse-control",
@@ -420,6 +485,11 @@
               "singleItemPerCall": true,
               "distinctMediaPerCall": true,
               "outputSemantic": "each provider invocation returns exactly one independent media item with its own identifier and media resource"
+            },
+            "concurrency": {
+              "maxParallel": 2,
+              "ordering": "unordered",
+              "failurePolicy": "fail-fast"
             }
           },
           "integrationBindings": [
@@ -991,7 +1061,25 @@
             "page-module:title-field",
             "page-module:submit-submission"
           ]
-        }
+        },
+        "inputUtilization": [
+          {
+            "inputId": "resourceIds",
+            "disposition": "provider-mapped",
+            "mapping": {
+              "providerParam": "provider.inputs",
+              "transform": "identity"
+            },
+            "evidenceAnchors": [
+              "page-module:assist-title",
+              "annotation:assist-title"
+            ],
+            "resourceResolution": {
+              "method": "asset-id-dereference",
+              "detail": "resolve each uploaded asset id to its stored bytes and hand the resource to the provider as a generation source"
+            }
+          }
+        ]
       },
       "presentation": {
         "mode": "reuse-control",

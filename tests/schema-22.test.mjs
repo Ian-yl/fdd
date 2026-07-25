@@ -122,12 +122,38 @@ test('⑲ (fix) deleting the itemContract entirely from an independent-items cap
   rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.closure.resultDestination.itemContract; })), /omits resultDestination\.itemContract/);
 });
 
+test('⑳ (wave7) an inputUtilization ledger that omits a disposition for a declared input is rejected', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.closure.inputUtilization = capability.closure.inputUtilization.filter((item) => item.inputId !== 'title'); })), /omits a disposition for input: title/);
+});
+
+test('㉑ (wave7) a provider-mapped input with no provider mapping is rejected', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.closure.inputUtilization.find((item) => item.inputId === 'resourceIds').mapping; })), /lacks a mapping to a provider parameter/);
+});
+
+test('㉑b (wave7) a provider-mapped resource input with no resourceResolution is rejected', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.closure.inputUtilization.find((item) => item.inputId === 'resourceIds').resourceResolution; })), /lacks a resourceResolution/);
+});
+
+test('㉒f (wave7) an independent-items provider without a concurrency contract is rejected', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.operations[0].providerContract.concurrency; })), /must declare a concurrency contract/);
+});
+
+test('㉓s (wave7) minting a new approval against a superseded validator revision is rejected (signing pins latest)', () => {
+  const dir = mkdtempSync(path.join(os.tmpdir(), 'fdd-22-sign-'));
+  try {
+    cpSync(golden, dir, { recursive: true });
+    const result = spawnSync('node', [path.join(root, 'scripts/review-package.mjs'), '--package', dir, '--reviewer-agent', 'golden-domain-reviewer-22', '--validator-version', '2.2.0'], { encoding: 'utf8' });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /superseded validator revision/);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
 test('the trusted 2.2 validator tree digest detects a tampered imported library on replay', () => {
   const temp = mkdtempSync(path.join(os.tmpdir(), 'fdd-22-tamper-'));
   try {
     for (const name of ['scripts', 'validators']) cpSync(path.join(root, name), path.join(temp, name), { recursive: true });
     cpSync(golden, path.join(temp, 'domain'), { recursive: true });
-    appendFileSync(path.join(temp, 'validators/fdd-2.2.0/lib/evidence-index.mjs'), '\n// tampered\n');
+    appendFileSync(path.join(temp, 'validators/fdd-2.2.1/lib/evidence-index.mjs'), '\n// tampered\n');
     const result = spawnSync('node', [path.join(temp, 'scripts/validate-package.mjs'), path.join(temp, 'domain'), '--require-approved'], { encoding: 'utf8' });
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /does not reference the immutable trusted repository validator/);

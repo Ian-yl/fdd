@@ -2,23 +2,9 @@
   "schemaVersion": "1.0",
   "status": "rejected",
   "authorAgentId": "golden-domain-author-22",
-  "reviewerAgentId": "golden-reviewer",
-  "reviewedAt": "2026-07-24T10:48:24.773Z",
+  "reviewerAgentId": "golden-domain-reviewer-22",
+  "reviewedAt": "2026-07-25T06:30:51.421Z",
   "findings": [
-    "cap-submit: capability intent is not semantically closed",
-    "cap-submit: capability was synthesized from an input, display, local control, navigation, state, or constraint leaf without an embedded operation",
-    "cap-submit: keyword classification was not confirmed by minimum implementable information",
-    "cap-submit: product-producing complete capability has no resultPresentation",
-    "cap-upload: capability intent is not semantically closed",
-    "cap-upload: capability was synthesized from an input, display, local control, navigation, state, or constraint leaf without an embedded operation",
-    "cap-upload: keyword classification was not confirmed by minimum implementable information",
-    "cap-assist: capability intent is not semantically closed",
-    "cap-assist: capability was synthesized from an input, display, local control, navigation, state, or constraint leaf without an embedded operation",
-    "cap-assist: keyword classification was not confirmed by minimum implementable information",
-    "cap-assist: medium-confidence semantics have no accepted input-bound BMAD decision",
-    "cap-assist: product-producing complete capability has no resultPresentation",
-    "cap-export: capability intent is not semantically closed",
-    "cap-export: capability was synthesized from an input, display, local control, navigation, state, or constraint leaf without an embedded operation",
-    "cap-export: keyword classification was not confirmed by minimum implementable information"
+    "planning capability definitions differ from formal domain: capabilities"
   ]
 }
