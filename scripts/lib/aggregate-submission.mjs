@@ -17,13 +17,14 @@ export function detectAggregateSubmissions({ pages, frontend, decisions = [] }) 
       const observedComplete = interaction && distinctRegions.size >= 2 && declaredFields.every((field) => requestFields.has(field) || [...coveredFieldIds].includes(field));
       const confirmed = declaration.evidenceStatus === 'confirmed'; const documented = declaration.evidenceStatus === 'documented';
       const relationProven = observedComplete || confirmed || documented;
-      const finalProductComplete = completeFinalProduct(declaration.finalProduct);
+      const finalProduct = normalizeFinalProduct(declaration.finalProduct, sections);
+      const finalProductComplete = completeFinalProduct(finalProduct);
       const findings = [];
       if (!relationProven) findings.push(`aggregate submission ${declaration.scopeId} has no observed, documented, or confirmed cross-region submit evidence`);
       if (!finalProductComplete) findings.push(`aggregate submission ${declaration.scopeId} has incomplete final product type, quantity binding, lifecycle, or downstream usage`);
-      if (declaration.finalProduct?.quantity?.sourceField && !declaredFields.includes(declaration.finalProduct.quantity.sourceField)) findings.push(`aggregate submission ${declaration.scopeId} quantity source field is not part of the aggregate request`);
+      if (finalProduct?.quantity?.sourceField && !sections.some((section) => section.fields.some((field) => field.id === finalProduct.quantity.sourceField))) findings.push(`aggregate submission ${declaration.scopeId} quantity source field is not part of the aggregate request`);
       if (sections.length < 2 || sections.some((section) => !section.fields.length)) findings.push(`aggregate submission ${declaration.scopeId} does not cover every declared form section`);
-      const aggregate = { schemaVersion: '1.0', scopeId: declaration.scopeId, pageId: page.id, primaryItemId: declaration.primaryItemId, triggerControlId: declaration.triggerControlId, operation: declaration.operation || null, evidence: { status: observedComplete ? 'observed' : confirmed ? 'confirmed' : documented ? 'documented' : 'inferred', sources: [...declaration.sources, ...(interaction ? [`observed-interaction:${interaction.id}`] : [])] }, sections, sectionItemIds: declaration.sectionItemIds, finalProduct: declaration.finalProduct || null, status: findings.length ? 'planned' : 'complete', findings };
+      const aggregate = { schemaVersion: '1.0', scopeId: declaration.scopeId, pageId: page.id, primaryItemId: declaration.primaryItemId, triggerControlId: declaration.triggerControlId, operation: declaration.operation || null, evidence: { status: observedComplete ? 'observed' : confirmed ? 'confirmed' : documented ? 'documented' : 'inferred', sources: [...declaration.sources, ...(interaction ? [`observed-interaction:${interaction.id}`] : [])] }, sections, sectionItemIds: declaration.sectionItemIds, finalProduct: finalProduct || null, status: findings.length ? 'planned' : 'complete', findings };
       aggregates.push(aggregate);
       for (const [index, question] of findings.entries()) unresolved.push({ id: `unresolved-aggregate-${slug(declaration.scopeId)}-${index + 1}`, severity: 'major', disposition: 'planned', status: 'open', question, relatedIds: [declaration.primaryItemId, ...declaration.sectionItemIds], sources: aggregate.evidence.sources });
     }
@@ -48,6 +49,7 @@ function declaredScopes(page, decisions) {
   return dedupe(result, (item) => `${item.scopeId}:${item.primaryItemId}`);
 }
 function completeFinalProduct(value) { return Boolean(value?.type && value?.quantity && (value.quantity.sourceField || Number.isInteger(value.quantity.fixed)) && value?.lifecycle?.length >= 2 && value?.downstreamUsage?.length); }
+function normalizeFinalProduct(value, sections) { if (!value?.quantity?.sourceField) return value; const source = value.quantity.sourceField; const field = sections.flatMap((section) => section.fields).find((item) => item.id === source || item.controlId === source); return field ? { ...value, quantity: { ...value.quantity, sourceField: field.id } } : value; }
 function sameRequest(observed, declared) { if (!declared) return true; return String(observed?.method).toUpperCase() === String(declared.method).toUpperCase() && observed?.url === declared.path; }
 function fieldKey(control) { return slug(control.label || control.placeholder) || slug(control.controlId); }
 function toField(control) { return { id: fieldKey(control), controlId: control.controlId, label: control.label || control.placeholder || control.controlId, required: control.required === true, schema: control.options?.length ? { type: 'string', enum: control.options } : { type: 'string', minLength: control.required ? 1 : 0 }, regionId: control.region?.id, evidence: control.evidence }; }

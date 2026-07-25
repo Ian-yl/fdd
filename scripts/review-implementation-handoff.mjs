@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { digestJSON, hashDirectory, readJSON, sha } from './lib/visual-release.mjs';
 import { presentationFindings } from './lib/presentation.mjs';
+import { treeDigest } from './lib/validator-tree.mjs';
 
 const args = parseArgs(process.argv.slice(2)); if (!args.handoff || !args['reviewer-agent']) usage();
-const dir = resolve(args.handoff); const specPreview = readJSON(`${dir}/functional-spec.json`); const semanticFiles = specPreview.schemaVersion === '2.1' ? ['frontend-semantic-inventory.json', 'observed-interactions.json', 'control-capability-map.json'] : []; const files = ['handoff-manifest.json', 'visual-source.json', 'release-manifest.json', 'suite-gate.json', 'visual-approval.json', 'frontend-manifest.json', 'functional-spec.json', ...semanticFiles, 'visual-controls.json', 'ui-implementation-plan.json', 'api-contract.json', 'domain-bindings.json', 'runtime-contract.json'];
+const dir = resolve(args.handoff); const specPreview = readJSON(`${dir}/functional-spec.json`); if (specPreview.schemaVersion !== '2.2') throw new Error('only implementation-handoff schema 2.2 is supported'); const semanticFiles = ['frontend-semantic-inventory.json', 'observed-interactions.json', 'control-capability-map.json', 'asset-role-inventory.json']; const files = ['handoff-manifest.json', 'visual-source.json', 'release-manifest.json', 'suite-gate.json', 'visual-approval.json', 'frontend-manifest.json', 'functional-spec.json', ...semanticFiles, 'handoff-anchor-manifest.json', 'visual-controls.json', 'ui-implementation-plan.json', 'api-contract.json', 'domain-bindings.json', 'runtime-contract.json'];
 for (const file of files) if (!existsSync(`${dir}/${file}`)) throw new Error(`handoff is missing ${file}`);
 const manifest = readJSON(`${dir}/handoff-manifest.json`); const visual = readJSON(`${dir}/visual-source.json`); const release = readJSON(`${dir}/release-manifest.json`); const frontend = readJSON(`${dir}/frontend-manifest.json`); const spec = readJSON(`${dir}/functional-spec.json`); const plan = readJSON(`${dir}/ui-implementation-plan.json`); const api = readJSON(`${dir}/api-contract.json`); const gate = readJSON(`${dir}/suite-gate.json`); const approval = readJSON(`${dir}/visual-approval.json`); const bindings = readJSON(`${dir}/domain-bindings.json`);
 const errors = [];
@@ -15,7 +17,9 @@ if (digestJSON(releaseCopy) !== release.releaseDigest || visual.releaseDigest !=
 if (gate.pass !== true || gate.gateDigest !== release.gateDigest || visual.suiteGateDigest !== release.gateDigest) errors.push('handoff Suite Gate is invalid');
 if (approval.approvalDigest !== release.approvalDigest) errors.push('handoff visual approval digest mismatch');
 const semanticInventory = semanticFiles.length ? readJSON(`${dir}/frontend-semantic-inventory.json`) : {}; const interactions = semanticFiles.length ? readJSON(`${dir}/observed-interactions.json`) : {}; const controlMap = semanticFiles.length ? readJSON(`${dir}/control-capability-map.json`) : {};
+const assetInventory = semanticFiles.includes('asset-role-inventory.json') ? readJSON(`${dir}/asset-role-inventory.json`) : { assets: [] };
 if (semanticFiles.length && (semanticInventory.release?.releaseDigest !== release.releaseDigest || interactions.releaseDigest !== release.releaseDigest || controlMap.releaseDigest !== release.releaseDigest)) errors.push('handoff frontend semantics are not bound to the visual release');
+if (semanticFiles.includes('asset-role-inventory.json') && (assetInventory.releaseDigest !== release.releaseDigest || (assetInventory.assets || []).some((item) => !['decorative', 'business-sample'].includes(item.role) || !item.digest || (item.role === 'business-sample' && !item.requiredReplacement)))) errors.push('handoff asset roles are unclassified or not release-bound');
 const copiedSourceDigest = hashDirectory(`${dir}/web`); if (frontend.sourceTreeDigest !== copiedSourceDigest || visual.sourceTreeDigest !== copiedSourceDigest) errors.push('handoff web source tree digest mismatch');
 const capabilities = new Map((spec.capabilities || []).map((item) => [item.id, item])); const capabilityIds = new Set(capabilities.keys()); const ruleIds = new Set((spec.rules || []).map((item) => item.id));
 if (bindings.functionalPackageDigest !== manifest.functionalPackageDigest || JSON.stringify([...capabilityIds].sort()) !== JSON.stringify([...(bindings.capabilityIds || [])].sort())) errors.push('handoff domain bindings mismatch');
@@ -23,7 +27,7 @@ const rawPlanIds = (plan.capabilities || []).map((item) => item.capabilityId); c
 if (new Set(rawPlanIds).size !== rawPlanIds.length || JSON.stringify([...rawPlanIds].sort()) !== JSON.stringify([...capabilityIds].sort())) errors.push('UI capability plan must be an exact one-to-one set with the functional capabilities');
 for (const capabilityId of capabilityIds) {
   const presentation = planned.get(capabilityId);
-  errors.push(...presentationFindings(capabilityId, presentation, capabilities.get(capabilityId), { requireDeliveryPolicy: spec.schemaVersion === '2.1' }));
+  errors.push(...presentationFindings(capabilityId, presentation, capabilities.get(capabilityId), { requireDeliveryPolicy: true }));
   if (presentation?.mode !== 'headless' && presentation?.targetPageId && !Object.hasOwn(frontend.pages || {}, presentation.targetPageId)) errors.push(`capability ${capabilityId} target page is absent from the visual release: ${presentation.targetPageId}`);
   const capability = capabilities.get(capabilityId); const mapping = (controlMap.mappings || []).find((item) => item.capabilityId === capabilityId);
   const uiContract = (plan.capabilities || []).find((item) => item.capabilityId === capabilityId);
@@ -48,8 +52,12 @@ for (const operation of api.operations || []) {
   const key = `${String(operation.method).toUpperCase()} ${operation.path}`; routes.set(key, [...(routes.get(key) || []), operation]);
 }
 for (const [route, group] of routes) if (group.length > 1) { const ds = group.map((item) => item.request?.discriminator); if (ds.some((item) => !item?.property || item.value === undefined) || new Set(ds.map((item) => `${item?.property}:${item?.value}`)).size !== group.length) errors.push(`shared HTTP operation ${route} has ambiguous dispatch`); }
-if (errors.length) { writeJSON(`${dir}/handoff-review-rejection.json`, { schemaVersion: '1.0', status: 'rejected', findings: errors }); console.error(errors.map((item) => `- ${item}`).join('\n')); process.exit(1); }
-const receipt = { schemaVersion: '1.0', status: 'approved', authorAgentId: manifest.authorAgentId, reviewerAgentId: args['reviewer-agent'], functionalPackageDigest: manifest.functionalPackageDigest, visualReleaseDigest: manifest.visualReleaseDigest, reviewedAt: new Date().toISOString() };
+if (errors.length) { if (!args['replay-only']) writeJSON(`${dir}/handoff-review-rejection.json`, { schemaVersion: '1.0', status: 'rejected', findings: errors }); console.error(errors.map((item) => `- ${item}`).join('\n')); process.exit(1); }
+if (args['trusted-replay-only']) { console.log(`Trusted implementation handoff ${spec.schemaVersion} review passed`); process.exit(0); }
+const trustedReviewerPath = resolve(import.meta.dirname, `../validators/handoff-${spec.schemaVersion}/review-handoff.mjs`);
+const replay = spawnSync(process.execPath, [trustedReviewerPath, '--handoff', dir, '--reviewer-agent', args['reviewer-agent'], '--trusted-replay-only', 'true'], { encoding: 'utf8' });
+if (replay.status !== 0) { console.error(replay.stderr || replay.stdout); process.exit(replay.status ?? 1); }
+const receipt = { schemaVersion: '1.4', contractVersion: `implementation-handoff/${spec.schemaVersion}`, trustedReviewerId: `fdd-handoff-reviewer-${spec.schemaVersion}`, validatorDigest: treeDigest(resolve(trustedReviewerPath, '..')), status: 'approved', authorAgentId: manifest.authorAgentId, reviewerAgentId: args['reviewer-agent'], functionalPackageDigest: manifest.functionalPackageDigest, visualReleaseDigest: manifest.visualReleaseDigest, reviewedAt: new Date().toISOString() };
 writeJSON(`${dir}/handoff-review-receipt.json`, receipt); manifest.status = 'approved'; manifest.approval = { reviewerAgentId: args['reviewer-agent'], reviewedAt: receipt.reviewedAt }; writeJSON(`${dir}/handoff-manifest.json`, manifest);
 const protectedFiles = [...files, 'handoff-review-receipt.json']; const digests = Object.fromEntries(protectedFiles.map((file) => [file, sha(readFileSync(`${dir}/${file}`))])); digests.web = hashDirectory(`${dir}/web`);
 writeJSON(`${dir}/handoff-lock.json`, { schemaVersion: '1.0', algorithm: 'sha256', functionalPackageDigest: manifest.functionalPackageDigest, visualReleaseDigest: manifest.visualReleaseDigest, sourceTreeDigest: digests.web, digests });
