@@ -1,0 +1,4 @@
+interface:
+  display_name: "功能与领域设计"
+  short_description: "从页面架构与系统架构产出完整可确认的功能领域规格包"
+  default_prompt: "Use $functional-domain-design to turn page and system architecture artifacts into an approved functional domain package."

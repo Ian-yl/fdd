@@ -1,27 +1,24 @@
 ---
 name: functional-domain-design
-description: Use internal BMAD planning to convert three architecture JSON inputs, an AI Restore release, and optional user business decisions into an approved functional-domain package and implementation handoff for project-implementation.
+description: Use internal BMAD planning to convert three architecture JSON inputs, an immutable frontend release, and optional user business decisions into an approved functional-domain package and implementation handoff for project-implementation.
 ---
 
 # Functional Domain Design
 
-Produce business authority for downstream design and implementation. Classify architectural hints by their actual evidence status.
+## North Star
+
+交付可执行的业务权威：PI 只读批准的领域包和 handoff，就能实现完整产品；无法安全闭合的语义必须明确 planned 或 blocked，不能用通用模板伪装完成。
 
 ## Workflow
 
-1. Import the architecture inputs. For ProductForge projects, run:
-
+1. Import the three architecture inputs when needed:
    ```bash
    node <skill-dir>/scripts/import-productforge.mjs \
      --db ~/.productforge/productforge.db \
      --project "<project name or id>" \
      --output <workspace>/architecture-input
    ```
-
-   The formal input set consists of the page architecture JSON, system architecture JSON, product context JSON, AI Restore release, and optional user business decisions.
-
-2. Parse the immutable release into `frontend-semantic-inventory.json`, `observed-interactions.json`, and `control-capability-map.json`. Capture pages, routes, regions, controls, labels, requiredness, options, handlers, state changes, network observations, result surfaces, and source digests. Run internal BMAD project understanding, requirements analysis, and domain design while generating a candidate package. Generation always produces `draft`:
-
+2. Extract immutable release semantics and run internal BMAD planning while scaffolding:
    ```bash
    node <skill-dir>/scripts/scaffold-package.mjs \
      --input <workspace>/architecture-input \
@@ -30,56 +27,56 @@ Produce business authority for downstream design and implementation. Classify ar
      --output <workspace>/functional-domain \
      --author-agent <stable-agent-id>
    ```
-
-   Read and reason over all inputs. Persist internal planning as `planning-manifest.json`, `planning-artifacts.json`, and generated `capability-definitions.json`. User decisions act as optional overrides during planning. For every capability close actor/scenario, business data, relationships, prerequisites, requiredness, rules, state transitions, execution mode, failure/recovery, idempotency, permissions, transaction, integration, UI-operation mapping, and executable acceptance.
-
-3. Read `<skill-dir>/references/input-contract.md`, `frontend-semantics.md`, `capability-synthesis.md`, `package-contract.md`, and `reviewer-gates.md`. Classify every architecture leaf before synthesis. Only `business-capability`, independent `operation`, and an explicitly observed embedded operation create capability records. Fold `input-field`, `local-control`, `display-requirement`, `state`, and `acceptance-constraint` leaves into their owning capability contract; keep navigation in page mapping. When only a menu name exists, combine the page workspace, system responsibility, shared operations, and frontend evidence into an implementation-ready `designed` capability.
-4. Verify and refine explicit inputs, outcomes, rules, failure states, entities, relationships, consistency boundaries, and acceptance criteria. Define identity fields, aggregate roots, cardinality, association keys, cascades, uniqueness, requiredness, lifecycle constraints, ownership scope, and operation transactions. Preserve references to the three input documents.
-5. Define the complete business workflow independently of the current visual controls. Assign each capability a presentation mode: `reuse-control`, `add-control`, `extend-flow`, `headless`, or `display-only`.
-   Named menu capabilities also define activation, active surface regions, input IDs, primary action/operation, empty state, and delivery policy. Distinct non-alias capabilities receive distinct content contracts, not heading-only variants.
-6. Mark semantics created by FDD planning as `designed`. When one capability still lacks enough evidence for an implementation-safe contract, mark that capability `planned`, remove guessed operations/effects/state writes, and define a reachable capability-specific “功能待实现” presentation. Record a package blocker only when source identity, authoritative inputs, or business decisions contradict each other and make approval unsafe.
-7. Record planned reasons and genuine contradictions in `unresolved-items.json`; only the latter use blocker severity.
-8. Validate during iteration. Independent review covers both FDD planning and the formal package, producing `planning-review-receipt.json` and `review-receipt.json`. Approval requires explicit decisions that resolve every blocker:
-
+3. Read [input-contract.md](references/input-contract.md), [frontend-semantics.md](references/frontend-semantics.md), [capability-synthesis.md](references/capability-synthesis.md), [package-contract.md](references/package-contract.md), and [reviewer-gates.md](references/reviewer-gates.md). Classify architecture leaves before synthesizing capabilities.
+4. Refine capability intent, operations, schemas, entities, relationships, rules, permissions, consistency, presentation, failures, and executable acceptance from traceable evidence.
+5. Design the complete business workflow independently of current visual coverage while preserving the immutable release and its semantic anchors.
+6. Mark implementation-safe designed semantics `complete`; use reachable `planned` contracts for insufficient but non-contradictory semantics; reserve blockers for contradictions requiring an authoritative decision.
+7. Record planned reasons and blockers in `unresolved-items.json`.
+8. Validate and independently review:
    ```bash
    node <skill-dir>/scripts/validate-package.mjs <workspace>/functional-domain
-   node <skill-dir>/scripts/validate-package.mjs <workspace>/functional-domain --require-approved
+   node <skill-dir>/scripts/review-package.mjs --package <workspace>/functional-domain --reviewer-agent <independent-agent-id>
+   node <skill-dir>/scripts/validate-package.mjs <workspace>/functional-domain --require-approved --check-lock
    ```
-9. Build and independently review the implementation handoff:
-
+9. Build and independently review the handoff:
    ```bash
    node <skill-dir>/scripts/build-implementation-handoff.mjs --functional <approved-package> --visual-release <ai-restore-release> --output <handoff> --author-agent <id>
    node <skill-dir>/scripts/review-implementation-handoff.mjs --handoff <handoff> --reviewer-agent <id>
    ```
 
-## Required Outputs
+## Schema 2.2 Authoring
 
-- `manifest.json`
-- `frontend-semantic-inventory.json`
-- `observed-interactions.json`
-- `control-capability-map.json`
-- `functional-spec.json`
-- `page-function-map.json`
-- `unresolved-items.json`
-- `package-lock.json`
+Schema 2.2 makes the agent the author and the scripts the index-and-check layer. Generation relies on understanding; verification stays deterministic.
 
-Keep the package concise. Use stable IDs and references rather than repeating prose. Downstream agents should load only capabilities linked to their current page or operation.
+1. Scaffold the skeleton and evidence index:
+   ```bash
+   node <skill-dir>/scripts/scaffold-package.mjs \
+     --input <workspace>/architecture-input --visual-release <ai-restore-release> \
+     --output <workspace>/functional-domain --author-agent <stable-agent-id>
+   ```
+   This emits `evidence-index.json` (every page, module, control, full `#` annotation, system node, observed interaction, and product-context paragraph, each with a stable id) and capability shells in `draft-pending-authoring`.
+2. For each capability, read its anchored evidence (reread the raw inputs when needed) and author the `closure` six-question answer — `userInput`, `systemBehavior`, `output` (+`outputSchema`), `resultDestination` (`region`, field-assist `field`, or `headless`), `failures`, `downstreamUse` — with `evidenceAnchors` on every field, plus typed schemas, entities, relationships, rules, permissions, consistency, operations, and concrete-literal `acceptanceExamples`. Bind non-headless complete capabilities to their observed release control.
+3. Keep a capability `planned` only with a `missingDecision` citing the unanswered source evidence; never leave a `draft-pending-authoring` residual.
+4. Record every indexed evidence item you do not anchor in `evidence-dispositions.json` with a reason (`out-of-scope`, `decorative`, `duplicate-of:<id>`).
+5. Validate structure, then review (independent agent confirms meaning fidelity against the anchored evidence):
+   ```bash
+   node <skill-dir>/scripts/validate-package.mjs <workspace>/functional-domain
+   node <skill-dir>/scripts/review-package.mjs --package <workspace>/functional-domain --reviewer-agent <id>
+   node <skill-dir>/scripts/validate-package.mjs <workspace>/functional-domain --require-approved --check-lock
+   ```
 
-## Rules
+Schema 2.2 is the only supported functional-domain and implementation-handoff contract.
 
-- Define WHAT and WHY. Leave framework, file, and function choices to implementation.
-- Give every non-navigation page at least one capability.
-- Give every write capability an entity effect, failure behavior, and acceptance criterion.
-- Give every persistent entity an identity, lifecycle, constraints, and aggregate-root declaration. Give every relationship cardinality, ownership, association keys, delete behavior, and invariants.
-- Give operations that write associated entities an atomic transaction boundary or explicit consistency strategy.
-- Separate `observed`, `documented`, `confirmed`, and `inferred` facts.
-- Record authorization, deletion, billing, concurrency, retention, and external-provider rules only when supported by evidence or an explicit design decision.
-- Fail closed on unresolved blockers and broken references.
-- Never promote a pending BMAD decision during package review. Medium-confidence decisions are accepted inside FDD planning, bind to the planning input digest, record the chosen pattern, rejected alternatives with reasons, and an internal reviewer identity.
-- Exclude shared header, toolbar, navigation, and global-search controls from capability-specific trigger matching.
-- Give named functions distinct provider contracts. Share one contract only for aliases declared by the approved domain package.
-- Every `complete` menu capability must receive dedicated inputs, processing semantics, output quality, failures, and an acceptance example. A capability that cannot meet this bar becomes `planned` with no guessed business operation and an explicit reachable planned state. Use `blocked` only when a contradiction makes package approval unsafe.
-- Never translate page labels into a uniform CRUD or `{ input: object } -> { result: object }` template. Schema validity alone is not domain completion.
-- Do not request caller-authored capability definitions. Do not implement code or modify the immutable visual release.
-- Evidence priority is `confirmed`, `documented`, `observed`, `designed`, `inferred`, then `blocked`. Contradictions become unresolved items instead of silent precedence choices.
-- PI receives enough locked semantics to implement without reopening raw architecture or product-specific references; framework and code organization remain PI decisions.
+## Judgment Rules
+
+- Define business WHAT and WHY; leave frameworks, files, functions, and component choices to PI.
+- Distinguish confirmed, documented, observed, designed, inferred, and blocked facts; never hide contradictions through precedence.
+- Fold fields, local controls, display requirements, states, and constraints into their owning capability instead of manufacturing APIs.
+- Infer only when architecture, release behavior, and product context jointly support an implementation-safe decision.
+- Give distinct business capabilities distinct intent, schemas, outcomes, failures, quality criteria, and acceptance.
+- Return genuinely authoritative unknowns as precise decisions with affected scope; do not request caller-authored capability definitions.
+- Keep the package concise and traceable so downstream implementation never needs product-specific hidden context.
+
+- For a media capability whose provider has not confirmed batch (multi-item, n greater than 1) support, loop one single-item provider call per requested item, each carrying the contract's single-item output constraint; never present one provider result as N independent items.
+
+All artifact schemas, evidence levels, synthesis rules, review gates, and handoff requirements live only in the linked references.

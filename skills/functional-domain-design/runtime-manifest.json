@@ -7,12 +7,16 @@
     "scripts/scaffold-package.mjs",
     "scripts/review-package.mjs",
     "scripts/validate-package.mjs",
-    "scripts/migrate-package.mjs",
     "scripts/build-implementation-handoff.mjs",
     "scripts/review-implementation-handoff.mjs",
+    "scripts/validate-implementation-handoff.mjs",
+    "scripts/freeze-validator.mjs",
     "scripts/lib/visual-release.mjs",
     "scripts/lib/frontend-semantics.mjs",
-    "scripts/lib/aggregate-submission.mjs"
+    "scripts/lib/aggregate-submission.mjs",
+    "scripts/lib/evidence-index.mjs",
+    "validators/fdd-2.2.0/validate-package.mjs",
+    "validators/handoff-2.2/review-handoff.mjs"
   ],
   "references": [
     "references/input-contract.md",

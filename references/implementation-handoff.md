@@ -2,9 +2,9 @@
 
 `implementation-handoff` binds an approved functional-domain package to one immutable AI Restore Suite release. The functional package lock also covers FDD-owned BMAD planning artifacts, generated capability definitions, and their independent planning review receipt. The visual release is a read-only layout and styling baseline. The functional package remains the authority for complete product behavior.
 
-The package contains `handoff-manifest.json`, `visual-source.json`, `release-manifest.json`, `suite-gate.json`, `visual-approval.json`, `frontend-manifest.json`, `functional-spec.json`, `frontend-semantic-inventory.json`, `observed-interactions.json`, `control-capability-map.json`, `visual-controls.json`, `ui-implementation-plan.json`, `api-contract.json`, `domain-bindings.json`, `runtime-contract.json`, `handoff-review-receipt.json`, `handoff-lock.json`, and `web/`.
+The schema 2.2 package contains `handoff-manifest.json`, `visual-source.json`, `release-manifest.json`, `suite-gate.json`, `visual-approval.json`, `frontend-manifest.json`, `functional-spec.json`, the required `frontend-semantic-inventory.json`, `observed-interactions.json`, `control-capability-map.json`, and `asset-role-inventory.json`, plus `handoff-anchor-manifest.json`, `visual-controls.json`, `ui-implementation-plan.json`, `api-contract.json`, `domain-bindings.json`, `runtime-contract.json`, `handoff-review-receipt.json`, `handoff-lock.json`, and `web/`.
 
-The three semantic artifacts are implementation inputs, not advisory prose. They connect the immutable visual baseline to typed capability inputs, operation requests, UI states, result surfaces, and runtime data dependencies. PI may choose frameworks and code organization but may not invent missing business semantics.
+The semantic artifacts are implementation inputs, not advisory prose. They connect the immutable visual baseline to typed capability inputs, operation requests, UI states, result surfaces, and runtime data dependencies. PI may choose frameworks and code organization but may not invent missing business semantics.
 
 Every capability declares one presentation intent:
 

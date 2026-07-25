@@ -24,6 +24,7 @@ export function extractFrontendSemantics(visual) {
     };
   });
   const interactions = extractInteractions(sources, pages, visual.releaseDigest);
+  const assetAnalysis = extractAssetRoles(visual.publicationRoot, sources, pages, visual.releaseDigest);
   return {
     inventory: {
       schemaVersion: '1.0',
@@ -32,7 +33,42 @@ export function extractFrontendSemantics(visual) {
       sourceSummary: sources.map((item) => ({ path: item.path, sha256: sha(Buffer.from(item.text)), bytes: Buffer.byteLength(item.text) })),
     },
     interactions: { schemaVersion: '1.0', releaseDigest: visual.releaseDigest, interactions },
+    assets: { schemaVersion: '1.0', releaseDigest: visual.releaseDigest, assets: assetAnalysis.assets },
+    unresolved: assetAnalysis.unresolved,
   };
+}
+
+function extractAssetRoles(root, sources, pages, releaseDigest) {
+  const assets = []; const unresolved = []; const inventoryItems = pages.flatMap((page) => [...(page.resultSurfaces || []), ...(page.controls || [])]);
+  for (const file of walk(root).filter((item) => !SOURCE_EXTENSIONS.has(extname(item)) && !['.json', '.map'].includes(extname(item)))) {
+    const relativePath = file.slice(root.length + 1); const basename = relativePath.split('/').at(-1); const references = sources.flatMap((source) => referenceContexts(source, relativePath, basename));
+    if (!references.length && !inventoryItems.some((item) => String(item.sourceAsset || item.selector || '').includes(basename))) continue;
+    const context = references.map((item) => item.context).join(' '); const businessEvidence = /result|output|preview|history|record|product|material|upload|thumbnail|sample|fixture|结果|预览|历史|商品|素材|上传|样例/i.test(context); const decorativeEvidence = /logo|icon|background|decoration|ornament|avatar-shell|品牌|图标|背景|装饰/i.test(context) && !businessEvidence;
+    const role = decorativeEvidence ? 'decorative' : 'business-sample'; const classificationStatus = decorativeEvidence || businessEvidence ? 'evidence-backed' : 'defaulted-fail-closed';
+    const replacement = role === 'business-sample' ? (/upload|input|素材|上传/i.test(context) ? 'user-input' : /result|output|history|record|结果|历史/i.test(context) ? 'api-data' : 'empty-state') : null;
+    const asset = { id: `asset-${sha(Buffer.from(relativePath)).slice(0, 16)}`, path: relativePath, digest: sha(readFileSync(file)), bytes: readFileSync(file).length, role, classificationStatus, ...(replacement ? { requiredReplacement: replacement } : {}), evidence: { status: classificationStatus === 'evidence-backed' ? 'observed' : 'inferred', sources: [...new Set([...references.map((item) => `frontend-source:${item.file}`), `visual-release:${releaseDigest}`])], rationale: decorativeEvidence ? 'Referenced only as visual chrome and carries no observed business-data meaning.' : businessEvidence ? 'Referenced in a business input, result, history, material, or sample context.' : 'No reliable decorative evidence exists; classified as business-sample by fail-closed policy.', candidateHint: /^(?:stage-|th-|up-)/i.test(basename) ? 'sample-name-pattern' : null } };
+    assets.push(asset);
+    if (classificationStatus === 'defaulted-fail-closed') unresolved.push({ id: `unresolved-asset-role-${asset.id}`, severity: 'minor', status: 'open', disposition: 'replace-business-sample', question: `Static asset ${relativePath} has no reliable decorative or business role evidence and is treated as business-sample`, relatedIds: [asset.id], sources: asset.evidence.sources });
+  }
+  return { assets, unresolved };
+}
+function referenceContexts(source, relativePath, basename) {
+  const result = [];
+  for (const needle of [relativePath, basename]) {
+    let offset = source.text.indexOf(needle);
+    while (needle && offset >= 0) {
+      const lineStart = source.text.lastIndexOf('\n', offset) + 1;
+      const lineEnd = source.text.indexOf('\n', offset + needle.length);
+      const tagStart = source.text.lastIndexOf('<', offset);
+      const tagEnd = source.text.indexOf('>', offset + needle.length);
+      const inSingleTag = tagStart >= lineStart && tagEnd >= 0 && tagEnd <= (lineEnd < 0 ? source.text.length : lineEnd);
+      const previousTagStart = inSingleTag ? source.text.lastIndexOf('<', tagStart - 1) : -1;
+      const contextStart = previousTagStart >= lineStart ? previousTagStart : inSingleTag ? tagStart : lineStart;
+      result.push({ file: source.path, context: source.text.slice(contextStart, inSingleTag ? tagEnd + 1 : lineEnd < 0 ? source.text.length : lineEnd) });
+      offset = source.text.indexOf(needle, offset + needle.length);
+    }
+  }
+  return result;
 }
 
 function enrichControl(pageId, control, items, sourceText) {
