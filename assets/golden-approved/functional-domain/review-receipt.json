@@ -1,9 +1,12 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.4",
+  "contractVersion": "functional-domain/2.2",
+  "trustedValidatorId": "fdd-validator-2.2.0",
+  "validatorDigest": "a6295b3b517978e56bfea57154ab03f210608b0dbfbc03f8341cc6b325b361fb",
   "status": "approved",
-  "authorAgentId": "codex-domain-author-semantic",
-  "reviewerAgentId": "codex-domain-reviewer-semantic",
-  "reviewedAt": "2026-07-23T10:32:07.659Z",
+  "authorAgentId": "golden-domain-author-22",
+  "reviewerAgentId": "golden-domain-reviewer-22",
+  "reviewedAt": "2026-07-25T03:06:35.422Z",
   "checks": [
     "all blockers resolved",
     "all capability specifications complete",

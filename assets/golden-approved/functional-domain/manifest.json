@@ -1,13 +1,12 @@
 {
-  "schemaVersion": "2.1",
+  "schemaVersion": "2.2",
   "packageType": "functional-domain",
-  "projectId": "project-7b76dd31",
-  "projectName": "灵灵生图站：新架构2",
+  "projectId": "neutral-submission-22",
+  "projectName": "Neutral submission workspace",
+  "visualReleaseDigest": "neutral-golden-release",
   "status": "approved",
-  "deliveryMode": "complete",
-  "productCompletionClaim": "complete",
-  "authorAgentId": "codex-domain-author-semantic",
-  "sourceDirectory": "1 - 架构",
+  "authorAgentId": "golden-domain-author-22",
+  "sourceDirectory": "architecture-input",
   "sourceContract": {
     "requiredFiles": [
       "page architecture JSON",
@@ -22,23 +21,24 @@
     "artifacts": "planning-artifacts.json",
     "capabilityDefinitions": "capability-definitions.json"
   },
+  "evidenceIndex": "evidence-index.json",
   "semanticArtifacts": [
     "frontend-semantic-inventory.json",
     "observed-interactions.json",
-    "control-capability-map.json"
+    "control-capability-map.json",
+    "asset-role-inventory.json"
   ],
   "capabilitySummary": {
-    "total": 64,
-    "complete": 64,
-    "planned": 0,
-    "designed": 64,
+    "total": 4,
+    "complete": 3,
+    "planned": 1,
+    "designed": 4,
     "blockedCapabilities": 0,
     "openBlockers": 0
   },
-  "visualReleaseDigest": "66221abb9fc7dd1387cd82f882bee9c0ea1de335695a1ad2b6a593a0a54df5cd",
   "approval": {
     "method": "independent-agent-review",
-    "reviewerAgentId": "codex-domain-reviewer-semantic",
-    "reviewedAt": "2026-07-23T10:32:07.659Z"
+    "reviewerAgentId": "golden-domain-reviewer-22",
+    "reviewedAt": "2026-07-25T03:06:35.422Z"
   }
 }

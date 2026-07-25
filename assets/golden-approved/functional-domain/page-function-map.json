@@ -1,102 +1,15 @@
 {
-  "schemaVersion": "2.1",
+  "schemaVersion": "2.2",
   "pages": [
     {
-      "pageId": "pg-1r",
-      "title": "首页",
-      "navigationOnly": true,
-      "capabilityIds": []
-    },
-    {
-      "pageId": "pg-1s",
-      "title": "照片级AI商品图",
+      "pageId": "submission",
+      "title": "Submission workspace",
       "navigationOnly": false,
       "capabilityIds": [
-        "cap-pg-1s-mod-xm",
-        "cap-pg-1s-mod-xn",
-        "cap-pg-1s-mod-xo",
-        "cap-pg-1s-mod-xp",
-        "cap-pg-1s-mod-xq",
-        "cap-pg-1s-mod-xr",
-        "cap-pg-1s-mod-xs",
-        "cap-pg-1s-mod-xt",
-        "cap-pg-1s-mod-xu",
-        "cap-pg-1s-mod-xv",
-        "cap-pg-1s-mod-xw",
-        "cap-pg-1s-mod-xx",
-        "cap-pg-1s-mod-xy",
-        "cap-pg-1s-mod-xz",
-        "cap-pg-1s-mod-y0",
-        "cap-pg-1s-mod-y1",
-        "cap-pg-1s-mod-yh",
-        "cap-pg-1s-mod-y6",
-        "cap-pg-1s-mod-y7",
-        "cap-pg-1s-mod-y8",
-        "cap-pg-1s-mod-y9-embedded-1",
-        "cap-pg-1s-mod-ym-download",
-        "cap-pg-1s-mod-ym-retry"
-      ]
-    },
-    {
-      "pageId": "pg-1t",
-      "title": "万物穿搭上身",
-      "navigationOnly": false,
-      "capabilityIds": [
-        "cap-pg-1t-mod-z3",
-        "cap-pg-1t-mod-z4",
-        "cap-pg-1t-mod-z5",
-        "cap-pg-1t-mod-z6",
-        "cap-pg-1t-mod-z7",
-        "cap-pg-1t-mod-z8",
-        "cap-pg-1t-mod-z9",
-        "cap-pg-1t-mod-za",
-        "cap-pg-1t-mod-zb",
-        "cap-pg-1t-mod-zc",
-        "cap-pg-1t-mod-zd",
-        "cap-pg-1t-mod-ze",
-        "cap-pg-1t-mod-zf",
-        "cap-pg-1t-mod-zg",
-        "cap-pg-1t-mod-yv",
-        "cap-pg-1t-mod-yw",
-        "cap-pg-1t-mod-yx-embedded-1",
-        "cap-pg-1t-mod-yy-embedded-1",
-        "cap-pg-1t-mod-yu-download",
-        "cap-pg-1t-mod-yu-retry"
-      ]
-    },
-    {
-      "pageId": "pg-1u",
-      "title": "营销场景设计",
-      "navigationOnly": false,
-      "capabilityIds": [
-        "cap-pg-1u-mod-w9",
-        "cap-pg-1u-mod-zi",
-        "cap-pg-1u-mod-zj",
-        "cap-pg-1u-mod-zk",
-        "cap-pg-1u-mod-zl",
-        "cap-pg-1u-mod-zm",
-        "cap-pg-1u-mod-103",
-        "cap-pg-1u-mod-104",
-        "cap-pg-1u-mod-105",
-        "cap-pg-1u-mod-zh-download",
-        "cap-pg-1u-mod-zh-retry"
-      ]
-    },
-    {
-      "pageId": "pg-1v",
-      "title": "电商素材生成",
-      "navigationOnly": false,
-      "capabilityIds": [
-        "cap-pg-1v-mod-zx",
-        "cap-pg-1v-mod-zy",
-        "cap-pg-1v-mod-zz",
-        "cap-pg-1v-mod-100",
-        "cap-pg-1v-mod-101",
-        "cap-pg-1v-mod-102",
-        "cap-pg-1v-mod-zo",
-        "cap-pg-1v-mod-zp",
-        "cap-pg-1v-mod-zn-download",
-        "cap-pg-1v-mod-zn-retry"
+        "cap-submit",
+        "cap-upload",
+        "cap-assist",
+        "cap-export"
       ]
     }
   ]

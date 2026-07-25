@@ -1,0 +1,306 @@
+{
+  "schemaVersion": "1.0",
+  "releaseDigest": "neutral-golden-release",
+  "synthesisInputDigest": "neutral-golden-input",
+  "evidence": [
+    {
+      "id": "product-context:brief",
+      "kind": "product-context",
+      "text": "Create an owned submission from multiple configuration sections and an uploaded source file.",
+      "source": {
+        "file": "product-context.json",
+        "field": "brief"
+      }
+    },
+    {
+      "id": "product-context:goals",
+      "kind": "product-context",
+      "text": "Submit complete configuration Present generated submission items Suggest a title from the source",
+      "source": {
+        "file": "product-context.json",
+        "field": "goals"
+      }
+    },
+    {
+      "id": "product-context:users",
+      "kind": "product-context",
+      "text": "operator",
+      "source": {
+        "file": "product-context.json",
+        "field": "users"
+      }
+    },
+    {
+      "id": "product-context:needs",
+      "kind": "product-context",
+      "text": "upload a source configure a submission observe its result",
+      "source": {
+        "file": "product-context.json",
+        "field": "needs"
+      }
+    },
+    {
+      "id": "page:submission",
+      "kind": "page",
+      "text": "Submission workspace Create an owned submission from configuration sections and an uploaded source, then observe generated items.",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission"
+      }
+    },
+    {
+      "id": "page-module:submission-actions",
+      "kind": "module",
+      "text": "功能列表",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "submission-actions"
+      }
+    },
+    {
+      "id": "page-module:submit-submission",
+      "kind": "control",
+      "text": "Create submission",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "submission-actions",
+        "itemId": "submit-submission"
+      }
+    },
+    {
+      "id": "page-module:assist-title",
+      "kind": "control",
+      "text": "Suggest title",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "submission-actions",
+        "itemId": "assist-title"
+      }
+    },
+    {
+      "id": "annotation:assist-title",
+      "kind": "annotation",
+      "text": "AI generates a title from the uploaded source file and writes it back into the title field",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "submission-actions",
+        "itemId": "assist-title",
+        "annotates": "page-module:assist-title"
+      }
+    },
+    {
+      "id": "page-module:upload-resource",
+      "kind": "control",
+      "text": "Upload source file",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "submission-actions",
+        "itemId": "upload-resource"
+      }
+    },
+    {
+      "id": "annotation:upload-resource",
+      "kind": "annotation",
+      "text": "supports one source file upload validated before submission",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "submission-actions",
+        "itemId": "upload-resource",
+        "annotates": "page-module:upload-resource"
+      }
+    },
+    {
+      "id": "page-module:planned-export",
+      "kind": "control",
+      "text": "External submission review",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "submission-actions",
+        "itemId": "planned-export"
+      }
+    },
+    {
+      "id": "annotation:planned-export",
+      "kind": "annotation",
+      "text": "requires a business decision on the external human-review orchestration and SLA",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "submission-actions",
+        "itemId": "planned-export",
+        "annotates": "page-module:planned-export"
+      }
+    },
+    {
+      "id": "page-module:identity-section",
+      "kind": "module",
+      "text": "Identity section",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "identity-section"
+      }
+    },
+    {
+      "id": "page-module:title-field",
+      "kind": "control",
+      "text": "Submission title",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "identity-section",
+        "itemId": "title-field"
+      }
+    },
+    {
+      "id": "page-module:options-section",
+      "kind": "module",
+      "text": "Options section",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "options-section"
+      }
+    },
+    {
+      "id": "page-module:category-field",
+      "kind": "control",
+      "text": "Submission category",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "options-section",
+        "itemId": "category-field"
+      }
+    },
+    {
+      "id": "page-module:quantity-field",
+      "kind": "control",
+      "text": "Result quantity",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "options-section",
+        "itemId": "quantity-field"
+      }
+    },
+    {
+      "id": "page-module:result-region",
+      "kind": "module",
+      "text": "创作结果",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "result-region"
+      }
+    },
+    {
+      "id": "page-module:result-items",
+      "kind": "control",
+      "text": "Generated submission items shown in the result panel",
+      "source": {
+        "file": "page-architecture.json",
+        "pageId": "submission",
+        "moduleId": "result-region",
+        "itemId": "result-items"
+      }
+    },
+    {
+      "id": "system-node:system-root",
+      "kind": "system-node",
+      "text": "Neutral submission",
+      "source": {
+        "file": "system-architecture.json",
+        "nodeId": "system-root",
+        "sourcePageId": null,
+        "sourceModuleId": null
+      }
+    },
+    {
+      "id": "system-node:domain-submission",
+      "kind": "system-node",
+      "text": "Submission",
+      "source": {
+        "file": "system-architecture.json",
+        "nodeId": "domain-submission",
+        "sourcePageId": "submission",
+        "sourceModuleId": null
+      }
+    },
+    {
+      "id": "system-node:module-submit",
+      "kind": "system-node",
+      "text": "Create submission",
+      "source": {
+        "file": "system-architecture.json",
+        "nodeId": "module-submit",
+        "sourcePageId": "submission",
+        "sourceModuleId": "submit-submission"
+      }
+    },
+    {
+      "id": "system-node:module-assist",
+      "kind": "system-node",
+      "text": "Suggest title",
+      "source": {
+        "file": "system-architecture.json",
+        "nodeId": "module-assist",
+        "sourcePageId": "submission",
+        "sourceModuleId": "assist-title"
+      }
+    },
+    {
+      "id": "system-node:module-upload",
+      "kind": "system-node",
+      "text": "Upload source file",
+      "source": {
+        "file": "system-architecture.json",
+        "nodeId": "module-upload",
+        "sourcePageId": "submission",
+        "sourceModuleId": "upload-resource"
+      }
+    },
+    {
+      "id": "system-node:module-export",
+      "kind": "system-node",
+      "text": "External submission review",
+      "source": {
+        "file": "system-architecture.json",
+        "nodeId": "module-export",
+        "sourcePageId": "submission",
+        "sourceModuleId": "planned-export"
+      }
+    },
+    {
+      "id": "observed-interaction:a7c8b7123e00",
+      "kind": "observed-interaction",
+      "text": "onSubmit posts /api/submissions",
+      "source": {
+        "file": "observed-interactions.json",
+        "interactionId": "interaction-submit",
+        "pageId": "submission",
+        "controlId": "submit-button",
+        "event": null
+      }
+    },
+    {
+      "id": "observed-interaction:d8587212fb46",
+      "kind": "observed-interaction",
+      "text": "file input posts /api/submissions/resources",
+      "source": {
+        "file": "observed-interactions.json",
+        "interactionId": "interaction-upload",
+        "pageId": "submission",
+        "controlId": "upload-input",
+        "event": null
+      }
+    }
+  ]
+}

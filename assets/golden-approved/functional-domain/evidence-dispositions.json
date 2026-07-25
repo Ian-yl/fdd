@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0",
+  "dispositions": [
+    {
+      "evidenceId": "page-module:submission-actions",
+      "reason": "out-of-scope",
+      "rationale": "Structural wrapper or navigation node with no owned business behavior."
+    },
+    {
+      "evidenceId": "system-node:system-root",
+      "reason": "out-of-scope",
+      "rationale": "Structural wrapper or navigation node with no owned business behavior."
+    },
+    {
+      "evidenceId": "system-node:domain-submission",
+      "reason": "out-of-scope",
+      "rationale": "Structural wrapper or navigation node with no owned business behavior."
+    }
+  ]
+}

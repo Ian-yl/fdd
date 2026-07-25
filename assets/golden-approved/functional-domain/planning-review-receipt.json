@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "status": "approved",
   "workflow": "fdd-bmad-planning",
-  "authorAgentId": "codex-domain-author-semantic",
-  "reviewerAgentId": "codex-domain-reviewer-semantic",
-  "reviewedAt": "2026-07-23T10:32:07.659Z",
+  "authorAgentId": "golden-domain-author-22",
+  "reviewerAgentId": "golden-domain-reviewer-22",
+  "reviewedAt": "2026-07-25T03:06:35.422Z",
   "checks": [
     "project understanding reviewed",
     "requirements analysis reviewed",
