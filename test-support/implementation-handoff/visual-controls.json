@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "role": "optional-reference",
+  "controls": [
+    {
+      "pageId": "submission",
+      "referenceId": "title-input",
+      "referenceIndex": 0,
+      "kind": "input",
+      "selector": "[data-vr-id=\"title-input\"]",
+      "text": "Submission title"
+    },
+    {
+      "pageId": "submission",
+      "referenceId": "category-select",
+      "referenceIndex": 1,
+      "kind": "select",
+      "selector": "[data-vr-id=\"category-select\"]",
+      "text": "Submission category"
+    },
+    {
+      "pageId": "submission",
+      "referenceId": "quantity-input",
+      "referenceIndex": 2,
+      "kind": "input",
+      "selector": "[data-vr-id=\"quantity-input\"]",
+      "text": "Result quantity"
+    },
+    {
+      "pageId": "submission",
+      "referenceId": "upload-input",
+      "referenceIndex": 3,
+      "kind": "input",
+      "selector": "[data-vr-id=\"upload-input\"]",
+      "text": "Upload source file"
+    },
+    {
+      "pageId": "submission",
+      "referenceId": "submit-button",
+      "referenceIndex": 4,
+      "kind": "button",
+      "selector": "[data-vr-id=\"submit-button\"]",
+      "text": "Create submission"
+    },
+    {
+      "pageId": "submission",
+      "referenceId": "planned-export",
+      "referenceIndex": 5,
+      "kind": "button",
+      "selector": "[data-vr-id=\"planned-export\"]",
+      "text": "External submission review"
+    }
+  ]
+}

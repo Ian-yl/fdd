@@ -27,7 +27,7 @@
 - `permissions`: actor/action/resource decisions.
 - `integrations`: required external capabilities and failure behavior.
 
-FDD planning reads page architecture, system architecture, product context, the AI Restore release, and optional user business decisions. It emits `frontend-semantic-inventory.json`, `observed-interactions.json`, `control-capability-map.json`, `asset-role-inventory.json`, `planning-manifest.json`, `planning-artifacts.json`, and generated `capability-definitions.json`. Independent review emits `planning-review-receipt.json`. The formal domain package is derived from and locked with these artifacts.
+FDD planning reads page architecture, system architecture, product context, finalized design exports, the AI Restore release, and optional user business decisions. It emits `design-manifest.json`, locked `designs/*`, `frontend-semantic-inventory.json`, `observed-interactions.json`, `control-capability-map.json`, `asset-role-inventory.json`, `planning-manifest.json`, `planning-artifacts.json`, and generated `capability-definitions.json`. Independent review emits `planning-review-receipt.json`. The formal domain package is derived from and locked with these artifacts.
 
 Every capability includes `capabilityIntent.userGoal`, `businessOutcome`, `trigger`, `prerequisites`, typed `inputs`, `processingSemantics`, typed `outputs`, `sideEffects`, `downstreamUsage`, `qualityCriteria`, `failures`, and evidence. Each operation closes method/path/content type, request/response schemas, authorization, effects, errors, transaction/consistency, idempotency, concurrency, acceptance, and applicable asset/provider contracts. Cross-operation values use explicit `dataDependencies` with runtime propagation, ownership, lifecycle, and consistency requirements.
 
@@ -110,6 +110,8 @@ A feature-list label proves the function is required. When detailed behavior is 
 ## Schema 2.2 authored closure
 
 Schema 2.2 is the only supported contract. `scaffold-package.mjs` emits `evidence-index.json`, an initially empty required `evidence-dispositions.json`, and capability skeletons (`specificationStatus: 'draft-pending-authoring'`, identity, pageId, anchored evidence ids, and non-authoritative classifier hints under `synthesisAnalysis.classifierRole: 'candidate-hint'`). The author agent then closes each capability and dispositions every indexed item not used by the authored contract.
+
+The formal package also contains `design-manifest.json` and its locked `designs/*` files. The normalized design-manifest digest is recorded in `planning-manifest.inputDigests.designs`, contributes to `synthesisInputDigest`, and is repeated by the evidence index. Replacing a design invalidates input-bound BMAD decisions and requires domain authoring review again.
 
 `evidence-index.json` mechanically indexes every input evidence item — page, module, control, full `#` annotation text, system node, observed interaction, and product-context paragraph — with a stable id derived only from its source location (`page:`, `page-module:`, `annotation:`, `system-node:`, `observed-interaction:`, `product-context:`). Generation is deterministic and interprets no meaning.
 

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { appendFileSync, cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import os from 'node:os';
@@ -156,6 +157,24 @@ test('㉖ (wave8) a design-manifest whose recorded digest does not match the ima
   rejects(withGolden(({ read, write }) => { const manifest = read('design-manifest.json'); manifest.images[0].sha256 = '0'.repeat(64); write('design-manifest.json', manifest); }), /design-manifest digest does not match/);
 });
 
+test('schema 2.2 cannot validate without the finalized design manifest', () => {
+  rejects(withGolden(({ dir }) => rmSync(path.join(dir, 'design-manifest.json'))), /design-manifest\.json|ENOENT/);
+});
+
+test('a design page hint must identify an architecture page', () => {
+  rejects(withGolden(({ read, write }) => { const manifest = read('design-manifest.json'); manifest.images[0].pageHint = 'unknown-page'; write('design-manifest.json', manifest); }), /pageHint does not match/);
+});
+
+test('changing a design invalidates an input-bound BMAD decision', () => {
+  rejects(withGolden(({ read, write, cap }) => {
+    const oldDigest = read('planning-manifest.json').synthesisInputDigest;
+    cap('cap-assist', (capability) => { capability.synthesisAnalysis.bmadDecision = { status: 'accepted', inputDigest: oldDigest }; });
+    const manifest = read('design-manifest.json'); manifest.provenance = { source: 'replacement-design-export' }; write('design-manifest.json', manifest);
+    const planning = read('planning-manifest.json'); planning.inputDigests.designs = createHash('sha256').update(JSON.stringify(manifest)).digest('hex'); planning.synthesisInputDigest = 'replacement-synthesis-input'; write('planning-manifest.json', planning);
+    const evidence = read('evidence-index.json'); evidence.synthesisInputDigest = planning.synthesisInputDigest; write('evidence-index.json', evidence);
+  }), /BMAD decision is not bound/);
+});
+
 test('㉗d (wave8) a complete capability anchoring no intent-axis evidence is rejected (dual-axis)', () => {
   rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { const strip = (list) => (list || []).filter((anchor) => !/^(product-context|annotation|design):/.test(anchor)); for (const field of ['userInput', 'systemBehavior', 'output', 'resultDestination', 'failures', 'downstreamUse']) if (capability.closure[field]) capability.closure[field].evidenceAnchors = strip(capability.closure[field].evidenceAnchors); capability.evidenceAnchors = strip(capability.evidenceAnchors); })), /anchors no intent-axis evidence/);
 });
@@ -177,7 +196,7 @@ test('the trusted 2.2 validator tree digest detects a tampered imported library 
   try {
     for (const name of ['scripts', 'validators']) cpSync(path.join(root, name), path.join(temp, name), { recursive: true });
     cpSync(golden, path.join(temp, 'domain'), { recursive: true });
-    appendFileSync(path.join(temp, 'validators/fdd-2.2.2/lib/evidence-index.mjs'), '\n// tampered\n');
+    appendFileSync(path.join(temp, 'validators/fdd-2.2.3/lib/evidence-index.mjs'), '\n// tampered\n');
     const result = spawnSync('node', [path.join(temp, 'scripts/validate-package.mjs'), path.join(temp, 'domain'), '--require-approved'], { encoding: 'utf8' });
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /does not reference the immutable trusted repository validator/);

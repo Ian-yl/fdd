@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "sourceType": "ai-restore-release",
+  "releaseManifest": "release-manifest.json",
+  "suiteGate": "suite-gate.json",
+  "approval": "visual-approval.json",
+  "releaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
+  "suiteGateDigest": "671b5da89cba71925cf574111ad3ce8f3cec1c722c7f3e247cf1291a45c12010",
+  "pageIds": [
+    "submission"
+  ],
+  "routes": {
+    "submission": "/submission"
+  },
+  "sourceTreeDigest": "1c351538968e657d634275343d892ba8389790f33472e922b3798b806e85787e"
+}

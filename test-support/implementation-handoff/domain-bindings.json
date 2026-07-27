@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.1",
+  "functionalPackageDigest": "41d96fe7d6a79090b93988a61b0005c5051cfb57dbeab309d40fafba840f65dc",
+  "capabilityIds": [
+    "cap-submission-submit-submission",
+    "cap-submission-upload-resource",
+    "cap-submission-planned-export"
+  ],
+  "completeCapabilityIds": [
+    "cap-submission-submit-submission",
+    "cap-submission-upload-resource"
+  ],
+  "plannedCapabilityIds": [
+    "cap-submission-planned-export"
+  ],
+  "ruleIds": [
+    "rule-cap-submission-submit-submission",
+    "rule-cap-submission-upload-resource"
+  ],
+  "semanticArtifacts": [
+    "frontend-semantic-inventory.json",
+    "observed-interactions.json",
+    "control-capability-map.json",
+    "asset-role-inventory.json"
+  ]
+}

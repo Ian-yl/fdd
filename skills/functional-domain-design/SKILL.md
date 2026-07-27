@@ -1,6 +1,6 @@
 ---
 name: functional-domain-design
-description: Use internal BMAD planning to convert three architecture JSON inputs, an immutable frontend release, and optional user business decisions into an approved functional-domain package and implementation handoff for project-implementation.
+description: Use internal BMAD planning to convert three architecture JSON inputs, finalized designs, an immutable frontend release, and optional user business decisions into an approved functional-domain package and implementation handoff for project-implementation.
 ---
 
 # Functional Domain Design
@@ -22,11 +22,11 @@ description: Use internal BMAD planning to convert three architecture JSON input
    ```bash
    node <skill-dir>/scripts/scaffold-package.mjs \
      --input <workspace>/architecture-input \
+     --designs <finalized-design-export-directory> \
      --visual-release <ai-restore-release> \
      --decisions <optional-user-business-decisions.json> \
      --output <workspace>/functional-domain \
-     --author-agent <stable-agent-id> \
-     --designs <optional-finalized-design-export-directory>
+     --author-agent <stable-agent-id>
    ```
 3. Read [input-contract.md](references/input-contract.md), [frontend-semantics.md](references/frontend-semantics.md), [capability-synthesis.md](references/capability-synthesis.md), [package-contract.md](references/package-contract.md), and [reviewer-gates.md](references/reviewer-gates.md). Classify architecture leaves before synthesizing capabilities.
 4. Refine capability intent, operations, schemas, entities, relationships, rules, permissions, consistency, presentation, failures, and executable acceptance from traceable evidence. Read each anchored `design:<id>` export with vision and write the design's semantics — each mode's interface, fields, states, and flow — into the owning capability's closure, anchoring `design:<id>`; a complete capability grounds both evidence axes (intent and anchor). When a design export contradicts the release or observed behavior, do not silently choose — record an unresolved item citing both, and let the release/observed reading prevail.

@@ -4,7 +4,11 @@
   "status": "approved",
   "authorAgentId": "golden-domain-author-22",
   "synthesisInputDigest": "neutral-golden-input",
+  "inputDigests": {
+    "designs": "85ccb1d6ff1049d420155b94adfd64d1cee1950d48968dff80fa7b412f438873"
+  },
   "artifacts": [
+    "design-manifest.json",
     "evidence-index.json",
     "evidence-dispositions.json",
     "planning-artifacts.json",

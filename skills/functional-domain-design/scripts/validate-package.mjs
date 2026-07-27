@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, lstatSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { extname, relative, resolve } from 'node:path';
 import { presentationFindings } from './lib/presentation.mjs';
 import { treeDigest } from './lib/validator-tree.mjs';
 import { collectStringValues, collectAnchorReferences, bookkeepingFindings } from './lib/evidence-index.mjs';
@@ -16,7 +16,7 @@ const manifestPreview = readJSON(`${dir}/manifest.json`);
 const SCHEMA_22_SEMANTIC_FILES = ['frontend-semantic-inventory.json', 'observed-interactions.json', 'control-capability-map.json', 'asset-role-inventory.json'];
 const isSchema22 = manifestPreview.schemaVersion === '2.2';
 const semanticFiles = isSchema22 ? SCHEMA_22_SEMANTIC_FILES : [];
-const files = ['manifest.json', 'planning-manifest.json', 'planning-artifacts.json', 'capability-definitions.json', 'evidence-index.json', 'evidence-dispositions.json', ...semanticFiles, 'functional-spec.json', 'page-function-map.json', 'unresolved-items.json'];
+const files = ['manifest.json', 'planning-manifest.json', 'planning-artifacts.json', 'capability-definitions.json', 'design-manifest.json', 'evidence-index.json', 'evidence-dispositions.json', ...semanticFiles, 'functional-spec.json', 'page-function-map.json', 'unresolved-items.json'];
 if (existsSync(`${dir}/review-receipt.json`)) files.push('review-receipt.json');
 if (existsSync(`${dir}/planning-review-receipt.json`)) files.push('planning-review-receipt.json');
 const docs = Object.fromEntries(files.map((file) => [file, readJSON(`${dir}/${file}`)]));
@@ -31,6 +31,7 @@ const unresolved = docs['unresolved-items.json'];
 const planningManifest = docs['planning-manifest.json'];
 const planningArtifacts = docs['planning-artifacts.json'];
 const definitions = docs['capability-definitions.json'];
+const designManifest = docs['design-manifest.json'];
 const frontendInventory = docs['frontend-semantic-inventory.json'] || {};
 const observedInteractions = docs['observed-interactions.json'] || {};
 const controlMap = docs['control-capability-map.json'] || {};
@@ -45,13 +46,17 @@ const trustedValidators = new Map([
   ['fdd-validator-2.2.0', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.0/validate-package.mjs') }],
   ['fdd-validator-2.2.1', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.1/validate-package.mjs') }],
   ['fdd-validator-2.2.2', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.2/validate-package.mjs') }],
+  ['fdd-validator-2.2.3', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.3/validate-package.mjs') }],
 ]);
 const trustedValidator = approvalReceipt?.trustedValidatorId ? trustedValidators.get(approvalReceipt.trustedValidatorId) : null;
 if (requireApproved && !approvalReceipt?.contractVersion) errors.push('approved package requires a versioned trusted review receipt');
 if (requireApproved && approvalReceipt?.contractVersion && !process.argv.includes('--trusted-validator-internal') && (!trustedValidator || trustedValidator.contractVersion !== approvalReceipt.contractVersion || !existsSync(trustedValidator.entry) || approvalReceipt.validatorDigest !== treeDigest(resolve(trustedValidator.entry, '..')))) errors.push('approval receipt does not reference the immutable trusted repository validator for its contract version');
 if (requireApproved && approvalReceipt?.contractVersion && !process.argv.includes('--trusted-validator-internal') && !errors.length) { const replay = spawnSync(process.execPath, [trustedValidator.entry, dir, '--require-approved', '--trusted-validator-internal', ...(checkLock ? ['--check-lock'] : [])], { encoding: 'utf8' }); process.stdout.write(replay.stdout || ''); process.stderr.write(replay.stderr || ''); process.exit(replay.status ?? 1); }
-const requiredPlanningArtifacts = ['evidence-index.json', 'evidence-dispositions.json', 'planning-artifacts.json', 'capability-definitions.json', ...semanticFiles];
+const requiredPlanningArtifacts = ['design-manifest.json', 'evidence-index.json', 'evidence-dispositions.json', 'planning-artifacts.json', 'capability-definitions.json', ...semanticFiles];
 if (planningManifest.packageType !== 'fdd-bmad-planning' || JSON.stringify(planningManifest.artifacts) !== JSON.stringify(requiredPlanningArtifacts)) errors.push('FDD planning manifest is invalid');
+const designDigest = sha(Buffer.from(JSON.stringify(designManifest)));
+if (!planningManifest.synthesisInputDigest || planningManifest.inputDigests?.designs !== designDigest) errors.push('FDD planning input digest does not bind the finalized design manifest');
+if (docs['evidence-index.json']?.synthesisInputDigest !== planningManifest.synthesisInputDigest) errors.push('evidence index synthesis input digest differs from FDD planning input');
 if (planningArtifacts.method !== 'bmad-planning' || !['project-understanding', 'requirements-analysis', 'domain-design', 'independent-domain-review'].every((id) => planningArtifacts.phases?.some((item) => item.id === id))) errors.push('FDD BMAD planning phases are incomplete');
 for (const group of ['capabilities', 'entities', 'valueObjects', 'relationships', 'consistencyBoundaries', 'journeys', 'rules', 'permissions', 'integrations']) if (JSON.stringify(definitions[group] || []) !== JSON.stringify(spec[group] || [])) errors.push(`capability definitions differ from functional spec: ${group}`);
 if (!frontendInventory.release?.releaseDigest || !frontendInventory.pages?.length || !frontendInventory.sourceSummary?.length) errors.push('frontend semantic inventory did not parse the immutable release');
@@ -131,6 +136,7 @@ for (const boundary of spec.consistencyBoundaries || []) {
   if (!boundary.entityIds?.includes(boundary.aggregateRootEntityId) || !['atomic', 'eventual'].includes(boundary.strategy)) errors.push(`consistency boundary ${boundary.id} is incomplete`);
 }
 for (const cap of capabilities.values()) {
+  if (cap.synthesisAnalysis?.bmadDecision && cap.synthesisAnalysis.bmadDecision.inputDigest !== planningManifest.synthesisInputDigest) errors.push(`capability ${cap.id} BMAD decision is not bound to the current synthesis input digest`);
   if (!['complete', 'planned', 'blocked', 'draft-pending-authoring'].includes(cap.specificationStatus)) errors.push(`capability ${cap.id} has invalid specification status`);
   if (!cap.name || !cap.purpose || !cap.pageIds?.length) errors.push(`capability ${cap.id} lacks identity or pages`);
   if (!cap.acceptanceCriteria?.length) errors.push(`capability ${cap.id} has no acceptance criteria`);
@@ -284,12 +290,16 @@ if (isSchema22) {
 // Design evidence integrity: the manifest's recorded digest must match the in-package image bytes (an
 // immutable binding at the same level as the release), and each entry is structurally complete. The gate
 // only re-hashes bytes — it never interprets a pixel.
-if (existsSync(`${dir}/design-manifest.json`)) {
-  const designManifest = readJSON(`${dir}/design-manifest.json`);
+{
+  const architecturePageIds = new Set((mapping.pages || []).map((page) => page.pageId));
+  if (!Array.isArray(designManifest.images) || !designManifest.images.length) errors.push('design-manifest must contain at least one finalized design image');
   for (const image of designManifest.images || []) {
     if (!image.id || !image.path || !image.sha256) { errors.push(`design-manifest entry is structurally incomplete: ${image.id || '(no id)'}`); continue; }
-    if (!existsSync(`${dir}/${image.path}`)) { errors.push(`design-manifest references a missing image file: ${image.path}`); continue; }
-    if (sha(readFileSync(`${dir}/${image.path}`)) !== image.sha256) errors.push(`design-manifest digest does not match the recorded image bytes: ${image.path}`);
+    const file = resolve(dir, image.path); const designRoot = resolve(dir, 'designs');
+    if (relative(designRoot, file).startsWith('..') || !['.png', '.jpg', '.jpeg', '.webp', '.svg'].includes(extname(file).toLowerCase())) { errors.push(`design-manifest references an unsupported design path: ${image.path}`); continue; }
+    if (!existsSync(file) || !lstatSync(file).isFile()) { errors.push(`design-manifest references a missing or non-regular image file: ${image.path}`); continue; }
+    if (!architecturePageIds.has(image.pageHint)) errors.push(`design-manifest pageHint does not match an architecture page: ${image.pageHint}`);
+    if (sha(readFileSync(file)) !== image.sha256) errors.push(`design-manifest digest does not match the recorded image bytes: ${image.path}`);
   }
 }
 
@@ -297,7 +307,7 @@ if (errors.length) {
   console.error(errors.map((error) => `- ${error}`).join('\n'));
   process.exit(1);
 }
-const digestFiles = [...files, ...(existsSync(`${dir}/design-manifest.json`) ? ['design-manifest.json'] : []), ...(existsSync(`${dir}/designs`) ? walkFiles(`${dir}/designs`).map((file) => file.slice(dir.length + 1)) : []), ...(existsSync(`${dir}/fixtures`) ? walkFiles(`${dir}/fixtures`).map((file) => file.slice(dir.length + 1)) : [])];
+const digestFiles = [...files, ...(existsSync(`${dir}/designs`) ? walkFiles(`${dir}/designs`).map((file) => file.slice(dir.length + 1)) : []), ...(existsSync(`${dir}/fixtures`) ? walkFiles(`${dir}/fixtures`).map((file) => file.slice(dir.length + 1)) : [])];
 const digests = Object.fromEntries(digestFiles.map((file) => [file, sha(readFileSync(`${dir}/${file}`))]));
 if (checkLock) {
   if (!existsSync(`${dir}/package-lock.json`)) { console.error('- package-lock.json is missing'); process.exit(1); }

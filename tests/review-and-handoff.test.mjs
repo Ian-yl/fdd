@@ -7,9 +7,7 @@ import test from 'node:test';
 
 const root = path.resolve(import.meta.dirname, '..');
 const golden = path.join(root, 'assets/golden-approved/functional-domain');
-// A real, approved schema 2.2 handoff produced by the end-to-end golden pipeline in the sibling
-// project-implementation repo (bound to its neutral ai-restore release).
-const handoffFixture = path.resolve(root, '../project-implementation/assets/golden-simulated/current/implementation-handoff');
+const handoffFixture = path.join(root, 'test-support/implementation-handoff');
 const readJSON = (file) => JSON.parse(readFileSync(file, 'utf8'));
 const tempCopy = (source) => { const dir = mkdtempSync(path.join(os.tmpdir(), 'fdd-rh-')); cpSync(source, path.join(dir, 'target'), { recursive: true }); return { dir, target: path.join(dir, 'target') }; };
 const reviewPackage = (dir, reviewer) => spawnSync('node', [path.join(root, 'scripts/review-package.mjs'), '--package', dir, '--reviewer-agent', reviewer], { encoding: 'utf8' });
@@ -39,6 +37,16 @@ test('review-package rolls the package back to draft and deletes the receipt whe
     assert.notEqual(result.status, 0);
     assert.equal(readJSON(path.join(target, 'manifest.json')).status, 'draft');
     assert.equal(existsSync(path.join(target, 'review-receipt.json')), false);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('review-package removes a stale rejection after approval succeeds', () => {
+  const { dir, target } = tempCopy(golden);
+  try {
+    writeFileSync(path.join(target, 'review-rejection.json'), `${JSON.stringify({ schemaVersion: '1.0', status: 'rejected', findings: ['stale'] }, null, 2)}\n`);
+    const result = reviewPackage(target, 'fresh-independent-reviewer');
+    assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+    assert.equal(existsSync(path.join(target, 'review-rejection.json')), false);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
