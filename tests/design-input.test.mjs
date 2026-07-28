@@ -54,6 +54,19 @@ test('explicit nav nodes retain semantics but are excluded from visual release c
   assert.ok(evidence.evidence.some((item) => item.id === 'page:navigation-destination'));
 }));
 
+test('per-control attributes come from each control own element, never a neighbor (wave-9 char-window regression)', () => withInput(({ designs, output }) => {
+  assert.equal(run(designs, output).status, 0);
+  const controls = Object.fromEntries(read(path.join(output, 'frontend-semantic-inventory.json')).pages[0].controls.map((control) => [control.controlId, control]));
+  // Each control reports its OWN native type, default, and options; a neighbor's never bleeds in.
+  assert.equal(controls['title-input'].nativeType, null, 'a text input must not inherit a neighboring number type');
+  assert.equal(controls['title-input'].defaultValue, null, 'a text input must not inherit a neighboring default value');
+  assert.deepEqual(controls['title-input'].options, [], 'a non-select must not scrape neighboring option text');
+  assert.equal(controls['quantity-input'].nativeType, 'number');
+  assert.equal(controls['quantity-input'].defaultValue, '2');
+  assert.equal(controls['upload-input'].nativeType, 'file');
+  assert.deepEqual(controls['category-select'].options, ['standard', 'priority']);
+}));
+
 function withInput(callback) {
   const dir = mkdtempSync(path.join(os.tmpdir(), 'fdd-design-input-'));
   try {
