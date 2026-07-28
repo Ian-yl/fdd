@@ -1203,7 +1203,13 @@
             "permission": "invoke:submission-assist",
             "ownership": "current-user"
           },
-          "effects": [],
+          "effects": [
+            {
+              "id": "effect-read-assist-resource",
+              "entityId": "submission-resource",
+              "effect": "read"
+            }
+          ],
           "errors": [
             {
               "code": "NOT_AUTHORIZED",

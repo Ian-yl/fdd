@@ -47,6 +47,7 @@ const trustedValidators = new Map([
   ['fdd-validator-2.2.1', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.1/validate-package.mjs') }],
   ['fdd-validator-2.2.2', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.2/validate-package.mjs') }],
   ['fdd-validator-2.2.3', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.3/validate-package.mjs') }],
+  ['fdd-validator-2.2.4', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.4/validate-package.mjs') }],
 ]);
 const trustedValidator = approvalReceipt?.trustedValidatorId ? trustedValidators.get(approvalReceipt.trustedValidatorId) : null;
 if (requireApproved && !approvalReceipt?.contractVersion) errors.push('approved package requires a versioned trusted review receipt');
@@ -103,6 +104,9 @@ const actors = new Set((spec.capabilities || []).map((item) => item.actor).filte
 const cardinalities = new Set(['one-to-one', 'one-to-many', 'many-to-one', 'many-to-many']);
 const ownerships = new Set(['aggregate', 'reference', 'shared']);
 const deleteRules = new Set(['cascade', 'restrict', 'set-null', 'detach']);
+const coreCapabilityIds = new Set((spec.journeys || []).filter((journey) => journey.core === true).flatMap((journey) => journey.capabilityIds || []));
+const integrationCapabilityIds = new Set((spec.integrations || []).flatMap((integration) => integration.capabilityIds || []));
+const permissionCapabilityIds = new Set((spec.permissions || []).flatMap((permission) => permission.capabilityIds || []));
 for (const domain of spec.domains || []) {
   for (const pageId of domain.pageIds || []) if (!pages.has(pageId)) errors.push(`domain ${domain.id} references unknown page ${pageId}`);
   for (const entityId of domain.entityIds || []) if (!entities.has(entityId)) errors.push(`domain ${domain.id} references unknown entity ${entityId}`);
@@ -136,6 +140,8 @@ for (const boundary of spec.consistencyBoundaries || []) {
   if (!boundary.entityIds?.includes(boundary.aggregateRootEntityId) || !['atomic', 'eventual'].includes(boundary.strategy)) errors.push(`consistency boundary ${boundary.id} is incomplete`);
 }
 for (const cap of capabilities.values()) {
+  const requiresServerOperation = capabilityRequiresServerOperation(cap, integrationCapabilityIds, permissionCapabilityIds);
+  const coreCapability = coreCapabilityIds.has(cap.id) || cap.deliveryPolicy?.requiredForCompletion === true;
   if (cap.synthesisAnalysis?.bmadDecision && cap.synthesisAnalysis.bmadDecision.inputDigest !== planningManifest.synthesisInputDigest) errors.push(`capability ${cap.id} BMAD decision is not bound to the current synthesis input digest`);
   if (!['complete', 'planned', 'blocked', 'draft-pending-authoring'].includes(cap.specificationStatus)) errors.push(`capability ${cap.id} has invalid specification status`);
   if (!cap.name || !cap.purpose || !cap.pageIds?.length) errors.push(`capability ${cap.id} lacks identity or pages`);
@@ -143,6 +149,7 @@ for (const cap of capabilities.values()) {
   if (cap.specificationStatus === 'complete' && (!validObjectSchema(cap.inputSchema) || !validObjectSchema(cap.outputSchema) || !cap.acceptanceExamples?.length)) errors.push(`capability ${cap.id} lacks structured input, output, or acceptance examples`);
   if (cap.specificationStatus === 'planned' && ((cap.operations || []).length || (cap.entityEffects || []).length || cap.writesState || (cap.inputs || []).length || cap.inputSchema || (cap.outcomes || []).length || cap.outputSchema || (cap.acceptanceExamples || []).length || cap.deliveryPolicy?.requiredForCompletion !== false || cap.deliveryPolicy?.uiBehavior !== 'show-planned-state' || !cap.planningReason)) errors.push(`planned capability ${cap.id} exposes implementation semantics or lacks its planned delivery contract`);
   if (cap.specificationStatus === 'planned' && cap.presentation?.mode === 'headless') errors.push(`planned capability ${cap.id} cannot be headless`);
+  if (cap.specificationStatus === 'planned' && coreCapability) errors.push(`core capability ${cap.id} cannot remain planned`);
   if (cap.specificationStatus === 'complete' && cap.deliveryPolicy?.requiredForCompletion === false) errors.push(`complete capability ${cap.id} is explicitly excluded from completion`);
   if (containsUnconstrainedGeneric(cap.inputSchema) || containsUnconstrainedGeneric(cap.outputSchema)) errors.push(`capability ${cap.id} uses an unconstrained generic input or result object`);
   const mapped = (controlMap.mappings || []).find((item) => item.capabilityId === cap.id);
@@ -153,12 +160,15 @@ for (const cap of capabilities.values()) {
   for (const pageId of cap.pageIds || []) if (!pages.has(pageId)) errors.push(`${cap.id} references unknown page ${pageId}`);
   for (const ruleId of cap.ruleIds || []) if (!rules.has(ruleId)) errors.push(`${cap.id} references unknown rule ${ruleId}`);
   if (cap.operations?.length && !cap.ruleIds?.length) errors.push(`capability ${cap.id} has operations but no bound rules`);
+  if (cap.specificationStatus === 'complete' && requiresServerOperation && !cap.operations?.length) errors.push(`complete server-required capability ${cap.id} has no operation`);
   errors.push(...presentationFindings(cap.id, cap.presentation, cap, { requireDeliveryPolicy: true }));
   for (const operation of cap.operations || []) {
+    if (!operation.method || !operation.path || !operation.request || !operation.response) errors.push(`operation ${operation.id} lacks method, path, request, or response contract`);
     if (!operation.request?.contentType || !validObjectSchema(operation.response?.bodySchema)) errors.push(`operation ${operation.id} lacks content type or structured response schema`);
     for (const location of ['path', 'query', 'header']) if (operation.request?.[location]?.length && !validObjectSchema(operation.request?.[`${location}Schema`])) errors.push(`operation ${operation.id} lacks ${location} schema`);
     if (operation.request?.body?.length && !validObjectSchema(operation.request?.bodySchema)) errors.push(`operation ${operation.id} lacks body schema`);
     if (!operation.authorization || !operation.errors?.length || !operation.idempotency || !operation.concurrency || !operation.acceptanceExample) errors.push(`operation ${operation.id} lacks authorization, errors, idempotency, concurrency, or acceptance semantics`);
+    if (!operation.effects?.length) errors.push(`operation ${operation.id} has no entity effect`);
     if (!operation.ruleIds?.length || operation.ruleIds.some((ruleId) => !cap.ruleIds.includes(ruleId))) errors.push(`operation ${operation.id} is not bound to its capability rules`);
     const resourceTransfer = operation.resourceTransfer;
     if (operation.assetTransfer) errors.push(`operation ${operation.id} uses unsupported assetTransfer instead of resourceTransfer`);
@@ -474,5 +484,14 @@ function dualAxisFindings(spec, evidenceIndex) {
     if (cap.presentation?.mode !== 'headless' && !kinds.some((item) => ANCHOR.has(item))) findings.push(`non-headless complete capability ${cap.id} closure anchors no anchor-axis evidence (release control or observed interaction — where it lands)`);
   }
   return findings;
+}
+function capabilityRequiresServerOperation(capability, integrationCapabilityIds, permissionCapabilityIds) {
+  return capability.presentation?.behavior === 'server-operation'
+    || capability.writesState === true
+    || (capability.entityEffects || []).length > 0
+    || (capability.operations || []).length > 0
+    || integrationCapabilityIds.has(capability.id)
+    || permissionCapabilityIds.has(capability.id)
+    || (capability.capabilityIntent?.sideEffects || []).length > 0;
 }
 function typesCompatible(source, target) { const norm = (type) => (Array.isArray(type) ? type : [type]).filter((item) => item && item !== 'null'); const sourceTypes = norm(source); const targetTypes = norm(target); return sourceTypes.some((item) => targetTypes.includes(item)); }

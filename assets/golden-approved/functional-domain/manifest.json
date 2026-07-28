@@ -40,7 +40,7 @@
   },
   "approval": {
     "method": "independent-agent-review",
-    "reviewerAgentId": "golden-domain-reviewer-22",
-    "reviewedAt": "2026-07-27T06:00:43.023Z"
+    "reviewerAgentId": "golden-domain-reviewer",
+    "reviewedAt": "2026-07-28T02:07:00.498Z"
   }
 }

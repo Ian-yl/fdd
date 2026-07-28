@@ -74,6 +74,18 @@ test('⑨ a core implementation journey that includes a planned capability is re
   rejects(withGolden(({ patchSpec }) => patchSpec((spec) => { spec.journeys[0].capabilityIds.push('cap-export'); })), /includes non-complete capability/);
 });
 
+test('a complete state-writing capability cannot hide its missing operation behind a client presentation', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.operations = []; capability.presentation.behavior = 'client-state'; delete capability.presentation.primaryOperationId; })), /complete server-required capability .* has no operation/);
+});
+
+test('a core capability cannot remain planned', () => {
+  rejects(withGolden(({ patchSpec }) => patchSpec((spec) => { const capability = spec.capabilities.find((item) => item.id === 'cap-export'); spec.journeys[0].capabilityIds.push(capability.id); })), /core capability .* cannot remain planned|includes non-complete capability/);
+});
+
+test('an operation without entity effects is not implementation-complete', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.operations[0].effects = []; })), /has no entity effect/);
+});
+
 test('⑩ a field-assist output type incompatible with its target field is rejected', () => {
   rejects(withGolden(({ cap }) => cap('cap-assist', (capability) => { capability.outputSchema.properties.suggestion = { type: 'integer' }; })), /incompatible with target field/);
 });
@@ -196,7 +208,7 @@ test('the trusted 2.2 validator tree digest detects a tampered imported library 
   try {
     for (const name of ['scripts', 'validators']) cpSync(path.join(root, name), path.join(temp, name), { recursive: true });
     cpSync(golden, path.join(temp, 'domain'), { recursive: true });
-    appendFileSync(path.join(temp, 'validators/fdd-2.2.3/lib/evidence-index.mjs'), '\n// tampered\n');
+    appendFileSync(path.join(temp, 'validators/fdd-2.2.4/lib/evidence-index.mjs'), '\n// tampered\n');
     const result = spawnSync('node', [path.join(temp, 'scripts/validate-package.mjs'), path.join(temp, 'domain'), '--require-approved'], { encoding: 'utf8' });
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /does not reference the immutable trusted repository validator/);
