@@ -1,21 +1,24 @@
 {
   "schemaVersion": "1.1",
-  "functionalPackageDigest": "41d96fe7d6a79090b93988a61b0005c5051cfb57dbeab309d40fafba840f65dc",
+  "functionalPackageDigest": "ea4a303d1bd76e7d7cb0ce4deaec164a42fde949150f364cc9f074ba68036e90",
   "capabilityIds": [
-    "cap-submission-submit-submission",
-    "cap-submission-upload-resource",
-    "cap-submission-planned-export"
+    "cap-submit",
+    "cap-upload",
+    "cap-assist",
+    "cap-export"
   ],
   "completeCapabilityIds": [
-    "cap-submission-submit-submission",
-    "cap-submission-upload-resource"
+    "cap-submit",
+    "cap-upload",
+    "cap-assist"
   ],
   "plannedCapabilityIds": [
-    "cap-submission-planned-export"
+    "cap-export"
   ],
   "ruleIds": [
-    "rule-cap-submission-submit-submission",
-    "rule-cap-submission-upload-resource"
+    "rule-submission-quantity",
+    "rule-resource-checksum",
+    "rule-assist-provider"
   ],
   "semanticArtifacts": [
     "frontend-semantic-inventory.json",

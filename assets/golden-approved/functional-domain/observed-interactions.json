@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "releaseDigest": "neutral-golden-release",
+  "releaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
   "interactions": [
     {
       "id": "interaction-submit",
@@ -23,7 +23,7 @@
         "status": "observed",
         "sources": [
           "frontend-source:index.html",
-          "visual-release:neutral-golden-release"
+          "visual-release:961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec"
         ]
       }
     },
@@ -46,7 +46,7 @@
         "status": "observed",
         "sources": [
           "frontend-source:index.html",
-          "visual-release:neutral-golden-release"
+          "visual-release:961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec"
         ]
       }
     }

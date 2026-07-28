@@ -322,7 +322,8 @@
         },
         "inputUtilization": [
           {
-            "inputId": "title",
+            "operationId": "create-submission",
+            "requestPath": "body.title",
             "disposition": "application-only",
             "evidenceAnchors": [
               "page-module:identity-section",
@@ -336,7 +337,8 @@
             "reason": "used only by the application (persisted as submission metadata / drives the item count), not forwarded to the external provider"
           },
           {
-            "inputId": "category",
+            "operationId": "create-submission",
+            "requestPath": "body.category",
             "disposition": "application-only",
             "evidenceAnchors": [
               "page-module:identity-section",
@@ -350,7 +352,8 @@
             "reason": "used only by the application (persisted as submission metadata / drives the item count), not forwarded to the external provider"
           },
           {
-            "inputId": "quantity",
+            "operationId": "create-submission",
+            "requestPath": "body.quantity",
             "disposition": "application-only",
             "evidenceAnchors": [
               "page-module:identity-section",
@@ -364,11 +367,11 @@
             "reason": "used only by the application (persisted as submission metadata / drives the item count), not forwarded to the external provider"
           },
           {
-            "inputId": "resourceIds",
+            "operationId": "create-submission",
+            "requestPath": "body.resourceIds",
             "disposition": "provider-mapped",
             "mapping": {
-              "providerParam": "provider.inputs",
-              "transform": "identity"
+              "providerParam": "provider.inputs"
             },
             "evidenceAnchors": [
               "page-module:identity-section",
@@ -394,7 +397,31 @@
           "text": "Create submission"
         },
         "behavior": "server-operation",
-        "primaryOperationId": "create-submission"
+        "primaryOperationId": "create-submission",
+        "activation": {
+          "type": "existing-control",
+          "visualHint": {
+            "text": "Create submission",
+            "kind": "button"
+          }
+        },
+        "surface": {
+          "type": "same-page-workspace",
+          "requiredRegions": [
+            "result-panel"
+          ],
+          "contentContract": {
+            "heading": "Create submission",
+            "inputIds": [
+              "title",
+              "category",
+              "quantity"
+            ],
+            "primaryAction": "Create submission",
+            "primaryOperationId": "create-submission",
+            "emptyState": "No submission result is available"
+          }
+        }
       },
       "inputSchema": {
         "type": "object",
@@ -700,7 +727,7 @@
               "outputSemantic": "each provider invocation returns exactly one independent media item with its own identifier and media resource"
             },
             "concurrency": {
-              "maxParallel": 2,
+              "maxParallel": 16,
               "ordering": "unordered",
               "failurePolicy": "fail-fast"
             }
@@ -749,10 +776,6 @@
             ],
             "endpointPolicy": {
               "nonLocal": true
-            },
-            "correlation": {
-              "requestHeader": "X-Integration-Challenge",
-              "responsePath": "submissionId"
             }
           }
         }
@@ -950,7 +973,29 @@
           "text": "Upload source file"
         },
         "behavior": "server-operation",
-        "primaryOperationId": "upload-resource-op"
+        "primaryOperationId": "upload-resource-op",
+        "activation": {
+          "type": "existing-control",
+          "visualHint": {
+            "text": "Upload source file",
+            "kind": "input"
+          }
+        },
+        "surface": {
+          "type": "same-page-workspace",
+          "requiredRegions": [
+            "upload-status"
+          ],
+          "contentContract": {
+            "heading": "Upload source file",
+            "inputIds": [
+              "file"
+            ],
+            "primaryAction": "Upload source file",
+            "primaryOperationId": "upload-resource-op",
+            "emptyState": "No source file selected"
+          }
+        }
       },
       "inputSchema": {
         "type": "object",
@@ -1277,11 +1322,11 @@
         },
         "inputUtilization": [
           {
-            "inputId": "resourceIds",
+            "operationId": "assist-title-op",
+            "requestPath": "body.resourceIds",
             "disposition": "provider-mapped",
             "mapping": {
-              "providerParam": "provider.inputs",
-              "transform": "identity"
+              "providerParam": "provider.inputs"
             },
             "evidenceAnchors": [
               "page-module:assist-title",
@@ -1302,7 +1347,29 @@
           "text": "Suggest title"
         },
         "behavior": "server-operation",
-        "primaryOperationId": "assist-title-op"
+        "primaryOperationId": "assist-title-op",
+        "activation": {
+          "type": "existing-control",
+          "visualHint": {
+            "text": "Suggest title",
+            "kind": "button"
+          }
+        },
+        "surface": {
+          "type": "same-page-workspace",
+          "requiredRegions": [
+            "identity-section"
+          ],
+          "contentContract": {
+            "heading": "Suggest title",
+            "inputIds": [
+              "resourceIds"
+            ],
+            "primaryAction": "Suggest title",
+            "primaryOperationId": "assist-title-op",
+            "emptyState": "No suggested title is available"
+          }
+        }
       },
       "inputSchema": {
         "type": "object",
@@ -1512,10 +1579,6 @@
             ],
             "endpointPolicy": {
               "nonLocal": true
-            },
-            "correlation": {
-              "requestHeader": "X-Integration-Challenge",
-              "responsePath": "operationId"
             }
           },
           "dataDependencies": [
@@ -1678,6 +1741,24 @@
         "plannedState": {
           "title": "External submission review",
           "message": "功能待实现：外部复核编排待业务方决策"
+        },
+        "activation": {
+          "type": "existing-control",
+          "visualHint": {
+            "text": "External submission review",
+            "kind": "button"
+          }
+        },
+        "surface": {
+          "type": "planned-workspace",
+          "requiredRegions": [
+            "result-panel"
+          ],
+          "contentContract": {
+            "heading": "External submission review",
+            "inputIds": [],
+            "emptyState": "功能待实现：外部复核编排待业务方决策"
+          }
         }
       },
       "acceptanceCriteria": [
@@ -1813,7 +1894,7 @@
   ],
   "visualSource": {
     "sourceType": "ai-restore-release",
-    "releaseDigest": "neutral-golden-release",
+    "releaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
     "suiteGateDigest": "neutral-gate",
     "pageIds": [
       "submission"

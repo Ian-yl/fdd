@@ -2,83 +2,51 @@
   "schemaVersion": "1.0",
   "operations": [
     {
-      "id": "create-submission-submit-submission",
-      "capabilityId": "cap-submission-submit-submission",
-      "semantics": "For Create submission, validate inputs, create the capability-specific aggregate state, and return its typed result.",
+      "id": "create-submission",
+      "capabilityId": "cap-submit",
+      "semantics": "Persist the submission configuration atomically and enqueue generation of the requested item count.",
       "method": "POST",
-      "path": "/api/pages/submission/capabilities/submit-submission/create",
+      "path": "/api/submissions",
       "request": {
         "contentType": "application/json",
         "body": [
-          "submission-title",
-          "submission-category",
-          "result-quantity",
-          "upload-source-file-assetIds"
+          "title",
+          "category",
+          "quantity",
+          "resourceIds"
         ],
         "bodySchema": {
           "type": "object",
           "required": [
-            "submission-title",
-            "result-quantity",
-            "upload-source-file-assetIds"
+            "title",
+            "category",
+            "quantity",
+            "resourceIds"
           ],
           "properties": {
-            "submission-title": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "category": {
               "type": "string",
               "enum": [
-                "workspace",
-                "brand-icon",
-                "quantity-input",
-                "number",
-                "2",
-                "upload-panel",
-                "upload-input",
-                "file",
-                "sample-result",
-                "Sample result"
+                "standard",
+                "priority"
               ]
             },
-            "submission-category": {
-              "type": "string",
-              "enum": [
-                "workspace",
-                "brand-icon",
-                "quantity-input",
-                "number",
-                "2",
-                "upload-panel",
-                "upload-input",
-                "file",
-                "sample-result",
-                "Sample result",
-                "submit-button",
-                "planned-export"
-              ]
+            "quantity": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
             },
-            "result-quantity": {
-              "type": "string",
-              "enum": [
-                "brand-icon",
-                "quantity-input",
-                "number",
-                "2",
-                "upload-panel",
-                "upload-input",
-                "file",
-                "sample-result",
-                "Sample result",
-                "submit-button",
-                "planned-export",
-                "result-panel",
-                "history-panel"
-              ]
-            },
-            "upload-source-file-assetIds": {
+            "resourceIds": {
               "type": "array",
               "minItems": 1,
-              "maxItems": 1,
               "items": {
-                "type": "string"
+                "type": "string",
+                "minLength": 1
               }
             }
           },
@@ -94,7 +62,8 @@
           "required": [
             "submissionId",
             "status",
-            "items"
+            "items",
+            "quantity"
           ],
           "properties": {
             "submissionId": {
@@ -104,15 +73,35 @@
             "status": {
               "type": "string",
               "enum": [
-                "succeeded"
+                "succeeded",
+                "processing",
+                "failed"
               ]
+            },
+            "quantity": {
+              "type": "integer",
+              "minimum": 1
             },
             "items": {
               "type": "array",
               "minItems": 1,
               "items": {
-                "type": "string",
-                "minLength": 1
+                "type": "object",
+                "required": [
+                  "itemId",
+                  "mediaUrl"
+                ],
+                "properties": {
+                  "itemId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "mediaUrl": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
               }
             }
           },
@@ -121,13 +110,18 @@
       },
       "authorization": {
         "authentication": "required",
-        "permission": "create:entity-submission-resource",
+        "permission": "create:submission-configuration",
         "ownership": "current-user"
       },
       "effects": [
         {
-          "id": "effect-create-submission-submit-submission-configuration",
-          "entityId": "entity-cap-submission-submit-submission-configuration",
+          "id": "effect-create-submission",
+          "entityId": "submission-configuration",
+          "effect": "create"
+        },
+        {
+          "id": "effect-create-result",
+          "entityId": "submission-result",
           "effect": "create"
         }
       ],
@@ -149,7 +143,7 @@
         }
       ],
       "transaction": {
-        "boundary": "entity-cap-submission-submit-submission-configuration",
+        "boundary": "submission-configuration",
         "atomic": true
       },
       "consistency": null,
@@ -160,51 +154,35 @@
       "concurrency": {
         "strategy": "optimistic-version"
       },
+      "ruleIds": [
+        "rule-submission-quantity"
+      ],
+      "dataDependencies": [
+        {
+          "sourceOperationId": "upload-resource-op",
+          "sourceField": "response.resourceId",
+          "targetOperationId": "create-submission",
+          "targetField": "request.resourceIds",
+          "requiredOwnership": "current-user",
+          "requiredLifecycleStatus": "available",
+          "consistencyRequirement": "read-your-writes",
+          "runtimeValueRequired": true
+        }
+      ],
       "acceptanceExample": {
         "given": {
-          "submission-title": "runtime-value-1",
-          "submission-category": "runtime-value-2",
-          "result-quantity": "runtime-value-3",
-          "upload-source-file-assetIds": "runtime-value-4"
+          "title": "Spring launch tee",
+          "category": "standard",
+          "quantity": 2,
+          "resourceIds": [
+            "res-abc"
+          ]
         },
-        "when": "invoke create-submission-submit-submission",
-        "runtimeBindings": [
-          {
-            "source": "prior-operation:upload-upload-resource",
-            "target": "request.upload-source-file-assetIds",
-            "fixedValueForbidden": true
-          }
-        ],
+        "when": "invoke create-submission",
         "then": [
           {
-            "assertion": "response.submissionId",
-            "matches": true
-          },
-          {
-            "assertion": "quality.observable-result-is-specific-to-create-submission",
-            "equals": true
-          },
-          {
-            "assertion": "quality.required-values-are-preserved-end-to-end",
-            "equals": true
-          },
-          {
-            "assertion": "declared-ui-state",
-            "equals": "success"
-          }
-        ],
-        "failures": [
-          {
-            "condition": "actor lacks ownership or permission",
-            "expect": "NOT_AUTHORIZED"
-          },
-          {
-            "condition": "input violates the operation schema or business rule",
-            "expect": "INVALID_INPUT"
-          },
-          {
-            "condition": "lifecycle or concurrency precondition is not satisfied",
-            "expect": "CONFLICT"
+            "path": "response.status",
+            "equals": "succeeded"
           }
         ]
       },
@@ -212,82 +190,14 @@
         "status": "designed",
         "sources": [
           "page:submission",
-          "page-module:submit-submission",
-          "system-node:submit-node",
-          "frontend-control:submit-button",
-          "visual-release:961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
-          "page:submission",
-          "page-module:submit-submission",
-          "page-module:identity-section",
-          "page-module:options-section"
-        ],
-        "rationale": "Operation contract specializes the create business behavior."
-      },
-      "aggregateSubmission": {
-        "scopeId": "submission-scope",
-        "triggerControlId": "submit-button",
-        "sectionBindings": [
-          {
-            "sectionId": "identity-section",
-            "regionId": "identity-section",
-            "requestFields": [
-              "submission-title"
-            ]
-          },
-          {
-            "sectionId": "options-section",
-            "regionId": "options-section",
-            "requestFields": [
-              "submission-category",
-              "result-quantity"
-            ]
-          }
-        ],
-        "evidence": {
-          "status": "documented",
-          "sources": [
-            "page:submission",
-            "page-module:submit-submission",
-            "page-module:identity-section",
-            "page-module:options-section"
-          ]
-        }
-      },
-      "finalProduct": {
-        "type": "submission-items",
-        "quantity": {
-          "sourceField": "result-quantity"
-        },
-        "lifecycle": [
-          "processing",
-          "available",
-          "failed"
-        ],
-        "downstreamUsage": [
-          "result presentation",
-          "history"
+          "page-module:submit-submission"
         ]
       },
-      "dataDependencies": [
-        {
-          "sourceOperationId": "upload-submission-upload-resource",
-          "sourceField": "response.assetIds",
-          "targetOperationId": "create-submission-submit-submission",
-          "targetField": "request.upload-source-file-assetIds",
-          "requiredOwnership": "same-user",
-          "requiredLifecycleStatus": "available",
-          "consistencyRequirement": "read-your-writes",
-          "runtimeValueRequired": true
-        }
-      ],
-      "ruleIds": [
-        "rule-cap-submission-submit-submission"
-      ],
       "providerContract": {
         "requiredCapability": "media-generation",
         "parameterMappings": [
           {
-            "source": "request.upload-source-file-assetIds",
+            "source": "request.resourceIds",
             "target": "provider.inputs",
             "required": true
           }
@@ -304,17 +214,17 @@
         "perCallConstraints": {
           "singleItemPerCall": true,
           "distinctMediaPerCall": true,
-          "outputSemantic": "each provider invocation returns exactly one independent media item with its own media resource URL"
+          "outputSemantic": "each provider invocation returns exactly one independent media item with its own identifier and media resource"
         },
         "concurrency": {
-          "maxParallel": 2,
+          "maxParallel": 16,
           "ordering": "unordered",
           "failurePolicy": "fail-fast"
         }
       },
       "integrationBindings": [
         {
-          "source": "request.upload-source-file-assetIds",
+          "source": "request.resourceIds",
           "target": "provider.inputs",
           "required": true,
           "schema": {
@@ -326,11 +236,8 @@
           "evidence": {
             "status": "designed",
             "sources": [
-              "page:submission",
-              "page-module:submit-submission",
-              "system-node:submit-node",
-              "page-module:identity-section",
-              "page-module:options-section"
+              "page-module:result-items",
+              "page:submission"
             ]
           }
         }
@@ -359,19 +266,15 @@
         ],
         "endpointPolicy": {
           "nonLocal": true
-        },
-        "correlation": {
-          "requestHeader": "X-Integration-Challenge",
-          "responsePath": "submissionId"
         }
       }
     },
     {
-      "id": "upload-submission-upload-resource",
-      "capabilityId": "cap-submission-upload-resource",
-      "semantics": "For Upload source file, validate transfer constraints, compute checksum, bind ownership, persist an opaque storage reference, and return runtime resource identifiers.",
+      "id": "upload-resource-op",
+      "capabilityId": "cap-upload",
+      "semantics": "Validate and store an uploaded source file, returning an owned resource reference.",
       "method": "POST",
-      "path": "/api/pages/submission/capabilities/upload-resource/assets",
+      "path": "/api/submissions/resources",
       "request": {
         "contentType": "multipart/form-data",
         "body": [
@@ -386,7 +289,7 @@
             "files": {
               "type": "array",
               "minItems": 1,
-              "maxItems": 20,
+              "maxItems": 1,
               "items": {
                 "type": "string",
                 "format": "binary"
@@ -403,42 +306,25 @@
         "bodySchema": {
           "type": "object",
           "required": [
-            "assetIds",
-            "assets"
+            "resourceId",
+            "checksum",
+            "status"
           ],
           "properties": {
-            "assetIds": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "string"
-              }
+            "resourceId": {
+              "type": "string",
+              "minLength": 1
             },
-            "assets": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "required": [
-                  "id",
-                  "status",
-                  "checksum"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "available"
-                    ]
-                  },
-                  "checksum": {
-                    "type": "string"
-                  }
-                },
-                "additionalProperties": false
-              }
+            "checksum": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "available",
+                "rejected"
+              ]
             }
           },
           "additionalProperties": false
@@ -446,13 +332,13 @@
       },
       "authorization": {
         "authentication": "required",
-        "permission": "upload:entity-submission-asset",
+        "permission": "create:submission-resource",
         "ownership": "current-user"
       },
       "effects": [
         {
-          "id": "effect-upload-submission-upload-resource",
-          "entityId": "entity-submission-asset",
+          "id": "effect-upload-resource",
+          "entityId": "submission-resource",
           "effect": "create"
         }
       ],
@@ -468,18 +354,13 @@
           "recovery": "correct the identified field"
         },
         {
-          "code": "UNSUPPORTED_FILE",
-          "status": 415,
-          "recovery": "select a supported file"
-        },
-        {
-          "code": "STORAGE_UNAVAILABLE",
-          "status": 503,
-          "recovery": "retry without claiming the asset is available"
+          "code": "CONFLICT",
+          "status": 409,
+          "recovery": "refresh authoritative state and retry when allowed"
         }
       ],
       "transaction": {
-        "boundary": "boundary-submission",
+        "boundary": "submission-resource",
         "atomic": true
       },
       "consistency": null,
@@ -490,88 +371,238 @@
       "concurrency": {
         "strategy": "optimistic-version"
       },
+      "ruleIds": [
+        "rule-resource-checksum"
+      ],
+      "resourceTransfer": {
+        "fileField": "files",
+        "responseIdPath": "response.resourceId",
+        "interaction": "file-selection",
+        "constraints": {
+          "maxBytesPerFile": 20971520,
+          "checksum": "sha256",
+          "multiplicity": "single"
+        }
+      },
       "acceptanceExample": {
         "given": {
-          "files": "runtime-file-1"
+          "files": [
+            "challenge.bin"
+          ]
         },
-        "when": "invoke upload-submission-upload-resource",
-        "runtimeBindings": [],
+        "when": "invoke upload-resource-op",
         "then": [
           {
-            "assertion": "declared-output-schema",
-            "matches": true
+            "path": "response.status",
+            "equals": "available"
+          }
+        ]
+      },
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "page-module:upload-resource",
+          "observed-interaction:interaction-upload"
+        ]
+      }
+    },
+    {
+      "id": "assist-title-op",
+      "capabilityId": "cap-assist",
+      "semantics": "Generate a title suggestion from the uploaded source via an external text-generation capability.",
+      "method": "POST",
+      "path": "/api/submissions/assist-title",
+      "request": {
+        "contentType": "application/json",
+        "body": [
+          "resourceIds"
+        ],
+        "bodySchema": {
+          "type": "object",
+          "required": [
+            "resourceIds"
+          ],
+          "properties": {
+            "resourceIds": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           },
-          {
-            "assertion": "quality.transferred-bytes-match-the-recorded-checksum",
-            "equals": true
+          "additionalProperties": false
+        }
+      },
+      "response": {
+        "successStatuses": [
+          200
+        ],
+        "bodySchema": {
+          "type": "object",
+          "required": [
+            "operationId",
+            "status",
+            "suggestion"
+          ],
+          "properties": {
+            "operationId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "completed",
+                "failed"
+              ]
+            },
+            "suggestion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
           },
+          "additionalProperties": false
+        }
+      },
+      "authorization": {
+        "authentication": "required",
+        "permission": "invoke:submission-assist",
+        "ownership": "current-user"
+      },
+      "effects": [
+        {
+          "id": "effect-read-assist-resource",
+          "entityId": "submission-resource",
+          "effect": "read"
+        }
+      ],
+      "errors": [
+        {
+          "code": "NOT_AUTHORIZED",
+          "status": 403,
+          "recovery": "authenticate or select an owned resource"
+        },
+        {
+          "code": "INVALID_INPUT",
+          "status": 422,
+          "recovery": "correct the identified field"
+        },
+        {
+          "code": "CONFLICT",
+          "status": 409,
+          "recovery": "refresh authoritative state and retry when allowed"
+        }
+      ],
+      "transaction": null,
+      "consistency": {
+        "strategy": "read-your-writes"
+      },
+      "idempotency": {
+        "required": false,
+        "key": null
+      },
+      "concurrency": {
+        "strategy": "snapshot-read"
+      },
+      "ruleIds": [
+        "rule-assist-provider"
+      ],
+      "providerContract": {
+        "requiredCapability": "text-generation",
+        "parameterMappings": [
           {
-            "assertion": "quality.only-validated-owned-resources-become-available",
-            "equals": true
-          },
-          {
-            "assertion": "declared-ui-state",
-            "equals": "success"
+            "source": "request.resourceIds",
+            "target": "provider.inputs",
+            "required": true
           }
         ],
-        "failures": [
+        "outputConstraints": {
+          "suggestion": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "integrationBindings": [
+        {
+          "source": "request.resourceIds",
+          "target": "provider.inputs",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "status": "designed",
+            "sources": [
+              "annotation:assist-title"
+            ]
+          }
+        }
+      ],
+      "integrationVerification": {
+        "requiredScenarios": [
+          "success",
+          "timeout",
+          "unavailable"
+        ],
+        "artifactAssertions": [
           {
-            "condition": "actor lacks ownership or permission",
-            "expect": "NOT_AUTHORIZED"
+            "path": "response.operationId",
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
           },
           {
-            "condition": "input violates the operation schema or business rule",
-            "expect": "INVALID_INPUT"
-          },
+            "path": "response.suggestion",
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "endpointPolicy": {
+          "nonLocal": true
+        }
+      },
+      "dataDependencies": [
+        {
+          "sourceOperationId": "upload-resource-op",
+          "sourceField": "response.resourceId",
+          "targetOperationId": "assist-title-op",
+          "targetField": "request.resourceIds",
+          "requiredOwnership": "current-user",
+          "requiredLifecycleStatus": "available",
+          "consistencyRequirement": "read-your-writes",
+          "runtimeValueRequired": true
+        }
+      ],
+      "acceptanceExample": {
+        "given": {
+          "resourceIds": [
+            "res-abc"
+          ]
+        },
+        "when": "invoke assist-title-op",
+        "then": [
           {
-            "condition": "file type, count, size, or checksum is invalid",
-            "expect": "UNSUPPORTED_FILE"
-          },
-          {
-            "condition": "durable storage is unavailable",
-            "expect": "STORAGE_UNAVAILABLE"
+            "path": "response.status",
+            "equals": "completed"
           }
         ]
       },
       "evidence": {
         "status": "designed",
         "sources": [
-          "page:submission",
-          "page-module:upload-resource",
-          "system-node:upload-node",
-          "frontend-control:upload-input",
-          "visual-release:961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec"
-        ],
-        "rationale": "Operation contract specializes the upload business behavior."
-      },
-      "resourceTransfer": {
-        "contentType": "multipart/form-data",
-        "interaction": "file-selection",
-        "fileField": "files",
-        "purpose": "Upload source file",
-        "required": true,
-        "mimeTypes": [
-          "application/octet-stream"
-        ],
-        "maxBytesPerFile": 20971520,
-        "minItems": 1,
-        "maxItems": 20,
-        "checksum": "sha256",
-        "ownership": "current-user",
-        "lifecycle": [
-          "selected",
-          "uploading",
-          "validated",
-          "available",
-          "rejected",
-          "deleted"
-        ],
-        "storageReference": "opaque-storage-key",
-        "responseIdPath": "response.assetIds[]"
-      },
-      "ruleIds": [
-        "rule-cap-submission-upload-resource"
-      ]
+          "annotation:assist-title"
+        ]
+      }
     }
   ]
 }

@@ -3,107 +3,103 @@
   "releaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
   "mappings": [
     {
-      "capabilityId": "cap-submission-submit-submission",
+      "capabilityId": "cap-submit",
       "pageId": "submission",
       "controlId": "submit-button",
       "mappingType": "observed-trigger",
       "fieldBindings": [
-        {
-          "controlId": "title-input",
-          "inputId": "submission-title",
-          "statePath": "form.submission-title",
-          "requestPath": "request.submission-title",
-          "required": true,
-          "ownership": {
-            "type": "aggregate-section",
-            "scopeId": "submission-scope",
-            "sectionId": "identity-section",
-            "regionId": "identity-section",
-            "capabilityModuleId": "submit-submission"
-          }
-        },
-        {
-          "controlId": "category-select",
-          "inputId": "submission-category",
-          "statePath": "form.submission-category",
-          "requestPath": "request.submission-category",
-          "required": false,
-          "ownership": {
-            "type": "aggregate-section",
-            "scopeId": "submission-scope",
-            "sectionId": "options-section",
-            "regionId": "options-section",
-            "capabilityModuleId": "submit-submission"
-          }
-        },
-        {
-          "controlId": "quantity-input",
-          "inputId": "result-quantity",
-          "statePath": "form.result-quantity",
-          "requestPath": "request.result-quantity",
-          "required": true,
-          "ownership": {
-            "type": "aggregate-section",
-            "scopeId": "submission-scope",
-            "sectionId": "options-section",
-            "regionId": "options-section",
-            "capabilityModuleId": "submit-submission"
-          }
-        }
-      ],
-      "primaryOperationId": "create-submission-submit-submission",
-      "evidence": {
-        "status": "designed",
-        "sources": [
-          "page:submission",
-          "page-module:submit-submission",
-          "system-node:submit-node",
-          "frontend-control:submit-button",
-          "visual-release:961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
-          "page:submission",
-          "page-module:submit-submission",
-          "page-module:identity-section",
-          "page-module:options-section"
-        ],
-        "rationale": "Synthesized as create from architecture responsibility and observed frontend semantics."
+    {
+      "controlId": "title-input",
+          "inputId": "title",
+          "statePath": "capabilities.cap-submit.inputs.title",
+          "operationId": "create-submission",
+      "requestPath": "body.title"
+    },
+    {
+      "controlId": "designed-category-select",
+      "inputId": "category",
+      "statePath": "capabilities.cap-submit.inputs.category",
+      "operationId": "create-submission",
+      "requestPath": "body.category",
+      "source": "designed-control",
+      "designedControl": {
+        "type": "select",
+        "label": "Submission category",
+        "targetRegion": "options-section"
       }
     },
     {
-      "capabilityId": "cap-submission-upload-resource",
+      "controlId": "designed-quantity-input",
+      "inputId": "quantity",
+      "statePath": "capabilities.cap-submit.inputs.quantity",
+      "operationId": "create-submission",
+      "requestPath": "body.quantity",
+      "source": "designed-control",
+      "designedControl": {
+        "type": "number-input",
+        "label": "Result quantity",
+        "targetRegion": "options-section"
+      }
+    }
+      ],
+      "primaryOperationId": "create-submission",
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-control:submit-button",
+          "observed-interaction:interaction-submit"
+        ]
+      }
+    },
+    {
+      "capabilityId": "cap-upload",
       "pageId": "submission",
       "controlId": "upload-input",
       "mappingType": "observed-trigger",
-      "fieldBindings": [],
-      "primaryOperationId": "upload-submission-upload-resource",
+      "fieldBindings": [
+        {
+          "controlId": "upload-input",
+          "inputId": "files",
+          "statePath": "capabilities.cap-upload.inputs.files",
+          "operationId": "upload-resource-op",
+          "requestPath": "body.files"
+        }
+      ],
+      "primaryOperationId": "upload-resource-op",
       "evidence": {
-        "status": "designed",
+        "status": "observed",
         "sources": [
-          "page:submission",
-          "page-module:upload-resource",
-          "system-node:upload-node",
           "frontend-control:upload-input",
-          "visual-release:961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec"
-        ],
-        "rationale": "Synthesized as upload from architecture responsibility and observed frontend semantics."
+          "observed-interaction:interaction-upload"
+        ]
       }
     },
     {
-      "capabilityId": "cap-submission-planned-export",
+      "capabilityId": "cap-assist",
+      "pageId": "submission",
+      "controlId": "assist-title-button",
+      "mappingType": "observed-trigger",
+      "fieldBindings": [],
+      "primaryOperationId": "assist-title-op",
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-control:assist-title-button"
+        ]
+      }
+    },
+    {
+      "capabilityId": "cap-export",
       "pageId": "submission",
       "controlId": "planned-export",
       "mappingType": "observed-trigger",
       "fieldBindings": [],
       "primaryOperationId": null,
       "evidence": {
-        "status": "designed",
+        "status": "observed",
         "sources": [
-          "page:submission",
-          "page-module:planned-export",
-          "system-node:export-node",
-          "frontend-control:planned-export",
-          "visual-release:961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec"
-        ],
-        "rationale": "Synthesized as external-operation from architecture responsibility and observed frontend semantics."
+          "frontend-control:planned-export"
+        ]
       }
     }
   ]

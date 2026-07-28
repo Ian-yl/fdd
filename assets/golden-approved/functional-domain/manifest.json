@@ -3,7 +3,7 @@
   "packageType": "functional-domain",
   "projectId": "neutral-submission-22",
   "projectName": "Neutral submission workspace",
-  "visualReleaseDigest": "neutral-golden-release",
+  "visualReleaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
   "status": "approved",
   "authorAgentId": "golden-domain-author-23",
   "sourceDirectory": "architecture-input",
@@ -41,7 +41,7 @@
   "controlDispositions": "control-dispositions.json",
   "approval": {
     "method": "independent-agent-review",
-    "reviewerAgentId": "golden-domain-reviewer-23",
-    "reviewedAt": "2026-07-28T06:46:06.521Z"
+    "reviewerAgentId": "golden-reviewer",
+    "reviewedAt": "2026-07-28T08:47:33.194Z"
   }
 }

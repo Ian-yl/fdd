@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { appendFileSync, cpSync, mkdtempSync, rmSync } from 'node:fs';
+import { appendFileSync, cpSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
@@ -32,7 +32,8 @@ test('trusted validator tree digest detects a modified imported library', () => 
   try {
     for (const name of ['scripts', 'validators']) cpSync(path.join(root, name), path.join(temp, name), { recursive: true });
     cpSync(path.join(root, 'assets/golden-approved/functional-domain'), path.join(temp, 'domain'), { recursive: true });
-    appendFileSync(path.join(temp, 'validators/fdd-2.3.0/lib/presentation.mjs'), '\n// tampered\n');
+    const receipt = JSON.parse(readFileSync(path.join(temp, 'domain/review-receipt.json'), 'utf8'));
+    appendFileSync(path.join(temp, `validators/${receipt.trustedValidatorId.replace('fdd-validator-', 'fdd-')}/lib/presentation.mjs`), '\n// tampered\n');
     const result = spawnSync('node', [path.join(temp, 'scripts/validate-package.mjs'), path.join(temp, 'domain'), '--require-approved'], { encoding: 'utf8' });
     assert.notEqual(result.status, 0); assert.match(result.stderr, /does not reference the immutable trusted repository validator/);
   } finally { rmSync(temp, { recursive: true, force: true }); }

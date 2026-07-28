@@ -31,6 +31,8 @@ FDD planning reads page architecture, system architecture, product context, fina
 
 Every capability includes `capabilityIntent.userGoal`, `businessOutcome`, `trigger`, `prerequisites`, typed `inputs`, `processingSemantics`, typed `outputs`, `sideEffects`, `downstreamUsage`, `qualityCriteria`, `failures`, and evidence. Each operation closes method/path/content type, request/response schemas, authorization, effects, errors, transaction/consistency, idempotency, concurrency, acceptance, and applicable asset/provider contracts. Cross-operation values use explicit `dataDependencies` with runtime propagation, ownership, lifecycle, and consistency requirements.
 
+For provider-backed behavior, `closure.inputUtilization` is operation-scoped. Every entry names `operationId` and `requestPath`; every request field of every provider operation has exactly one disposition. A `provider-mapped` entry forms one unambiguous chain with `providerContract.parameterMappings` and `integrationBindings`: the request source exists, provider target and requiredness agree, and duplicate or competing mappings are rejected. Identity mappings preserve the value digest. When a resource identifier must become bytes, a URL, or another provider-ready representation, `resourceResolution` records that deterministic design declaration; PI binds its digest between the observed ingress source and provider target rather than requiring the two values to be identical.
+
 Relationship example:
 
 ```json
@@ -146,7 +148,7 @@ Transfer and integration semantics use `resourceTransfer`, `resourceValidation`,
 
 Schema 2.3 uses `resourceTransfer` exclusively. A multipart operation without `resourceTransfer` cannot be approved or prepared.
 
-Version binding uses the immutable repository-owned Schema 2.3 entrypoints under `validators/fdd-2.3.0/` and `validators/handoff-2.3/`. FDD is the canonical validator source; PI synchronizes this registry and tests the complete cross-project tree digest. Package-supplied JavaScript, snapshot paths, and self-reported hashes are data only and are never executed.
+Version binding uses the immutable repository-owned Schema 2.3 entrypoints under `validators/fdd-2.3.1/` and `validators/handoff-2.3/`. FDD is the canonical validator source; PI synchronizes this registry and tests the complete cross-project tree digest. Package-supplied JavaScript, snapshot paths, and self-reported hashes are data only and are never executed.
 
 Every capability input carries ownership evidence. Valid sources are the same business region as its trigger, an architecture owner module, a reliable semantic match, a cross-operation data dependency, or a confirmed user decision. Merely existing on the same page is not ownership evidence.
 

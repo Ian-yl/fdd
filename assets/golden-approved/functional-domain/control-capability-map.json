@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "releaseDigest": "neutral-golden-release",
+  "releaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
   "mappings": [
     {
       "capabilityId": "cap-submit",

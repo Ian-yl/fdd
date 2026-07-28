@@ -6,7 +6,11 @@ Evidence precedence is `confirmed`, `documented`, `observed`, `designed`, `infer
 
 Under schema 2.3 the unit of synthesis is a **page interaction closure**, not an architecture leaf. The authoring agent reads each released page's complete semantics and identifies every closed loop the page supports; one closed loop is one capability. The page architecture, system architecture, and product context are **context evidence** that enriches a closure's business meaning — its purpose, entities, rules, and downstream use — but they never generate, bound, cap, or split capabilities. An architecture leaf is not a capability; a matching system node is not an operation; a module boundary is not a capability boundary. The visual release and its observed behavior decide what closures exist, and the context evidence explains what each closure means.
 
+Partial page, route, architecture, or finalized-design coverage is not itself a blocker. The Agent uses the immutable release as the current interaction baseline and may add evidence-backed controls or flows needed to close the approved business behavior. Tooling blocks only a complete product-identity mismatch; partial discrepancies remain visible review context rather than automatic rejection.
+
 A closure operates in interaction-local scope: the input controls, the primary trigger, the result surface, and the states that participate in one user-initiated outcome on one page. Whole-page words do not classify every capability on that page, and one page may host several independent closures.
+
+The author must not start from “one page, one capability.” A resource upload with its own request/result and a field-assist action with its own processing/write-back are independent closures even when a later page submit consumes their outputs. The validator checks that authored links close mechanically; the independent reviewer decides whether the boundary faithfully matches the release and source evidence.
 
 ## The interaction closure model
 
@@ -97,6 +101,6 @@ Conflict handling: when a design export contradicts the release or observed beha
 
 When source evidence shows a capability produces N independent media results through an external provider, the author closes it with an `operation.providerContract` whose `outputMode` is `independent-items` and `oneProviderResultPerItem` is true. Unless the source explicitly confirms the provider supports batch generation (`n>1`), `batchSupportAssumed` is false and the implementation loops one provider call per item, each carrying the contract's single-item `perCallConstraints`. This contractualizes the established practice of single-item looping and prevents a single provider result (a collage) from being presented as N independent items.
 
-Independent results are independent work, not a serial queue disguised as a multi-result feature. When the requested quantity can exceed one, the contract declares `concurrency.maxParallel >= 2`; PI may choose the scheduling implementation but must exercise real bounded parallelism. A genuinely single-result contract may retain `maxParallel: 1`.
+The author declares the provider concurrency contract from product and integration needs. `maxParallel` may be one or greater; PI must honor the declared ceiling, while the validator does not choose serial or parallel scheduling for the Agent.
 
 Every required operation input has an authored origin. It may bind an observed release control, an agent-designed control that the implementation will add, a prior operation response, or evidenced application state. A design image is not a feature ceiling: when space or fidelity constraints omit a necessary control, the FDD agent records a `designed-control` binding with its type, label, target region, rationale, and evidence. `application-only` and `not-used` are explicit semantic decisions and therefore carry both a reason and evidence anchors; they are not escape hatches for avoiding provider mappings.

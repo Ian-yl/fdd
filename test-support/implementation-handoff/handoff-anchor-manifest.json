@@ -5,11 +5,6 @@
       "pageId": "submission",
       "anchors": [
         {
-          "id": "workspace",
-          "kind": "region",
-          "source": "frontend-semantic-inventory"
-        },
-        {
           "id": "identity-section",
           "kind": "region",
           "source": "frontend-semantic-inventory"
@@ -20,22 +15,12 @@
           "source": "frontend-semantic-inventory"
         },
         {
-          "id": "upload-panel",
-          "kind": "region",
-          "source": "frontend-semantic-inventory"
-        },
-        {
           "id": "result-panel",
           "kind": "region",
           "source": "frontend-semantic-inventory"
         },
         {
-          "id": "history-panel",
-          "kind": "region",
-          "source": "frontend-semantic-inventory"
-        },
-        {
-          "id": "quantity-input",
+          "id": "upload-status",
           "kind": "region",
           "source": "frontend-semantic-inventory"
         },

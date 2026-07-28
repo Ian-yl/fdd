@@ -2,77 +2,23 @@
   "schemaVersion": "1.0",
   "capabilities": [
     {
-      "capabilityId": "cap-submission-submit-submission",
+      "capabilityId": "cap-submit",
       "specificationStatus": "complete",
       "presentation": {
         "mode": "reuse-control",
         "targetPageId": "submission",
-        "triggerControl": {
+        "visualHint": {
           "controlId": "submit-button",
-          "label": "Create submission"
+          "text": "Create submission"
         },
-        "fieldBindings": [
-          {
-            "controlId": "title-input",
-            "inputId": "submission-title",
-            "statePath": "form.submission-title",
-            "requestPath": "request.submission-title",
-            "required": true,
-            "ownership": {
-              "type": "aggregate-section",
-              "scopeId": "submission-scope",
-              "sectionId": "identity-section",
-              "regionId": "identity-section",
-              "capabilityModuleId": "submit-submission"
-            }
-          },
-          {
-            "controlId": "category-select",
-            "inputId": "submission-category",
-            "statePath": "form.submission-category",
-            "requestPath": "request.submission-category",
-            "required": false,
-            "ownership": {
-              "type": "aggregate-section",
-              "scopeId": "submission-scope",
-              "sectionId": "options-section",
-              "regionId": "options-section",
-              "capabilityModuleId": "submit-submission"
-            }
-          },
-          {
-            "controlId": "quantity-input",
-            "inputId": "result-quantity",
-            "statePath": "form.result-quantity",
-            "requestPath": "request.result-quantity",
-            "required": true,
-            "ownership": {
-              "type": "aggregate-section",
-              "scopeId": "submission-scope",
-              "sectionId": "options-section",
-              "regionId": "options-section",
-              "capabilityModuleId": "submit-submission"
-            }
-          }
-        ],
-        "primaryAction": "Create submission",
-        "primaryOperationId": "create-submission-submit-submission",
-        "requiredUiStates": [
-          "idle",
-          "loading",
-          "success",
-          "error"
-        ],
+        "behavior": "server-operation",
+        "primaryOperationId": "create-submission",
         "activation": {
           "type": "existing-control",
           "visualHint": {
             "text": "Create submission",
             "kind": "button"
           }
-        },
-        "resultSurface": {
-          "region": "result-panel",
-          "dataSource": "operation:create-submission-submit-submission"
         },
         "surface": {
           "type": "same-page-workspace",
@@ -82,87 +28,47 @@
           "contentContract": {
             "heading": "Create submission",
             "inputIds": [
-              "submission-title",
-              "submission-category",
-              "result-quantity"
+              "title",
+              "category",
+              "quantity"
             ],
             "primaryAction": "Create submission",
-            "primaryOperationId": "create-submission-submit-submission",
-            "emptyState": "No Create submission result is available",
+            "primaryOperationId": "create-submission",
+            "emptyState": "No submission result is available",
             "resultContract": {
               "targetRegion": "result-panel",
               "bindings": [
                 {
-                  "id": "result-submit-submission",
+                  "id": "binding-submit-items",
                   "responsePath": "response.items",
                   "element": {
-                    "semantic": "result-item",
-                    "valueSource": "item-value"
+                    "semantic": "media-item"
                   },
-                  "cardinality": "many",
                   "count": {
                     "mode": "request-field",
-                    "requestPath": "request.result-quantity",
-                    "responsePath": "response.items",
-                    "fixedValueForbidden": true
+                    "requestPath": "request.quantity",
+                    "fixedValueForbidden": true,
+                    "nonDefaultValueRequired": true
                   }
                 }
               ],
               "states": {
                 "processing": {
-                  "regionStatus": "processing",
-                  "elementSemantic": "progress-indicator",
-                  "contentRequirement": "region contains a non-result progress affordance"
+                  "regionStatus": "busy",
+                  "elementSemantic": "progress"
                 },
                 "success": {
-                  "regionStatus": "success",
-                  "elementSemantic": "bound-result-elements",
+                  "regionStatus": "ready",
+                  "elementSemantic": "media-item",
                   "requiresBoundElements": true
                 },
                 "failure": {
                   "regionStatus": "error",
-                  "elementSemantic": "error-message",
-                  "contentRequirement": "declared operation failure is visible in the target region"
+                  "elementSemantic": "error-message"
                 }
-              },
-              "runtimeFlow": {
-                "mode": "immediate"
-              },
-              "product": {
-                "type": "submission-items",
-                "quantity": {
-                  "sourceField": "result-quantity"
-                },
-                "lifecycle": [
-                  "processing",
-                  "available",
-                  "failed"
-                ],
-                "downstreamUsage": [
-                  "result presentation",
-                  "history"
-                ]
-              },
-              "evidence": {
-                "status": "documented",
-                "sources": [
-                  "page:submission",
-                  "page-module:submit-submission",
-                  "system-node:submit-node",
-                  "frontend-control:submit-button",
-                  "visual-release:961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
-                  "page-module:identity-section",
-                  "page-module:options-section",
-                  "frontend-result-surface:result-panel"
-                ],
-                "releaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec"
               }
             }
           }
-        },
-        "visualHint": {
-          "text": "Create submission",
-          "kind": "button"
         }
       },
       "deliveryPolicy": {
@@ -174,47 +80,43 @@
       "aliasOf": null
     },
     {
-      "capabilityId": "cap-submission-upload-resource",
+      "capabilityId": "cap-upload",
       "specificationStatus": "complete",
       "presentation": {
         "mode": "reuse-control",
         "targetPageId": "submission",
-        "triggerControl": {
-          "controlId": "upload-input",
-          "label": "Upload source file"
-        },
-        "fieldBindings": [],
-        "primaryAction": "Upload source file",
-        "primaryOperationId": "upload-submission-upload-resource",
-        "requiredUiStates": [
-          "idle",
-          "loading",
-          "success",
-          "error"
-        ],
         "visualHint": {
-          "text": "Upload source file",
-          "kind": "input"
+          "controlId": "upload-input",
+          "text": "Upload source file"
+        },
+        "behavior": "server-operation",
+        "primaryOperationId": "upload-resource-op",
+        "activation": {
+          "type": "existing-control",
+          "visualHint": {
+            "text": "Upload source file",
+            "kind": "input"
+          }
         },
         "surface": {
           "type": "same-page-workspace",
           "requiredRegions": [
-            "upload-panel"
+            "upload-status"
           ],
           "contentContract": {
             "heading": "Upload source file",
             "inputIds": [
-              "files"
+              "file"
             ],
             "primaryAction": "Upload source file",
-            "primaryOperationId": "upload-submission-upload-resource",
+            "primaryOperationId": "upload-resource-op",
             "emptyState": "No source file selected",
             "resultContract": {
-              "targetRegion": "upload-panel",
+              "targetRegion": "upload-status",
               "bindings": [
                 {
-                  "id": "binding-cap-submission-upload-resource-assetIds",
-                  "responsePath": "response.assetIds",
+                  "id": "binding-upload-status",
+                  "responsePath": "response.status",
                   "element": {
                     "semantic": "status-badge"
                   },
@@ -240,12 +142,48 @@
               }
             }
           }
+        }
+      },
+      "deliveryPolicy": {
+        "requiredForCompletion": true,
+        "allowedIncompleteState": "planned"
+      },
+      "planningReason": null,
+      "missingDecisions": [],
+      "aliasOf": null
+    },
+    {
+      "capabilityId": "cap-assist",
+      "specificationStatus": "complete",
+      "presentation": {
+        "mode": "reuse-control",
+        "targetPageId": "submission",
+        "visualHint": {
+          "controlId": "assist-title-button",
+          "text": "Suggest title"
         },
+        "behavior": "server-operation",
+        "primaryOperationId": "assist-title-op",
         "activation": {
           "type": "existing-control",
           "visualHint": {
-            "text": "Upload source file",
-            "kind": "input"
+            "text": "Suggest title",
+            "kind": "button"
+          }
+        },
+        "surface": {
+          "type": "same-page-workspace",
+          "requiredRegions": [
+            "identity-section"
+          ],
+          "contentContract": {
+            "heading": "Suggest title",
+            "inputIds": [
+              "resourceIds"
+            ],
+            "primaryAction": "Suggest title",
+            "primaryOperationId": "assist-title-op",
+            "emptyState": "No suggested title is available"
           }
         }
       },
@@ -258,30 +196,37 @@
       "aliasOf": null
     },
     {
-      "capabilityId": "cap-submission-planned-export",
+      "capabilityId": "cap-export",
       "specificationStatus": "planned",
       "presentation": {
         "mode": "reuse-control",
         "targetPageId": "submission",
-        "triggerControl": {
-          "controlId": "planned-export",
-          "label": "External submission review"
-        },
-        "fieldBindings": [],
-        "primaryOperationId": null,
-        "requiredUiStates": [
-          "idle",
-          "planned"
-        ],
         "visualHint": {
-          "text": "External submission review",
-          "kind": "button"
+          "controlId": "planned-export",
+          "text": "External submission review"
         },
         "behavior": "planned-state",
         "plannedState": {
           "title": "External submission review",
-          "message": "功能待实现",
-          "capabilitySpecific": true
+          "message": "功能待实现：外部复核编排待业务方决策"
+        },
+        "activation": {
+          "type": "existing-control",
+          "visualHint": {
+            "text": "External submission review",
+            "kind": "button"
+          }
+        },
+        "surface": {
+          "type": "planned-workspace",
+          "requiredRegions": [
+            "result-panel"
+          ],
+          "contentContract": {
+            "heading": "External submission review",
+            "inputIds": [],
+            "emptyState": "功能待实现：外部复核编排待业务方决策"
+          }
         }
       },
       "deliveryPolicy": {
@@ -289,12 +234,8 @@
         "allowedIncompleteState": "planned",
         "uiBehavior": "show-planned-state"
       },
-      "planningReason": "External submission review has no documented or confirmed capability-specific output schema; a generated name, generic reference list, or result region cannot define its business product; No observed, documented, or confirmed result region identifies where External submission review renders its product; External submission review has no operation response field that can be bound to result elements",
-      "missingDecisions": [
-        "External submission review has no documented or confirmed capability-specific output schema; a generated name, generic reference list, or result region cannot define its business product",
-        "No observed, documented, or confirmed result region identifies where External submission review renders its product",
-        "External submission review has no operation response field that can be bound to result elements"
-      ],
+      "planningReason": "The source names external submission review but does not define the review orchestration, routing, or SLA; an authoritative business decision is required.",
+      "missingDecisions": [],
       "aliasOf": null
     }
   ]

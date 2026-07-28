@@ -29,11 +29,11 @@ description: Convert an immutable frontend release, three architecture JSON inpu
      --author-agent <stable-agent-id>
    ```
 3. Read [input-contract.md](references/input-contract.md), [frontend-semantics.md](references/frontend-semantics.md), [capability-synthesis.md](references/capability-synthesis.md), [package-contract.md](references/package-contract.md), and [reviewer-gates.md](references/reviewer-gates.md). Read each page's semantics and identify its interaction closures; the architecture is context evidence, never a capability generator.
-4. For each closure, author one capability's intent, operations, schemas, entities, relationships, rules, permissions, consistency, presentation, failures, and executable acceptance from traceable evidence, and disposition every interaction control. Read each anchored `design:<id>` export with vision and write the design's semantics — each mode's interface, fields, states, and flow — into the owning closure, anchoring `design:<id>`; a complete capability grounds both evidence axes (intent and anchor). When a design export contradicts the release or observed behavior, do not silently choose — record an unresolved item citing both, and let the release/observed reading prevail.
+4. For each closure, author one capability's intent, operations, schemas, entities, relationships, rules, permissions, consistency, presentation, failures, and executable acceptance from traceable evidence, and disposition every interaction control. Read each anchored `design:<id>` export with vision and write the design's semantics — each mode's interface, fields, states, and flow — into the owning closure, anchoring `design:<id>`; a complete capability grounds both evidence axes (intent and anchor). The release is the implementation baseline. Architecture or design gaps are context for Agent judgment and may be completed with evidence-backed designed controls or flows; only a complete product-identity mismatch is an automatic blocker.
 5. Design the complete business behavior of each closure while preserving the immutable release and its semantic anchors.
 6. Mark implementation-safe designed semantics `complete`; use reachable `planned` contracts for insufficient but non-contradictory semantics; reserve blockers for contradictions requiring an authoritative decision.
 7. Record planned reasons and blockers in `unresolved-items.json`.
-8. Validate and independently review:
+8. Validate artifact structure, then have a distinct reviewer Agent read the source evidence and judge omitted or incorrectly merged closures:
    ```bash
    node <skill-dir>/scripts/validate-package.mjs <workspace>/functional-domain
    node <skill-dir>/scripts/review-package.mjs --package <workspace>/functional-domain --reviewer-agent <independent-agent-id>
@@ -77,11 +77,12 @@ Schema 2.3 is the only supported functional-domain and implementation-handoff co
 - Distinguish confirmed, documented, observed, designed, inferred, and blocked facts; never hide contradictions through precedence.
 - Identify a primary trigger from structured evidence — a native submit type, a form scope, or an observed submit interaction — never from a label or DOM proximity. Collect the closure's scoped inputs into one operation and bind that operation back to the release control; never create a capability or endpoint merely for the button.
 - Account for every interaction control with exactly one disposition; a control you cannot honestly wire into a closure is `ignored-with-reason`, never a hidden capability.
+- Treat resource selection and field-assist write-back as their own evidenced interaction closures when they have independent processing/results. The reviewer, not the validator, judges whether the author omitted or incorrectly merged them.
 - Infer only when architecture, release behavior, and product context jointly support an implementation-safe decision.
 - Give distinct business capabilities distinct intent, schemas, outcomes, failures, quality criteria, and acceptance.
 - Return genuinely authoritative unknowns as precise decisions with affected scope; do not request caller-authored capability definitions.
 - Keep the package concise and traceable so downstream implementation never needs product-specific hidden context.
 
-- For independent multi-item output, declare bounded parallel execution when quantity can exceed one. Missing visual controls may be designed and added with evidence; the release is a baseline, not a feature ceiling.
+- Declare the concurrency behavior the business and provider require; the validator checks the declaration, not the scheduling choice. Missing visual controls may be designed and added with evidence; the release is a baseline, not a feature ceiling.
 
 All artifact schemas, evidence levels, synthesis rules, review gates, and handoff requirements live only in the linked references.

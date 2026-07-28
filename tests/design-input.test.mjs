@@ -54,7 +54,7 @@ test('explicit nav nodes retain semantics but are excluded from visual release c
   assert.ok(evidence.evidence.some((item) => item.id === 'page:navigation-destination'));
 }));
 
-test('per-control attributes come from each control own element, never a neighbor (wave-9 char-window regression)', () => withInput(({ designs, output }) => {
+test('per-control attributes come from each control own element, never a neighbor', () => withInput(({ designs, output }) => {
   assert.equal(run(designs, output).status, 0);
   const controls = Object.fromEntries(read(path.join(output, 'frontend-semantic-inventory.json')).pages[0].controls.map((control) => [control.controlId, control]));
   // Each control reports its OWN native type, default, and options; a neighbor's never bleeds in.

@@ -3,12 +3,12 @@
   "packageType": "implementation-handoff",
   "status": "approved",
   "authorAgentId": "golden-handoff-author",
-  "functionalProjectId": "neutral-submission",
-  "functionalPackageDigest": "41d96fe7d6a79090b93988a61b0005c5051cfb57dbeab309d40fafba840f65dc",
+  "functionalProjectId": "neutral-submission-22",
+  "functionalPackageDigest": "ea4a303d1bd76e7d7cb0ce4deaec164a42fde949150f364cc9f074ba68036e90",
   "visualReleaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
   "sourceDirectory": "visual-release",
   "approval": {
-    "reviewerAgentId": "golden-handoff-reviewer-23",
-    "reviewedAt": "2026-07-28T06:22:40.627Z"
+    "reviewerAgentId": "golden-handoff-reviewer",
+    "reviewedAt": "2026-07-28T08:47:33.527Z"
   }
 }
