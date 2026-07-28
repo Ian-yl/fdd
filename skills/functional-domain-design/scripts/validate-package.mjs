@@ -5,6 +5,7 @@ import { existsSync, lstatSync, readFileSync, readdirSync, writeFileSync } from 
 import { extname, relative, resolve } from 'node:path';
 import { presentationFindings } from './lib/presentation.mjs';
 import { primarySubmitFindings } from './lib/primary-submit.mjs';
+import { controlDispositionFindings } from './lib/control-dispositions.mjs';
 import { treeDigest } from './lib/validator-tree.mjs';
 import { collectStringValues, collectAnchorReferences, bookkeepingFindings } from './lib/evidence-index.mjs';
 
@@ -14,18 +15,19 @@ const dir = resolve(dirArg);
 const requireApproved = process.argv.includes('--require-approved');
 const checkLock = process.argv.includes('--check-lock');
 const manifestPreview = readJSON(`${dir}/manifest.json`);
-const SCHEMA_22_SEMANTIC_FILES = ['frontend-semantic-inventory.json', 'observed-interactions.json', 'control-capability-map.json', 'asset-role-inventory.json'];
-const isSchema22 = manifestPreview.schemaVersion === '2.2';
-const semanticFiles = isSchema22 ? SCHEMA_22_SEMANTIC_FILES : [];
-const files = ['manifest.json', 'planning-manifest.json', 'planning-artifacts.json', 'capability-definitions.json', 'design-manifest.json', 'evidence-index.json', 'evidence-dispositions.json', ...semanticFiles, 'functional-spec.json', 'page-function-map.json', 'unresolved-items.json'];
+const SCHEMA_23_SEMANTIC_FILES = ['frontend-semantic-inventory.json', 'observed-interactions.json', 'control-capability-map.json', 'asset-role-inventory.json'];
+const isSchema23 = manifestPreview.schemaVersion === '2.3';
+const semanticFiles = isSchema23 ? SCHEMA_23_SEMANTIC_FILES : [];
+const files = ['manifest.json', 'planning-manifest.json', 'planning-artifacts.json', 'capability-definitions.json', 'design-manifest.json', 'evidence-index.json', 'evidence-dispositions.json', 'control-dispositions.json', ...semanticFiles, 'functional-spec.json', 'page-function-map.json', 'unresolved-items.json'];
 if (existsSync(`${dir}/review-receipt.json`)) files.push('review-receipt.json');
 if (existsSync(`${dir}/planning-review-receipt.json`)) files.push('planning-review-receipt.json');
 const docs = Object.fromEntries(files.map((file) => [file, readJSON(`${dir}/${file}`)]));
 const errors = [];
 const manifest = docs['manifest.json'];
-if (manifest.schemaVersion !== '2.2') errors.push('only functional-domain schema 2.2 is supported');
-if (isSchema22 && JSON.stringify(manifest.semanticArtifacts) !== JSON.stringify(SCHEMA_22_SEMANTIC_FILES)) errors.push('schema 2.2 semanticArtifacts must equal the fixed semantic artifact contract');
-if (isSchema22 && manifest.evidenceIndex !== 'evidence-index.json') errors.push('schema 2.2 manifest must declare the evidence-index.json bookkeeping artifact');
+if (manifest.schemaVersion !== '2.3') errors.push('only functional-domain schema 2.3 is supported');
+if (isSchema23 && JSON.stringify(manifest.semanticArtifacts) !== JSON.stringify(SCHEMA_23_SEMANTIC_FILES)) errors.push('schema 2.3 semanticArtifacts must equal the fixed semantic artifact contract');
+if (isSchema23 && manifest.evidenceIndex !== 'evidence-index.json') errors.push('schema 2.3 manifest must declare the evidence-index.json bookkeeping artifact');
+if (isSchema23 && manifest.controlDispositions !== 'control-dispositions.json') errors.push('schema 2.3 manifest must declare the control-dispositions.json ledger artifact');
 const spec = docs['functional-spec.json'];
 const mapping = docs['page-function-map.json'];
 const unresolved = docs['unresolved-items.json'];
@@ -39,23 +41,18 @@ const controlMap = docs['control-capability-map.json'] || {};
 const assetInventory = docs['asset-role-inventory.json'] || {};
 const approvalReceipt = docs['review-receipt.json'];
 // Replay registry pins each approved package to the immutable validator revision named in its receipt.
-// Multiple 2.2.x revisions coexist: a package approved under 2.2.0 keeps replaying against the frozen
-// 2.2.0 rules (semantic changes never retroactively invalidate an approved package), while packages
-// signed after a revision replay against the newer frozen rules. The signing path (review-package) always
-// pins the latest revision, so no new approval can select an older, weaker revision to evade a new rule.
+// Schema 2.3 is a clean switch: the superseded 2.2 revisions and their registry entries were removed under an
+// explicit user decision that 2.2 products are discardable (see the reviewer-gates append-only clause). Inside
+// 2.3, append-only resumes — a new 2.3.x revision is added here, the signing path (review-package) pins the
+// latest, and every prior 2.3 revision is retained so no approval is retroactively invalidated or silently upgraded.
 const trustedValidators = new Map([
-  ['fdd-validator-2.2.0', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.0/validate-package.mjs') }],
-  ['fdd-validator-2.2.1', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.1/validate-package.mjs') }],
-  ['fdd-validator-2.2.2', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.2/validate-package.mjs') }],
-  ['fdd-validator-2.2.3', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.3/validate-package.mjs') }],
-  ['fdd-validator-2.2.4', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.4/validate-package.mjs') }],
-  ['fdd-validator-2.2.5', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.5/validate-package.mjs') }],
+  ['fdd-validator-2.3.0', { contractVersion: 'functional-domain/2.3', entry: resolve(import.meta.dirname, '../validators/fdd-2.3.0/validate-package.mjs') }],
 ]);
 const trustedValidator = approvalReceipt?.trustedValidatorId ? trustedValidators.get(approvalReceipt.trustedValidatorId) : null;
 if (requireApproved && !approvalReceipt?.contractVersion) errors.push('approved package requires a versioned trusted review receipt');
 if (requireApproved && approvalReceipt?.contractVersion && !process.argv.includes('--trusted-validator-internal') && (!trustedValidator || trustedValidator.contractVersion !== approvalReceipt.contractVersion || !existsSync(trustedValidator.entry) || approvalReceipt.validatorDigest !== treeDigest(resolve(trustedValidator.entry, '..')))) errors.push('approval receipt does not reference the immutable trusted repository validator for its contract version');
 if (requireApproved && approvalReceipt?.contractVersion && !process.argv.includes('--trusted-validator-internal') && !errors.length) { const replay = spawnSync(process.execPath, [trustedValidator.entry, dir, '--require-approved', '--trusted-validator-internal', ...(checkLock ? ['--check-lock'] : [])], { encoding: 'utf8' }); process.stdout.write(replay.stdout || ''); process.stderr.write(replay.stderr || ''); process.exit(replay.status ?? 1); }
-const requiredPlanningArtifacts = ['design-manifest.json', 'evidence-index.json', 'evidence-dispositions.json', 'planning-artifacts.json', 'capability-definitions.json', ...semanticFiles];
+const requiredPlanningArtifacts = ['design-manifest.json', 'evidence-index.json', 'evidence-dispositions.json', 'control-dispositions.json', 'planning-artifacts.json', 'capability-definitions.json', ...semanticFiles];
 if (planningManifest.packageType !== 'fdd-bmad-planning' || JSON.stringify(planningManifest.artifacts) !== JSON.stringify(requiredPlanningArtifacts)) errors.push('FDD planning manifest is invalid');
 const designDigest = sha(Buffer.from(JSON.stringify(designManifest)));
 if (!planningManifest.synthesisInputDigest || planningManifest.inputDigests?.designs !== designDigest) errors.push('FDD planning input digest does not bind the finalized design manifest');
@@ -69,7 +66,7 @@ if (!Array.isArray(observedInteractions.interactions) || !Array.isArray(controlM
 if (assetInventory.releaseDigest !== frontendInventory.release?.releaseDigest || !Array.isArray(assetInventory.assets)) errors.push('asset role inventory is absent or not release-bound');
 for (const asset of assetInventory.assets || []) { if (!asset.id || !asset.path || !asset.digest || !['decorative', 'business-sample'].includes(asset.role) || !asset.evidence?.sources?.length) errors.push(`asset role entry is unclassified or incomplete: ${asset.id || asset.path || '<unknown>'}`); if (asset.role === 'business-sample' && !['api-data', 'user-input', 'empty-state'].includes(asset.requiredReplacement)) errors.push(`business sample asset has no valid replacement contract: ${asset.id}`); }
 if (spec.planningContext) errors.push('external planningContext is outside the FDD-owned planning workflow');
-if (manifest.schemaVersion !== '2.2' || manifest.packageType !== 'functional-domain') errors.push('manifest contract is invalid');
+if (manifest.schemaVersion !== '2.3' || manifest.packageType !== 'functional-domain') errors.push('manifest contract is invalid');
 if (requireApproved && manifest.status !== 'approved') errors.push('package is not approved');
 if (!manifest.authorAgentId) errors.push('package has no author agent identity');
 if (requireApproved) {
@@ -256,12 +253,14 @@ for (const cap of capabilities.values()) {
   if (cap.aggregateSubmission?.status === 'complete') { const trigger = `${cap.pageIds?.[0]}:${cap.aggregateSubmission.triggerControlId}`; if (aggregateTriggers.has(trigger)) errors.push(`aggregate submit trigger ${trigger} is assigned to multiple capabilities: ${aggregateTriggers.get(trigger)}, ${cap.id}`); else aggregateTriggers.set(trigger, cap.id); }
 }
 
-if (isSchema22) {
+if (isSchema23) {
   errors.push(...primarySubmitFindings(spec, frontendInventory, docs['observed-interactions.json'], controlMap));
-  // Schema 2.2 authoring integrity. Validate proves structure and consistency of the agent's
-  // authored closure; it never judges business meaning (independent review owns that). Every
-  // semantic field is evidence-anchored, acceptance examples carry concrete literal values, and
-  // every indexed evidence item is referenced or explicitly dispositioned (the bookkeeping gate).
+  errors.push(...controlDispositionFindings(docs['control-dispositions.json'], spec, frontendInventory, controlMap, docs['observed-interactions.json']));
+  // Schema 2.3 authoring integrity. Validate proves structure and consistency of the agent's authored
+  // closure and its control-disposition ledger; it never judges business meaning (independent review owns
+  // that). Every semantic field is evidence-anchored, acceptance examples carry concrete literal values,
+  // every interaction control carries a disposition, and every indexed evidence item is referenced or
+  // explicitly dispositioned (the bookkeeping gate).
   const evidenceIndex = docs['evidence-index.json'] || {};
   const dispositions = docs['evidence-dispositions.json'] || null;
   const anchorIds = new Set((evidenceIndex.evidence || []).map((item) => item.id));
@@ -371,7 +370,7 @@ function sha(buffer) { return createHash('sha256').update(buffer).digest('hex');
 function readJSON(path) { return JSON.parse(readFileSync(path, 'utf8')); }
 function walkFiles(path) { return readdirSync(path, { withFileTypes: true }).flatMap((entry) => entry.isDirectory() ? walkFiles(`${path}/${entry.name}`) : [`${path}/${entry.name}`]).sort(); }
 
-// Schema 2.2 authoring-integrity helpers (structure only; never business meaning).
+// Schema 2.3 authoring-integrity helpers (structure only; never business meaning).
 function isSymbolicValue(value) { return typeof value === 'string' && (/^runtime-value/i.test(value) || /^<.+>$/.test(value)); }
 function concreteAcceptanceFindings(cap) {
   const findings = []; const examples = cap.acceptanceExamples || []; const required = cap.inputSchema?.required || [];

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0",
+  "releaseDigest": "neutral-golden-release",
+  "dispositions": [
+    {
+      "controlId": "submit-button",
+      "pageId": "submission",
+      "disposition": "primary-trigger",
+      "capabilityId": "cap-submit",
+      "operationId": "create-submission",
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-page:submission",
+          "frontend-control:submit-button"
+        ]
+      }
+    },
+    {
+      "controlId": "title-input",
+      "pageId": "submission",
+      "disposition": "input",
+      "capabilityId": "cap-submit",
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-page:submission",
+          "frontend-control:title-input"
+        ]
+      }
+    },
+    {
+      "controlId": "upload-input",
+      "pageId": "submission",
+      "disposition": "input",
+      "capabilityId": "cap-upload",
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-page:submission",
+          "frontend-control:upload-input"
+        ]
+      }
+    },
+    {
+      "controlId": "assist-title-button",
+      "pageId": "submission",
+      "disposition": "primary-trigger",
+      "capabilityId": "cap-assist",
+      "operationId": "assist-title-op",
+      "evidence": {
+        "status": "observed",
+        "sources": [
+          "frontend-page:submission",
+          "frontend-control:assist-title-button"
+        ]
+      }
+    }
+  ]
+}

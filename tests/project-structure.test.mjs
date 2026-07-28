@@ -32,7 +32,7 @@ test('trusted validator tree digest detects a modified imported library', () => 
   try {
     for (const name of ['scripts', 'validators']) cpSync(path.join(root, name), path.join(temp, name), { recursive: true });
     cpSync(path.join(root, 'assets/golden-approved/functional-domain'), path.join(temp, 'domain'), { recursive: true });
-    appendFileSync(path.join(temp, 'validators/fdd-2.2.5/lib/presentation.mjs'), '\n// tampered\n');
+    appendFileSync(path.join(temp, 'validators/fdd-2.3.0/lib/presentation.mjs'), '\n// tampered\n');
     const result = spawnSync('node', [path.join(temp, 'scripts/validate-package.mjs'), path.join(temp, 'domain'), '--require-approved'], { encoding: 'utf8' });
     assert.notEqual(result.status, 0); assert.match(result.stderr, /does not reference the immutable trusted repository validator/);
   } finally { rmSync(temp, { recursive: true, force: true }); }

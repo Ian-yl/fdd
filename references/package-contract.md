@@ -27,7 +27,7 @@
 - `permissions`: actor/action/resource decisions.
 - `integrations`: required external capabilities and failure behavior.
 
-FDD planning reads page architecture, system architecture, product context, finalized design exports, the AI Restore release, and optional user business decisions. It emits `design-manifest.json`, locked `designs/*`, `frontend-semantic-inventory.json`, `observed-interactions.json`, `control-capability-map.json`, `asset-role-inventory.json`, `planning-manifest.json`, `planning-artifacts.json`, and generated `capability-definitions.json`. Independent review emits `planning-review-receipt.json`. The formal domain package is derived from and locked with these artifacts.
+FDD planning reads page architecture, system architecture, product context, finalized design exports, the AI Restore release, and optional user business decisions. Under schema 2.3 the scaffold synthesizes no capability; it extracts the release's complete page semantics and emits `design-manifest.json`, locked `designs/*`, `frontend-semantic-inventory.json`, `observed-interactions.json`, an empty `control-capability-map.json`, `asset-role-inventory.json`, `control-dispositions.json` (every interaction control seeded `unresolved`), `grouping-candidates.json` (advisory closure hints), `evidence-index.json`, an empty `evidence-dispositions.json`, `planning-manifest.json`, `planning-artifacts.json`, and a `capability-definitions.json` with no capabilities. The author agent then creates one capability per interaction closure and dispositions every control. Independent review emits `planning-review-receipt.json`. The formal domain package is derived from and locked with these artifacts.
 
 Every capability includes `capabilityIntent.userGoal`, `businessOutcome`, `trigger`, `prerequisites`, typed `inputs`, `processingSemantics`, typed `outputs`, `sideEffects`, `downstreamUsage`, `qualityCriteria`, `failures`, and evidence. Each operation closes method/path/content type, request/response schemas, authorization, effects, errors, transaction/consistency, idempotency, concurrency, acceptance, and applicable asset/provider contracts. Cross-operation values use explicit `dataDependencies` with runtime propagation, ownership, lifecycle, and consistency requirements.
 
@@ -76,6 +76,14 @@ Every complete capability that produces a business product declares `resultPrese
 
 `asset-role-inventory.json` binds every release-referenced static asset to its digest and evidence-backed role. `decorative` assets remain part of the visual baseline. `business-sample` assets declare replacement by `api-data`, `user-input`, or `empty-state`. Unknown roles fail closed as business samples and produce an unresolved item.
 
+## Control dispositions
+
+`control-dispositions.json` is a formal package artifact: its digest is bound in `package-lock.json` alongside the semantic artifacts, and it is immutable once approved. It accounts for every interaction control the release exposes. Each entry is `{ controlId, pageId, disposition, capabilityId?, operationId?, rationale? }`; `disposition` is one of `primary-trigger`, `input`, `secondary-action`, `navigation`, `presentation-only`, or `ignored-with-reason`. The scaffold seeds each control `unresolved`; the author replaces every seed. Validate proves a complete, exact correspondence with the release control inventory — every inventory control has exactly one ledger entry, no ledger entry names a control absent from the inventory, and no `unresolved` seed remains — and proves each disposition's structural obligations: `primary-trigger` names an existing `capabilityId` and its primary `operationId`; `input` and `secondary-action` name an existing `capabilityId`; `navigation` and `presentation-only` name none and never bind a state-writing operation; `ignored-with-reason` carries a non-empty `rationale`. Whether a disposition is honest is the reviewer's judgment; the ledger content is the author's.
+
+## Grouping candidates
+
+`grouping-candidates.json` records advisory groupings the scaffold computed from container/DOM containment and visual distance, button-text hierarchy, field required/type/default affinity, spatial association to a result region, architecture annotations, and observed network interactions. It is a hint set, never a decision: the author confirms, splits, or merges candidates into closures from evidence, and no validator or reviewer treats a candidate as a decided closure. It is not part of the locked formal contract.
+
 ## Page mapping
 
 `page-function-map.json` maps every architecture node ID to capability IDs. An architecture node with explicit `nav: true` is emitted as `navigationOnly: true`: its navigation and business evidence remain available to FDD authoring, but it is excluded from immutable visual-release page coverage and route checks. Navigation-only status is never inferred from an ID, title, parent position, or missing release page.
@@ -99,6 +107,7 @@ Approval requires:
 - parsed frontend semantic artifacts bound to the immutable release;
 - no unconstrained generic object replacing a business schema;
 - complete control mappings, operation-specific failures and acceptance, runtime data lineage, asset transfer and provider contracts where applicable;
+- a `control-dispositions.json` in exact correspondence with the release control inventory, with no `unresolved` seed remaining and every `primary-trigger` bound to a capability and its primary operation;
 - distinguishable semantics for non-alias capabilities in the same business scope.
 
 The validator generates `package-lock.json`; regenerate it after formal package files change.
@@ -107,9 +116,9 @@ The validator generates `package-lock.json`; regenerate it after formal package 
 
 A feature-list label proves the function is required. When detailed behavior is absent, this Skill designs distinct inputs, processing semantics, output quality, failure rules, and an acceptance example, marking those additions as `designed`. Named functions receive distinct behavior unless the approved package declares them as aliases. Decisions that require external authority remain blockers.
 
-## Schema 2.2 authored closure
+## Schema 2.3 authored closure
 
-Schema 2.2 is the only supported contract. `scaffold-package.mjs` emits `evidence-index.json`, an initially empty required `evidence-dispositions.json`, and capability skeletons (`specificationStatus: 'draft-pending-authoring'`, identity, pageId, anchored evidence ids, and non-authoritative classifier hints under `synthesisAnalysis.classifierRole: 'candidate-hint'`). The author agent then closes each capability and dispositions every indexed item not used by the authored contract.
+Schema 2.3 is the only supported contract. `scaffold-package.mjs` emits the evidence workspace — `evidence-index.json`, an initially empty required `evidence-dispositions.json`, `control-dispositions.json` with every control seeded `unresolved`, `grouping-candidates.json`, and a `functional-spec.json`/`capability-definitions.json` with no capabilities. It creates no capability skeleton and classifies no architecture leaf into a capability. The author agent reads each page's interaction closures, creates one capability per closure, dispositions every control, and dispositions every indexed evidence item not anchored by an authored closure.
 
 The formal package also contains `design-manifest.json` and its locked `designs/*` files. The normalized design-manifest digest is recorded in `planning-manifest.inputDigests.designs`, contributes to `synthesisInputDigest`, and is repeated by the evidence index. Replacing a design invalidates input-bound BMAD decisions and requires domain authoring review again.
 
@@ -126,7 +135,7 @@ Every authored capability carries a `closure` answering the six questions, each 
 
 A `complete` capability's `acceptanceExamples` carry concrete literal values: real `given` inputs and real expected `then` values, never symbolic `runtime-value-N` placeholders. A `planned` capability carries a `missingDecision` record (`question`, `missingBusinessDecision`, `sourceEvidenceUnanswered: true`, `evidenceAnchors`) proving the source genuinely leaves the business decision open. When the source shows an external capability is required, the author writes an abstract `providerContract` (`requiredCapability` plus input/output mappings) without naming a vendor unless a user decision does.
 
-`evidence-dispositions.json` records every indexed evidence item the closure does not anchor, each with a reason (`out-of-scope`, `decorative`, or `duplicate-of:<id>`). The bookkeeping gate fails the package when any indexed evidence item is neither referenced by an authored closure nor dispositioned, listing each gap. Non-headless `complete` capabilities bind their trigger to an observed release control in `control-capability-map.json` (control provenance).
+`evidence-dispositions.json` records every indexed evidence item the closure does not anchor, each with a reason (`out-of-scope`, `decorative`, or `duplicate-of:<id>`). The bookkeeping gate fails the package when any indexed evidence item is neither referenced by an authored closure nor dispositioned, listing each gap. A non-headless `complete` capability binds its trigger through a `primary-trigger` entry in `control-dispositions.json` naming an observed release control, mirrored in `control-capability-map.json` (control provenance).
 # Structured Capability Contract
 
 Every complete capability declares machine-readable `inputSchema`, `outputSchema`, and `acceptanceExamples`. Each operation declares content type, location-specific request schemas, response schema, errors, effects, and transaction or consistency behavior where related writes occur. Natural-language input names are descriptive context, not an implementation contract.
@@ -135,15 +144,15 @@ Cross-operation workflows declare `dataDependencies`: source operation and respo
 
 Transfer and integration semantics use `resourceTransfer`, `resourceValidation`, `resourcePersistence`, `integrationBindings`, and `externalEffects`. A file upload is one possible resource-transfer instance. Validators and implementation tools must not infer these semantics from operation IDs, labels, filenames, framework choices, product categories, or vocabulary.
 
-Schema 2.2 uses `resourceTransfer` exclusively. A multipart operation without `resourceTransfer` cannot be approved or prepared.
+Schema 2.3 uses `resourceTransfer` exclusively. A multipart operation without `resourceTransfer` cannot be approved or prepared.
 
-Version binding uses the immutable repository-owned Schema 2.2 entrypoints under `validators/fdd-2.2.0/` and `validators/handoff-2.2/`. FDD is the canonical validator source; PI synchronizes this registry and tests the complete cross-project tree digest. Package-supplied JavaScript, snapshot paths, and self-reported hashes are data only and are never executed.
+Version binding uses the immutable repository-owned Schema 2.3 entrypoints under `validators/fdd-2.3.0/` and `validators/handoff-2.3/`. FDD is the canonical validator source; PI synchronizes this registry and tests the complete cross-project tree digest. Package-supplied JavaScript, snapshot paths, and self-reported hashes are data only and are never executed.
 
 Every capability input carries ownership evidence. Valid sources are the same business region as its trigger, an architecture owner module, a reliable semantic match, a cross-operation data dependency, or a confirmed user decision. Merely existing on the same page is not ownership evidence.
 
 `synthesisAnalysis.confidence` is `confirmed`, `high`, `medium`, or `low`. Low-confidence capability semantics are `planned`: they retain a reachable, capability-specific planned presentation but expose no operation or state-changing domain contract. Medium confidence carries a reviewable `bmadDecision`, and an approved package records its independent reviewer. Every provider parameter mapping is also an operation `integrationBinding`.
 
-Architecture leaves are classified before synthesis as `business-capability`, `operation`, `input-field`, `local-control`, `display-requirement`, `navigation`, `state`, or `acceptance-constraint`. Only business capabilities, independent operations, and explicitly observed embedded operations may create capability records.
+Architecture leaves do not create capability records. They are context evidence indexed in `evidence-index.json` and anchored (or dispositioned) like any other evidence. What creates a capability is a resolved interaction closure on a released page; completeness is proven by the control-disposition ledger, not by classifying leaves into capability-generating buckets.
 
 The planning manifest binds every accepted medium-confidence BMAD decision to `synthesisInputDigest`. The decision records its chosen pattern, rejected alternatives with reasons, and reviewer identity. Package review never promotes a pending decision.
 

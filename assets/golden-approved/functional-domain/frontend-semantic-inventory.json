@@ -35,7 +35,8 @@
       "controls": [
         {
           "controlId": "submit-button",
-          "label": "Create submission"
+          "label": "Create submission",
+          "kind": "button"
         },
         {
           "controlId": "upload-input",
@@ -43,7 +44,8 @@
         },
         {
           "controlId": "assist-title-button",
-          "label": "Suggest title"
+          "label": "Suggest title",
+          "kind": "button"
         },
         {
           "controlId": "title-input",

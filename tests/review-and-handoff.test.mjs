@@ -13,7 +13,7 @@ const tempCopy = (source) => { const dir = mkdtempSync(path.join(os.tmpdir(), 'f
 const reviewPackage = (dir, reviewer) => spawnSync('node', [path.join(root, 'scripts/review-package.mjs'), '--package', dir, '--reviewer-agent', reviewer], { encoding: 'utf8' });
 const validateHandoff = (dir) => spawnSync('node', [path.join(root, 'scripts/validate-implementation-handoff.mjs'), '--handoff', dir], { encoding: 'utf8' });
 
-// ---- review negatives (schema 2.2 functional golden) ----
+// ---- review negatives (schema 2.3 functional golden) ----
 test('review-package rejects a package whose reviewer is the same agent as the author', () => {
   const { dir, target } = tempCopy(golden);
   try {
@@ -62,8 +62,8 @@ test('a tampered functional package lock digest is rejected under --require-appr
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
-// ---- handoff negatives (schema 2.2 approved handoff) ----
-test('the approved schema 2.2 handoff fixture validates before tampering', () => {
+// ---- handoff negatives (schema 2.3 approved handoff) ----
+test('the approved schema 2.3 handoff fixture validates before tampering', () => {
   assert.equal(validateHandoff(handoffFixture).status, 0, validateHandoff(handoffFixture).stderr);
 });
 
@@ -91,12 +91,12 @@ test('validate-implementation-handoff rejects a handoff receipt with a tampered 
   }
 });
 
-test('the trusted handoff-2.2 reviewer tree digest detects a tampered imported library on replay', () => {
+test('the trusted handoff-2.3 reviewer tree digest detects a tampered imported library on replay', () => {
   const temp = mkdtempSync(path.join(os.tmpdir(), 'fdd-handoff-tamper-'));
   try {
     for (const name of ['scripts', 'validators']) cpSync(path.join(root, name), path.join(temp, name), { recursive: true });
     cpSync(handoffFixture, path.join(temp, 'handoff'), { recursive: true });
-    appendFileSync(path.join(temp, 'validators/handoff-2.2/lib/presentation.mjs'), '\n// tampered\n');
+    appendFileSync(path.join(temp, 'validators/handoff-2.3/lib/presentation.mjs'), '\n// tampered\n');
     const result = spawnSync('node', [path.join(temp, 'scripts/validate-implementation-handoff.mjs'), '--handoff', path.join(temp, 'handoff')], { encoding: 'utf8' });
     assert.notEqual(result.status, 0);
     assert.match(`${result.stdout}${result.stderr}`, /does not pin a trusted reviewer revision/);

@@ -5,13 +5,13 @@
   "visualReleaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
   "sourceTreeDigest": "1c351538968e657d634275343d892ba8389790f33472e922b3798b806e85787e",
   "digests": {
-    "handoff-manifest.json": "ad6b795d24f0bbab2040999bb602c89db9bb995e777b7bc6671efd6b1455a219",
+    "handoff-manifest.json": "3ec68e5373c4504d75ac2cbe79fcf91ae776e1ba77734eab8c99bcc4506fab80",
     "visual-source.json": "195b5d4cb640bceec677acbf07e783b1de16ddf4590a2aa9310f1a664936a651",
     "release-manifest.json": "b84c01e3d11e90bf1c27d65a77c8040fce27dd3e3facde114ec120ac8ba4a97e",
     "suite-gate.json": "df3a61c8f089be157f194cc94090a4a8240bd27b2064017ddfb060d32591bd1f",
     "visual-approval.json": "d7d481b3d4a280f6c06e7a23a8f0ffca4ca7059461182eb8ff5c9e3030c8157d",
     "frontend-manifest.json": "383ca1e6fe701aad6a290fc1ce9bc2995b03e9e0fb63d1bfc035a3ddf879026c",
-    "functional-spec.json": "6efaaac25026419ffaf6d090ced02f062cae02ec3d917b439d8426065fb10669",
+    "functional-spec.json": "40f93444884984c4ffaec2440df4d3b7710665bd94d1fa63e4b38ce8dda378e7",
     "frontend-semantic-inventory.json": "51aa6cf1775cd398707af3617f1ae69d17e9b0834764c519b2c456519584490a",
     "observed-interactions.json": "e760ebd022544c889c6fec968402c499c7c1c968432024f87a04fcd755a2c29e",
     "control-capability-map.json": "5ef7b95d1e4a6f8e0ba9377608857eb94da8dd7feddc3c5dc80b86b1c10e89c7",
@@ -22,7 +22,7 @@
     "api-contract.json": "e1f50b59dfbb3e169f06551b2bd770750fb1fb3b73751ef763503cf405a94621",
     "domain-bindings.json": "29472361325c14b024baddd37d514569213434312aa5f4c5cbc81fd6da10271c",
     "runtime-contract.json": "bdf3bbcd4f6abbb0bfeec14bd0730e3714b3006c6d8e540140c6971e33ca3739",
-    "handoff-review-receipt.json": "73ed4739dfc5f95906580d55ded55c8f47536246e1221751c866bdc35fb070a6",
+    "handoff-review-receipt.json": "f017fdc031ddc2c7ae097ac4d360ffcbcc46ec2db3915ef4e11b3acd4b65e3da",
     "web": "1c351538968e657d634275343d892ba8389790f33472e922b3798b806e85787e"
   }
 }

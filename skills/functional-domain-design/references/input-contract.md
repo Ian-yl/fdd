@@ -13,6 +13,6 @@ Caller-authored planning, stories, profiles, and `capability-definitions.json` a
 
 The release must contain a valid release manifest, payload manifest, approval, Suite Gate, page results, page restore plans, visual inventories, and publication source. FDD reads it without modification.
 
-Schema 2.2 approval requires the finalized design input. The scaffold copies it into `designs/`, writes `design-manifest.json`, binds the normalized manifest digest into `planning-manifest.inputDigests.designs` and `synthesisInputDigest`, and indexes every selected design as `design:*` evidence. Exploration files, unsupported binaries, non-regular files, empty design directories, and page hints absent from the page architecture are rejected.
+Schema 2.3 approval requires the finalized design input. The scaffold copies it into `designs/`, writes `design-manifest.json`, binds the normalized manifest digest into `planning-manifest.inputDigests.designs` and `synthesisInputDigest`, and indexes every selected design as `design:*` evidence. Exploration files, unsupported binaries, non-regular files, empty design directories, and page hints absent from the page architecture are rejected.
 
 User decisions use stable IDs and target an architecture module/capability. A decision overrides only its explicit target. Contradictions with documented requiredness, ownership, lifecycle, or observable frontend behavior become unresolved blockers.

@@ -1,11 +1,11 @@
 {
-  "schemaVersion": "2.2",
+  "schemaVersion": "2.3",
   "packageType": "functional-domain",
   "projectId": "neutral-submission-22",
   "projectName": "Neutral submission workspace",
   "visualReleaseDigest": "neutral-golden-release",
   "status": "approved",
-  "authorAgentId": "golden-domain-author-22",
+  "authorAgentId": "golden-domain-author-23",
   "sourceDirectory": "architecture-input",
   "sourceContract": {
     "requiredFiles": [
@@ -38,9 +38,10 @@
     "blockedCapabilities": 0,
     "openBlockers": 0
   },
+  "controlDispositions": "control-dispositions.json",
   "approval": {
     "method": "independent-agent-review",
-    "reviewerAgentId": "golden-domain-reviewer-22",
-    "reviewedAt": "2026-07-28T03:59:42.261Z"
+    "reviewerAgentId": "golden-domain-reviewer-23",
+    "reviewedAt": "2026-07-28T05:23:04.632Z"
   }
 }

@@ -50,7 +50,8 @@ test('explicit nav nodes retain semantics but are excluded from visual release c
   assert.equal(spec.architecture.visualAlignment.missingArchitecturePageIds.includes('navigation-destination'), false);
   assert.equal(spec.architecture.visualAlignment.coverage, 1);
   assert.equal(mapping.pages.find((page) => page.pageId === 'navigation-destination').navigationOnly, true);
-  assert.ok(spec.architecture.leafClassifications.some((leaf) => leaf.pageId === 'navigation-destination'));
+  const evidence = read(path.join(output, 'evidence-index.json'));
+  assert.ok(evidence.evidence.some((item) => item.id === 'page:navigation-destination'));
 }));
 
 function withInput(callback) {
