@@ -78,7 +78,7 @@ Every complete capability that produces a business product declares `resultPrese
 
 ## Page mapping
 
-`page-function-map.json` maps every page ID to capability IDs. A page may be explicitly marked `navigationOnly`.
+`page-function-map.json` maps every architecture node ID to capability IDs. An architecture node with explicit `nav: true` is emitted as `navigationOnly: true`: its navigation and business evidence remain available to FDD authoring, but it is excluded from immutable visual-release page coverage and route checks. Navigation-only status is never inferred from an ID, title, parent position, or missing release page.
 
 ## Unresolved items
 

@@ -34,13 +34,32 @@ test('scaffold rejects a design whose page hint is not an architecture page', ()
   assertRejected(run(designs, output), /pageHint does not match an architecture page/);
 }));
 
+test('explicit nav nodes retain semantics but are excluded from visual release coverage', () => withInput(({ dir, designs, output }) => {
+  const architecture = path.join(dir, 'architecture');
+  cpSync(path.join(support, 'architecture'), architecture, { recursive: true });
+  const pageFile = path.join(architecture, 'page-architecture.json');
+  const pages = read(pageFile);
+  pages.nodes.push({ id: 'navigation-destination', title: 'Navigation destination', nav: true, modules: [{ id: 'navigation-module', name: 'Module navigation', children: [{ id: 'navigation-entry', name: 'Entry' }] }] });
+  writeFileSync(pageFile, `${JSON.stringify(pages, null, 2)}\n`);
+  const result = run(designs, output, architecture);
+  assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+  const spec = read(path.join(output, 'functional-spec.json'));
+  const mapping = read(path.join(output, 'page-function-map.json'));
+  assert.deepEqual(spec.architecture.visualAlignment.navigationOnlyPageIds, ['navigation-destination']);
+  assert.equal(spec.architecture.visualAlignment.visualRequiredPageIds.includes('navigation-destination'), false);
+  assert.equal(spec.architecture.visualAlignment.missingArchitecturePageIds.includes('navigation-destination'), false);
+  assert.equal(spec.architecture.visualAlignment.coverage, 1);
+  assert.equal(mapping.pages.find((page) => page.pageId === 'navigation-destination').navigationOnly, true);
+  assert.ok(spec.architecture.leafClassifications.some((leaf) => leaf.pageId === 'navigation-destination'));
+}));
+
 function withInput(callback) {
   const dir = mkdtempSync(path.join(os.tmpdir(), 'fdd-design-input-'));
   try {
     cpSync(path.join(support, 'designs'), path.join(dir, 'designs'), { recursive: true });
-    callback({ designs: path.join(dir, 'designs'), output: path.join(dir, 'output') });
+    callback({ dir, designs: path.join(dir, 'designs'), output: path.join(dir, 'output') });
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
-function run(designs, output) { return spawnSync(process.execPath, [scaffold, '--input', path.join(support, 'architecture'), '--designs', designs, '--visual-release', path.join(support, 'visual-release'), '--output', output, '--author-agent', 'design-input-author'], { encoding: 'utf8' }); }
+function run(designs, output, input = path.join(support, 'architecture')) { return spawnSync(process.execPath, [scaffold, '--input', input, '--designs', designs, '--visual-release', path.join(support, 'visual-release'), '--output', output, '--author-agent', 'design-input-author'], { encoding: 'utf8' }); }
 function read(file) { return JSON.parse(readFileSync(file, 'utf8')); }
 function assertRejected(result, pattern) { assert.notEqual(result.status, 0); assert.match(`${result.stdout}${result.stderr}`, pattern); }
