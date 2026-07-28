@@ -8,13 +8,39 @@
       "controlId": "submit-button",
       "mappingType": "observed-trigger",
       "fieldBindings": [
-        {
-          "controlId": "title-input",
+    {
+      "controlId": "title-input",
           "inputId": "title",
           "statePath": "capabilities.cap-submit.inputs.title",
           "operationId": "create-submission",
-          "requestPath": "body.title"
-        }
+      "requestPath": "body.title"
+    },
+    {
+      "controlId": "designed-category-select",
+      "inputId": "category",
+      "statePath": "capabilities.cap-submit.inputs.category",
+      "operationId": "create-submission",
+      "requestPath": "body.category",
+      "source": "designed-control",
+      "designedControl": {
+        "type": "select",
+        "label": "Submission category",
+        "targetRegion": "options-section"
+      }
+    },
+    {
+      "controlId": "designed-quantity-input",
+      "inputId": "quantity",
+      "statePath": "capabilities.cap-submit.inputs.quantity",
+      "operationId": "create-submission",
+      "requestPath": "body.quantity",
+      "source": "designed-control",
+      "designedControl": {
+        "type": "number-input",
+        "label": "Result quantity",
+        "targetRegion": "options-section"
+      }
+    }
       ],
       "primaryOperationId": "create-submission",
       "evidence": {

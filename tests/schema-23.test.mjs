@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { appendFileSync, cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
@@ -152,6 +152,34 @@ test('㉒f (wave7) an independent-items provider without a concurrency contract 
   rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.operations[0].providerContract.concurrency; })), /must declare a concurrency contract/);
 });
 
+test('independent multi-item output rejects serial provider execution', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.operations[0].providerContract.concurrency.maxParallel = 1; })), /maxParallel is below 2/);
+});
+
+test('application-only provider input requires an evidence-backed application reason', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { const entry = capability.closure.inputUtilization.find((item) => item.disposition === 'application-only'); delete entry.reason; entry.evidenceAnchors = []; })), /application-only input .* lacks a reason or evidence/);
+});
+
+test('a required field absent from the release must have an authored designed-control binding', () => {
+  rejects(withGolden(({ cap }) => cap('cap-upload', (capability) => {
+    capability.inputSchema.properties.description = { type: 'string', minLength: 1 }; capability.inputSchema.required.push('description');
+    const operation = capability.operations[0]; operation.request.bodySchema.properties.description = { type: 'string', minLength: 1 }; operation.request.bodySchema.required.push('description');
+    operation.acceptanceExample.given.description = 'fresh description'; capability.acceptanceExamples[0].given.description = 'fresh description';
+  })), /required request field .*body\.description has no authored/);
+});
+
+test('an agent-designed control may supply a required field not shown in the release', () => {
+  const dir = withGolden(({ cap, read, write }) => {
+    cap('cap-upload', (capability) => {
+      capability.inputSchema.properties.description = { type: 'string', minLength: 1 }; capability.inputSchema.required.push('description');
+      const operation = capability.operations[0]; operation.request.bodySchema.properties.description = { type: 'string', minLength: 1 }; operation.request.bodySchema.required.push('description');
+      operation.acceptanceExample.given.description = 'fresh description'; capability.acceptanceExamples[0].given.description = 'fresh description';
+    });
+    const map = read('control-capability-map.json'); map.mappings.find((item) => item.capabilityId === 'cap-upload').fieldBindings.push({ inputId: 'description', controlId: 'designed-upload-description', operationId: 'upload-resource-op', statePath: 'form.description', requestPath: 'body.description', source: 'designed-control', designedControl: { type: 'textarea', label: 'Description', targetRegion: 'upload-panel' } }); write('control-capability-map.json', map);
+  });
+  const result = validate(dir); rmSync(dir, { recursive: true, force: true }); assert.equal(result.status, 0, result.stderr);
+});
+
 test('㉓s (wave7) minting a new approval against a superseded validator revision is rejected (signing pins latest)', () => {
   const dir = mkdtempSync(path.join(os.tmpdir(), 'fdd-22-sign-'));
   try {
@@ -159,6 +187,9 @@ test('㉓s (wave7) minting a new approval against a superseded validator revisio
     const result = spawnSync('node', [path.join(root, 'scripts/review-package.mjs'), '--package', dir, '--reviewer-agent', 'golden-domain-reviewer-23', '--validator-version', '2.2.5'], { encoding: 'utf8' });
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /superseded validator revision/);
+    assert.equal(JSON.parse(readFileSync(path.join(dir, 'manifest.json'), 'utf8')).status, 'draft');
+    assert.equal(existsSync(path.join(dir, 'review-receipt.json')), false);
+    assert.equal(existsSync(path.join(dir, 'review-rejection.json')), true);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
