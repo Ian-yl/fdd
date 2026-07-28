@@ -5,6 +5,7 @@ import { basename, extname, resolve } from 'node:path';
 import { bindVisualRelease, verifyVisualRelease } from './lib/visual-release.mjs';
 import { extractFrontendSemantics } from './lib/frontend-semantics.mjs';
 import { buildEvidenceIndex } from './lib/evidence-index.mjs';
+import { primarySubmitControls } from './lib/primary-submit.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.input || !args.output || !args['author-agent'] || !args['visual-release'] || !args.designs) usage();
@@ -63,6 +64,7 @@ for (const page of pages) for (const module of page.modules || []) for (const it
       sourceModuleId: item.id,
       sourceContainerModuleId: module.id,
       sourceArchitectureLeafId: item.id,
+      submissionScopeId: item.submissionScopeId || module.submissionScopeId || null,
       embeddedOperationHints: classification.embeddedOperations,
       observedTriggerControlId: control?.controlId || null,
       note: 'Candidate hint only; the author agent must close semantics from anchored evidence.',
@@ -70,6 +72,19 @@ for (const page of pages) for (const module of page.modules || []) for (const it
     evidenceAnchors: anchors,
   });
   skeletonControlMap.push({ capabilityId: id, pageId: page.id, controlId: null, observedTriggerControlId: control?.controlId || null, mappingType: 'pending-authoring', fieldBindings: [], primaryOperationId: null, evidence: { status: 'designed', sources: anchors } });
+}
+
+for (const control of primarySubmitControls({ capabilities: [] }, frontend.inventory, frontend.interactions)) {
+  const candidates = skeletons.filter((item) => item.pageIds.includes(control.pageId) && item.synthesisAnalysis.candidateClassification === 'business-capability' && (control.capabilityId === item.id || (control.submissionScopeId && control.submissionScopeId === item.synthesisAnalysis.submissionScopeId)));
+  const fallback = candidates.length ? candidates : skeletons.filter((item) => item.pageIds.includes(control.pageId) && item.synthesisAnalysis.candidateClassification === 'business-capability');
+  if (fallback.length === 1) {
+    const capability = fallback[0]; const mapping = skeletonControlMap.find((item) => item.capabilityId === capability.id);
+    capability.synthesisAnalysis.observedTriggerControlId = control.controlId;
+    capability.synthesisAnalysis.primarySubmitCandidate = { controlId: control.controlId, submissionScopeId: control.submissionScopeId, formId: control.formId, evidence: control.evidence };
+    Object.assign(mapping, { controlId: control.controlId, observedTriggerControlId: control.controlId, mappingType: 'observed-primary-submit-candidate', evidence: control.evidence });
+  } else {
+    unresolved.push({ id: `unresolved-primary-submit-${stableId(`${control.pageId}:${control.controlId}`)}`, severity: 'blocker', status: 'open', disposition: 'author-decision-required', question: `Observed primary submit control ${control.controlId} cannot be uniquely assigned to an architecture capability`, relatedIds: [control.pageId, control.controlId, ...fallback.map((item) => item.id)], sources: control.evidence.sources });
+  }
 }
 
 for (const decision of decisions) unresolved.push({ id: `decision-${decision.id}`, severity: 'minor', status: 'open', disposition: 'authoring-input', question: `Apply user decision ${decision.id} during domain authoring`, relatedIds: [decision.targetId].filter(Boolean), sources: [`user-decision:${decision.id}`] });

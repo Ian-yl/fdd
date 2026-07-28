@@ -66,6 +66,8 @@ For a capability anchoring a `design:<id>` export, meaning-fidelity and discard-
 
 ## Constitution: division of judgment
 
+Before approval, every structured primary-submit control is traced through exactly one `control-capability-map` entry to an existing capability and its existing primary `POST` operation. The operation request covers every input explicitly tied to the same submission scope/form or observed request, and its response participates in a business result presentation contract. A navigation or history semantic role is never accepted as a submit trigger. Missing or ambiguous ownership is rejected; reviewers do not resolve it by inventing a button capability or a generic endpoint.
+
 The framework carries four standing guarantees, and no change may weaken any of them:
 
 - **Genericity** — gates activate from contract declarations only; framework code carries no product vocabulary; fixtures stay business-neutral.

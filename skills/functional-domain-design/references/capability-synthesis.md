@@ -12,11 +12,15 @@ Persistent workflows produce entities appropriate to the observed operation role
 
 ## Cross-region aggregate submission
 
+A release control is a primary-submit candidate only when structured evidence identifies it: a native submit type, an explicit submission role/form scope, or an observed submit interaction. Labels and DOM proximity are never classifiers. The scaffold attaches an unambiguous candidate to an existing architecture capability shell; ambiguity becomes a blocker for the authoring agent and never creates a button-shaped capability or API.
+
 Multiple form or configuration sections become one `aggregateSubmission` only when they are inside one declared capability scope and one primary submit action consumes their values to produce one final product. Evidence is accepted in this order: an `observed-interactions` request carrying the declared fields across the sections, a confirmed user decision, or an explicit architecture declaration. DOM proximity and similar labels are not evidence. If the relationship or final-product semantics cannot be proven, the primary capability is `planned` with an unresolved item and has no operation, schema, or acceptance fixture.
 
 `aggregateSubmission.sections` preserves field groups and source regions. The final JSON operation has exactly one body schema covering every section field, including local-only configuration fields. Its `configurationAggregate` is an aggregate-root entity and the operation persists it atomically. `finalProduct` declares type, quantity (a fixed integer or a `sourceField` included in the aggregate request), lifecycle, and downstream usage.
 
 Section leaves do not become capabilities or APIs. Menu modes remain separate capabilities. Two independently evidenced submit actions remain two operations and are never merged merely because they share a page. Resource uploads remain independent multipart operations using `resourceTransfer`; their runtime resource IDs enter the aggregate request through `dataDependencies`.
+
+The authoring agent closes a primary submit as the trigger of one aggregate business capability. The primary `POST` operation covers every evidenced field in its submission scope, identifies the button in `presentation.primaryOperationId` and `control-capability-map.json`, and returns the capability's business result. Navigation, history, and other entry controls cannot serve as aggregate-submit triggers. A submit candidate that cannot be assigned honestly remains blocked rather than receiving a generic operation.
 
 ## Result presentation binding
 

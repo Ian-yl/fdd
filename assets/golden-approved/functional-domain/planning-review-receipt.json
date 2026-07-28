@@ -3,8 +3,8 @@
   "status": "approved",
   "workflow": "fdd-bmad-planning",
   "authorAgentId": "golden-domain-author-22",
-  "reviewerAgentId": "golden-domain-reviewer",
-  "reviewedAt": "2026-07-28T02:07:00.498Z",
+  "reviewerAgentId": "golden-domain-reviewer-22",
+  "reviewedAt": "2026-07-28T03:59:42.261Z",
   "checks": [
     "project understanding reviewed",
     "requirements analysis reviewed",

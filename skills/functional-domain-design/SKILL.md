@@ -73,6 +73,7 @@ Schema 2.2 is the only supported functional-domain and implementation-handoff co
 - Define business WHAT and WHY; leave frameworks, files, functions, and component choices to PI.
 - Distinguish confirmed, documented, observed, designed, inferred, and blocked facts; never hide contradictions through precedence.
 - Fold fields, local controls, display requirements, states, and constraints into their owning capability instead of manufacturing APIs.
+- Treat an evidence-backed primary submit control as the trigger of its owning aggregate capability: collect the scoped page inputs into one `POST` operation and bind that operation back to the release control; never create a capability or endpoint merely for the button.
 - Infer only when architecture, release behavior, and product context jointly support an implementation-safe decision.
 - Give distinct business capabilities distinct intent, schemas, outcomes, failures, quality criteria, and acceptance.
 - Return genuinely authoritative unknowns as precise decisions with affected scope; do not request caller-authored capability definitions.

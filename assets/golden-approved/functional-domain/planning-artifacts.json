@@ -29,7 +29,7 @@
       "id": "independent-domain-review",
       "status": "completed",
       "outputs": {
-        "reviewerAgentId": "golden-domain-reviewer",
+        "reviewerAgentId": "golden-domain-reviewer-22",
         "result": "approved"
       }
     }

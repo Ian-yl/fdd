@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, lstatSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { extname, relative, resolve } from 'node:path';
 import { presentationFindings } from './lib/presentation.mjs';
+import { primarySubmitFindings } from './lib/primary-submit.mjs';
 import { treeDigest } from './lib/validator-tree.mjs';
 import { collectStringValues, collectAnchorReferences, bookkeepingFindings } from './lib/evidence-index.mjs';
 
@@ -48,6 +49,7 @@ const trustedValidators = new Map([
   ['fdd-validator-2.2.2', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.2/validate-package.mjs') }],
   ['fdd-validator-2.2.3', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.3/validate-package.mjs') }],
   ['fdd-validator-2.2.4', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.4/validate-package.mjs') }],
+  ['fdd-validator-2.2.5', { contractVersion: 'functional-domain/2.2', entry: resolve(import.meta.dirname, '../validators/fdd-2.2.5/validate-package.mjs') }],
 ]);
 const trustedValidator = approvalReceipt?.trustedValidatorId ? trustedValidators.get(approvalReceipt.trustedValidatorId) : null;
 if (requireApproved && !approvalReceipt?.contractVersion) errors.push('approved package requires a versioned trusted review receipt');
@@ -255,6 +257,7 @@ for (const cap of capabilities.values()) {
 }
 
 if (isSchema22) {
+  errors.push(...primarySubmitFindings(spec, frontendInventory, docs['observed-interactions.json'], controlMap));
   // Schema 2.2 authoring integrity. Validate proves structure and consistency of the agent's
   // authored closure; it never judges business meaning (independent review owns that). Every
   // semantic field is evidence-anchored, acceptance examples carry concrete literal values, and

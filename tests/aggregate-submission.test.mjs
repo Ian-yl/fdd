@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { detectAggregateSubmissions } from '../scripts/lib/aggregate-submission.mjs';
+import { primarySubmitControls, primarySubmitFindings } from '../scripts/lib/primary-submit.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const release = path.resolve(root, '../ai-restore/releases/sample-suite/843a1541f8b1517dd996580cb467fa1534df8a320ce059e097910f01d92cb957');
@@ -36,6 +37,42 @@ test('insufficient aggregate evidence fails closed as planned', () => {
   const input = syntheticEvidence({ actions: 1 }); input.frontend.interactions.interactions = []; input.pages[0].modules.find((item) => item.id === 'actions-a').children[0].aggregateSubmission.evidenceStatus = 'inferred';
   const analysis = detectAggregateSubmissions(input); assert.equal(analysis.aggregates[0].status, 'planned'); assert.ok(analysis.unresolved.length);
 });
+
+test('structured primary submit evidence closes through one mapped POST operation', () => {
+  const contract = primarySubmitContract();
+  assert.deepEqual(primarySubmitControls(contract.spec, contract.inventory, contract.interactions).map((item) => item.controlId), ['submit']);
+  assert.deepEqual(primarySubmitFindings(contract.spec, contract.inventory, contract.interactions, contract.controlMap), []);
+});
+
+test('primary submit review rejects missing field coverage and navigation triggers', () => {
+  const contract = primarySubmitContract();
+  contract.inventory.pages[0].controls.find((item) => item.controlId === 'submit').semanticRole = 'navigation';
+  delete contract.spec.capabilities[0].operations[0].request.bodySchema.properties.option;
+  const findings = primarySubmitFindings(contract.spec, contract.inventory, contract.interactions, contract.controlMap);
+  assert.ok(findings.some((item) => item.includes('navigation or history')));
+  assert.ok(findings.some((item) => item.includes('omits page input field option')));
+});
+
+test('primary submit review rejects an unmapped control instead of inventing an operation', () => {
+  const contract = primarySubmitContract(); contract.controlMap.mappings = [];
+  assert.ok(primarySubmitFindings(contract.spec, contract.inventory, contract.interactions, contract.controlMap).some((item) => item.includes('exactly one control-capability mapping')));
+});
+
+test('aggregate submission review rejects a primary control absent from the release', () => {
+  const contract = primarySubmitContract(); contract.inventory.pages[0].controls = contract.inventory.pages[0].controls.filter((item) => item.controlId !== 'submit');
+  assert.ok(primarySubmitFindings(contract.spec, contract.inventory, contract.interactions, contract.controlMap).some((item) => item.includes('primary submit control is absent from the frontend release')));
+});
+
+function primarySubmitContract() {
+  const operation = { id: 'create-record', method: 'POST', request: { bodySchema: { type: 'object', required: ['title', 'option'], properties: { title: { type: 'string' }, option: { type: 'string' } } } }, response: { bodySchema: { type: 'object', required: ['recordId'], properties: { recordId: { type: 'string' } } } } };
+  const capability = { id: 'cap-create', pageIds: ['page'], specificationStatus: 'complete', aggregateSubmission: { status: 'complete', triggerControlId: 'submit' }, presentation: { primaryOperationId: 'create-record' }, operations: [operation], resultPresentation: { targetRegion: 'result' } };
+  return {
+    spec: { capabilities: [capability] },
+    inventory: { pages: [{ pageId: 'page', controls: [{ controlId: 'title-control', kind: 'input', fieldName: 'title', formId: 'create-form' }, { controlId: 'option-control', kind: 'select', fieldName: 'option', formId: 'create-form' }, { controlId: 'submit', kind: 'button', nativeType: 'submit', submissionRole: 'primary-submit', formId: 'create-form' }] }] },
+    interactions: { interactions: [{ id: 'submit-observed', pageId: 'page', controlId: 'submit', submissionRole: 'primary-submit', network: { method: 'POST', url: '/records', requestFields: ['title', 'option'] } }] },
+    controlMap: { mappings: [{ pageId: 'page', controlId: 'submit', capabilityId: 'cap-create', primaryOperationId: 'create-record' }] },
+  };
+}
 
 function syntheticEvidence({ actions }) {
   const modules = [];
