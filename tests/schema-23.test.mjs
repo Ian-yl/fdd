@@ -246,9 +246,21 @@ test('L7 an ignored-with-reason control without a rationale is rejected', () => 
 });
 
 test('L8 a primary-trigger not mirrored in control-capability-map is rejected', () => {
-  rejects(withGolden(({ read, write }) => { const map = read('control-capability-map.json'); map.mappings = map.mappings.filter((x) => x.controlId !== 'submit-button'); write('control-capability-map.json', map); }), /not mirrored in control-capability-map/);
+  rejects(withGolden(({ read, write }) => { const map = read('control-capability-map.json'); map.mappings = map.mappings.filter((x) => x.controlId !== 'submit-button'); write('control-capability-map.json', map); }), /not mirrored .*control-capability-map/);
 });
 
 test('L9 an operation with no trigger source (no disposition names it, no system trigger) is rejected', () => {
   rejects(withGolden(({ ledger }) => ledger((d) => { const s = d.find((x) => x.controlId === 'submit-button'); s.disposition = 'presentation-only'; delete s.capabilityId; delete s.operationId; })), /operation create-submission has no trigger source/);
+});
+
+test('L10 an input control without an operation request field binding is rejected', () => {
+  rejects(withGolden(({ read, write }) => { const map = read('control-capability-map.json'); map.mappings.find((item) => item.capabilityId === 'cap-submit').fieldBindings = []; write('control-capability-map.json', map); }), /exactly one field binding/);
+});
+
+test('L11 a secondary action cannot trigger another capability operation', () => {
+  rejects(withGolden(({ read, write }) => { const ledger = read('control-dispositions.json'); const item = ledger.dispositions.find((entry) => entry.controlId === 'assist-title-button'); item.disposition = 'secondary-action'; item.capabilityId = 'cap-submit'; item.operationId = 'assist-title-op'; write('control-dispositions.json', ledger); }), /operation that is not on capability cap-submit/);
+});
+
+test('L12 a primary trigger and handoff mapping cannot name different operations', () => {
+  rejects(withGolden(({ read, write }) => { const map = read('control-capability-map.json'); map.mappings.find((item) => item.capabilityId === 'cap-submit').primaryOperationId = 'assist-title-op'; write('control-capability-map.json', map); }), /not mirrored with the same operation|mapping differs/);
 });

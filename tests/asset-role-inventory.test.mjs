@@ -18,3 +18,18 @@ test('frontend semantics classifies decorative and business assets with fail-clo
     assert.equal(byPath.get('assets/th-unknown.png').role, 'business-sample'); assert.equal(byPath.get('assets/th-unknown.png').classificationStatus, 'defaulted-fail-closed'); assert.ok(result.unresolved.some((item) => item.relatedIds.includes(byPath.get('assets/th-unknown.png').id)));
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
+
+test('frontend semantics inventories CSS, remote, and data URI assets', () => {
+  const root = mkdtempSync(path.join(os.tmpdir(), 'asset-roles-extended-'));
+  try {
+    mkdirSync(`${root}/assets`, { recursive: true });
+    writeFileSync(`${root}/index.html`, '<section class="result-panel"><img src="https://cdn.example.test/sample-result.png"><img src="data:image/png;base64,c2FtcGxl"></section>');
+    writeFileSync(`${root}/styles.css`, '.brand-icon{background-image:url("assets/icon.png")}');
+    writeFileSync(`${root}/assets/icon.png`, 'decorative-icon');
+    const visual = { publicationRoot: root, pages: ['page'], routes: { page: '/page' }, inventories: { page: { items: [] } }, releaseDigest: 'release-digest', sourceTreeDigest: 'tree-digest', suiteGateDigest: 'gate-digest', manifest: { payloadManifestDigest: 'payload-digest' } };
+    const assets = extractFrontendSemantics(visual).assets.assets;
+    assert.equal(assets.find((item) => item.path === 'assets/icon.png')?.role, 'decorative');
+    assert.equal(assets.find((item) => item.sourceType === 'remote-url')?.role, 'business-sample');
+    assert.equal(assets.find((item) => item.sourceType === 'data-uri')?.role, 'business-sample');
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});

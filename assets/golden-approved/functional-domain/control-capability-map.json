@@ -7,7 +7,15 @@
       "pageId": "submission",
       "controlId": "submit-button",
       "mappingType": "observed-trigger",
-      "fieldBindings": [],
+      "fieldBindings": [
+        {
+          "controlId": "title-input",
+          "inputId": "title",
+          "statePath": "capabilities.cap-submit.inputs.title",
+          "operationId": "create-submission",
+          "requestPath": "body.title"
+        }
+      ],
       "primaryOperationId": "create-submission",
       "evidence": {
         "status": "observed",
@@ -22,7 +30,15 @@
       "pageId": "submission",
       "controlId": "upload-input",
       "mappingType": "observed-trigger",
-      "fieldBindings": [],
+      "fieldBindings": [
+        {
+          "controlId": "upload-input",
+          "inputId": "files",
+          "statePath": "capabilities.cap-upload.inputs.files",
+          "operationId": "upload-resource-op",
+          "requestPath": "body.files"
+        }
+      ],
       "primaryOperationId": "upload-resource-op",
       "evidence": {
         "status": "observed",
