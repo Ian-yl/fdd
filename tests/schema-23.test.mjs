@@ -150,6 +150,13 @@ test('a provider-mapped input with no provider mapping is rejected', () => {
 
 test('a provider-mapped resource input with no resourceResolution is rejected', () => {
   rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.closure.inputUtilization.find((item) => item.requestPath === 'body.resourceIds').resourceResolution; })), /lacks a resourceResolution/);
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.closure.inputUtilization.find((item) => item.requestPath === 'body.resourceIds').resourceResolution.verificationMode = 'guess'; })), /lacks a resourceResolution verificationMode/);
+});
+
+test('resource transfer file-count ranges are structurally valid', () => {
+  rejects(withGolden(({ cap }) => cap('cap-upload', (capability) => { capability.operations[0].resourceTransfer.minFiles = 1.5; })), /minFiles must be a positive integer/);
+  rejects(withGolden(({ cap }) => cap('cap-upload', (capability) => { capability.operations[0].resourceTransfer.minFiles = 0; })), /minFiles must be a positive integer/);
+  rejects(withGolden(({ cap }) => cap('cap-upload', (capability) => { Object.assign(capability.operations[0].resourceTransfer, { minFiles: 3, maxFiles: 2 }); })), /minFiles exceeds maxFiles/);
 });
 
 test('every provider operation has its own complete input utilization ledger', () => {

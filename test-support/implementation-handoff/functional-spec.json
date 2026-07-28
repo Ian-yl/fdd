@@ -383,6 +383,7 @@
               "product-context:needs"
             ],
             "resourceResolution": {
+              "verificationMode": "base64-content",
               "method": "asset-id-dereference",
               "detail": "resolve each uploaded asset id to its stored bytes and hand the resource to the provider as a generation source"
             }
@@ -1333,6 +1334,7 @@
               "annotation:assist-title"
             ],
             "resourceResolution": {
+              "verificationMode": "base64-content",
               "method": "asset-id-dereference",
               "detail": "resolve each uploaded asset id to its stored bytes and hand the resource to the provider as a generation source"
             }

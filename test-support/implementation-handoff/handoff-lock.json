@@ -1,17 +1,17 @@
 {
   "schemaVersion": "1.0",
   "algorithm": "sha256",
-  "functionalPackageDigest": "ea4a303d1bd76e7d7cb0ce4deaec164a42fde949150f364cc9f074ba68036e90",
+  "functionalPackageDigest": "ddf42fdb54832236c6e14fcf10e150533e966a8f960f9210f6a0ad2274a0680d",
   "visualReleaseDigest": "961069a7aa1f6c1f88f6806588230c530095905f80281efd7bacaa4f2310d1ec",
   "sourceTreeDigest": "1c351538968e657d634275343d892ba8389790f33472e922b3798b806e85787e",
   "digests": {
-    "handoff-manifest.json": "c0be70c84ee4a8f6bd4c5f975c1fba36c9c32ff6fb1706eac8a38d48446c5a5e",
+    "handoff-manifest.json": "a6d0134dc01c29950d650b249321baeb376e968b92a73984ba3632d5b16e8572",
     "visual-source.json": "195b5d4cb640bceec677acbf07e783b1de16ddf4590a2aa9310f1a664936a651",
     "release-manifest.json": "b84c01e3d11e90bf1c27d65a77c8040fce27dd3e3facde114ec120ac8ba4a97e",
     "suite-gate.json": "df3a61c8f089be157f194cc94090a4a8240bd27b2064017ddfb060d32591bd1f",
     "visual-approval.json": "d7d481b3d4a280f6c06e7a23a8f0ffca4ca7059461182eb8ff5c9e3030c8157d",
     "frontend-manifest.json": "383ca1e6fe701aad6a290fc1ce9bc2995b03e9e0fb63d1bfc035a3ddf879026c",
-    "functional-spec.json": "3f68811631412dbd58261725d2ba2f7a16a093f66e37626bd66f77c7e2813ae8",
+    "functional-spec.json": "34d77393a5b19b5e3987046c4b7202c890581e2b448b6e299a23da5017ea8881",
     "frontend-semantic-inventory.json": "c38427180ed742dfa4fb112a8d60c56c4641b02ca3c9223c8a63df6ff2185f16",
     "observed-interactions.json": "2219aaa9b3ca49e6d1226a9054cad46d5d8b8fd54d8a7cffeb5dec9b7ed2165c",
     "control-capability-map.json": "9f75dd339dd95951894256e00090c9e553e494d78f67c218d8aa92329f7df417",
@@ -20,9 +20,9 @@
     "visual-controls.json": "b04b26bcd36a82f2a6dd1a18abf29315296cce3f7a010806e32309f674a9db34",
     "ui-implementation-plan.json": "769ae0618eb118a712e61f875725d1f4a4f3af9630e64e7f54391c9fdb7f899e",
     "api-contract.json": "733fb93249b6b7aae9b43447cbec8cd7533337b40b0a6c4e09452707493b71c2",
-    "domain-bindings.json": "57ba15f7e0fedde30efe7fa3142c79a616bf5cf5e3d16539a9a118d44c42dc83",
+    "domain-bindings.json": "29a1301db7d8ea4373cc28f5317cdf128b4c257c4e3c61bfd8d230284e19c063",
     "runtime-contract.json": "bdf3bbcd4f6abbb0bfeec14bd0730e3714b3006c6d8e540140c6971e33ca3739",
-    "handoff-review-receipt.json": "951dc43a714b3327a22e6bd579f1b945cc406b75ae4a51cc3e4f890ab448b556",
+    "handoff-review-receipt.json": "24afd3fb79dbb2fec032f73790f8b0cfb9e03e27d97195b05137a1f35422b631",
     "web": "1c351538968e657d634275343d892ba8389790f33472e922b3798b806e85787e"
   }
 }

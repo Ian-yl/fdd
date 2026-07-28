@@ -43,7 +43,9 @@ description: Convert an immutable frontend release, three architecture JSON inpu
    ```bash
    node <skill-dir>/scripts/build-implementation-handoff.mjs --functional <approved-package> --visual-release <ai-restore-release> --output <handoff> --author-agent <id>
    node <skill-dir>/scripts/review-implementation-handoff.mjs --handoff <handoff> --reviewer-agent <id>
+   node <skill-dir>/scripts/validate-implementation-handoff.mjs --handoff <handoff>
    ```
+   Read every finding from package validation, package review, handoff review, and handoff validation. Correct the Agent-authored package or handoff, then rerun the failed step and every downstream step until the complete FDD flow passes. Stop only for a concrete decision blocker that cannot be resolved from the available evidence, and record that blocker explicitly.
 
 ## Schema 2.3 Authoring
 
@@ -78,6 +80,7 @@ Schema 2.3 is the only supported functional-domain and implementation-handoff co
 - Identify a primary trigger from structured evidence — a native submit type, a form scope, or an observed submit interaction — never from a label or DOM proximity. Collect the closure's scoped inputs into one operation and bind that operation back to the release control; never create a capability or endpoint merely for the button.
 - Account for every interaction control with exactly one disposition; a control you cannot honestly wire into a closure is `ignored-with-reason`, never a hidden capability.
 - Treat resource selection and field-assist write-back as their own evidenced interaction closures when they have independent processing/results. The reviewer, not the validator, judges whether the author omitted or incorrectly merged them.
+- Model local file selection, drag/drop, and replacement as an independent `resourceTransfer`, then carry its returned resource ID into business operations through `dataDependencies`. An existing-resource selector may bind an already controlled resource ID directly; distinguish the two from release behavior and domain evidence rather than control labels.
 - Infer only when architecture, release behavior, and product context jointly support an implementation-safe decision.
 - Give distinct business capabilities distinct intent, schemas, outcomes, failures, quality criteria, and acceptance.
 - Return genuinely authoritative unknowns as precise decisions with affected scope; do not request caller-authored capability definitions.
