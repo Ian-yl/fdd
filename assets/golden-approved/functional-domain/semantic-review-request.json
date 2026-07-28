@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0",
+  "generatedBy": "functional-domain-design/semantic-review-request",
+  "inputDigest": "d6c83c55df48c86fc9525960c4b1456368ba3884895c54b95a13ba8336903f1d",
+  "pageIds": [
+    "submission"
+  ],
+  "capabilityIds": [
+    "cap-assist",
+    "cap-export",
+    "cap-submit",
+    "cap-upload"
+  ],
+  "controlIds": [
+    "submission:assist-title-button",
+    "submission:submit-button",
+    "submission:title-input",
+    "submission:upload-input"
+  ],
+  "requestDigest": "a7670e4f5918c4310683e9f5568109b92f83c27b6004e610982142b5445516cb"
+}

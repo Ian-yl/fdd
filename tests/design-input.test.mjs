@@ -19,6 +19,19 @@ test('scaffold binds the finalized design manifest into planning and evidence in
   assert.ok(evidence.evidence.some((item) => item.id === 'design:submission'));
 }));
 
+test('design-led scaffold creates an Agent authoring workspace without inventing frontend semantics', () => withInput(({ designs, output }) => {
+  const result = run(designs, output, path.join(support, 'architecture'), false);
+  assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+  const manifest = read(path.join(output, 'manifest.json'));
+  const spec = read(path.join(output, 'functional-spec.json'));
+  const inventory = read(path.join(output, 'frontend-semantic-inventory.json'));
+  assert.equal(manifest.inputMode, 'design-led');
+  assert.equal('visualReleaseDigest' in manifest, false);
+  assert.deepEqual(spec.capabilities, []);
+  assert.equal(inventory.authoringStatus, 'pending-agent-semantic-extraction');
+  assert.ok(inventory.pages.every((page) => page.controls.length === 0 && page.regions.length === 0));
+}));
+
 test('scaffold rejects an empty finalized design directory', () => withInput(({ designs, output }) => {
   rmSync(designs, { recursive: true, force: true }); mkdirSync(designs);
   assertRejected(run(designs, output), /at least one finalized/);
@@ -74,6 +87,6 @@ function withInput(callback) {
     callback({ dir, designs: path.join(dir, 'designs'), output: path.join(dir, 'output') });
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
-function run(designs, output, input = path.join(support, 'architecture')) { return spawnSync(process.execPath, [scaffold, '--input', input, '--designs', designs, '--visual-release', path.join(support, 'visual-release'), '--output', output, '--author-agent', 'design-input-author'], { encoding: 'utf8' }); }
+function run(designs, output, input = path.join(support, 'architecture'), releaseBacked = true) { return spawnSync(process.execPath, [scaffold, '--input', input, '--designs', designs, ...(releaseBacked ? ['--visual-release', path.join(support, 'visual-release')] : []), '--output', output, '--author-agent', 'design-input-author'], { encoding: 'utf8' }); }
 function read(file) { return JSON.parse(readFileSync(file, 'utf8')); }
 function assertRejected(result, pattern) { assert.notEqual(result.status, 0); assert.match(`${result.stdout}${result.stderr}`, pattern); }

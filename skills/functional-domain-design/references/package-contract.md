@@ -33,6 +33,12 @@ Every capability includes `capabilityIntent.userGoal`, `businessOutcome`, `trigg
 
 For provider-backed behavior, `closure.inputUtilization` is operation-scoped. Every entry names `operationId` and `requestPath`; every request field of every provider operation has exactly one disposition. A `provider-mapped` entry forms one unambiguous chain with `providerContract.parameterMappings` and `integrationBindings`: the request source exists, provider target and requiredness agree, and duplicate or competing mappings are rejected. Identity mappings preserve the value digest. When a resource identifier becomes provider-ready content, `resourceResolution.verificationMode` declares exactly one representation: `raw-content`, `base64-content`, or `multipart-content`. PI evaluates only that representation; a digest string cannot masquerade as transferred content.
 
+The FDD Agent authors `providerContract.controlledResponse` from the available provider protocol evidence: successful HTTP `status`, `contentType`, `bodySchema`, a representative `body`, and `resultIdPath` identifying the per-invocation result value. PI's controlled observer replays this exact output shape so the implementation exercises the same adapter parsing path used by a real call. Validation checks only that this declared input/output artifact is structurally usable; it does not infer, select, or judge a provider protocol. When output quality needs semantic judgment, the Agent declares `integrationVerification.resultReview: { required: true, assertions[] }`. A distinct reviewer Agent judges those assertions against campaign-owned actual results; scripts only bind the request and receipt to the same run.
+
+`providerContract.providerResultLineage` declares how the provider result enters the operation's business response: `sourcePath`, `targetPath`, a free-form Agent-authored `transformation`, evidence sources, and the `reviewAssertionId` that assigns this judgment to the independent result reviewer. The runner does not require a provider ID to appear verbatim in an application response and does not execute or infer transformations.
+
+An approved package includes locked `semantic-review-request.json` and `semantic-review.json`. The request binds the reviewed semantic inputs and enumerates pages, capabilities, and control dispositions. The independent reviewer Agent authors one explained page judgment covering those exact sets; signing and replay scripts verify only coverage, identities, and digests.
+
 Relationship example:
 
 ```json

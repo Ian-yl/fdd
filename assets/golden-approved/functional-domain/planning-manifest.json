@@ -1,5 +1,6 @@
 {
   "schemaVersion": "2.3",
+  "inputMode": "release-backed",
   "packageType": "fdd-bmad-planning",
   "status": "approved",
   "authorAgentId": "golden-domain-author-22",

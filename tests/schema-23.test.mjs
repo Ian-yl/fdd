@@ -132,6 +132,16 @@ test('an independent-items provider contract without oneProviderResultPerItem is
   rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.operations[0].providerContract.oneProviderResultPerItem; })), /independent-items provider must set oneProviderResultPerItem/);
 });
 
+test('a provider operation requires an Agent-authored executable controlled response', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.operations[0].providerContract.controlledResponse; })), /has no executable controlled response/);
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.operations[0].providerContract.controlledResponse.resultIdPath = 'missing.id'; })), /has no executable controlled response/);
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { delete capability.operations[0].providerContract.providerResultLineage; })), /provider result lineage/);
+});
+
+test('an independent result review declaration requires explicit Agent-authored assertions', () => {
+  rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.operations[0].integrationVerification.resultReview = { required: true, assertions: [] }; })), /invalid independent result review contract/);
+});
+
 test('an inconsistent quantity chain is rejected', () => {
   rejects(withGolden(({ cap }) => cap('cap-submit', (capability) => { capability.finalProduct.quantity.sourceField = 'title'; })), /quantity chain is inconsistent/);
 });

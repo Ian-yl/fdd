@@ -1,6 +1,6 @@
 ---
 name: functional-domain-design
-description: Convert an immutable frontend release, three architecture JSON inputs, finalized designs, and optional user business decisions into an approved functional-domain package and implementation handoff for project-implementation by identifying each page's visual interaction closures.
+description: Convert three architecture JSON inputs, finalized designs, an optional immutable frontend release, and optional user decisions into an approved functional-domain package and implementation handoff authored by the Agent.
 ---
 
 # Functional Domain Design
@@ -18,30 +18,32 @@ description: Convert an immutable frontend release, three architecture JSON inpu
      --project "<project name or id>" \
      --output <workspace>/architecture-input
    ```
-2. Extract the release's complete page semantics and build the evidence workspace (no capability is synthesized):
+2. Select the input mode and build the evidence workspace (no capability is synthesized). Use `--visual-release` for `release-backed`; omit it for `design-led`:
    ```bash
    node <skill-dir>/scripts/scaffold-package.mjs \
      --input <workspace>/architecture-input \
      --designs <finalized-design-export-directory> \
-     --visual-release <ai-restore-release> \
+     [--visual-release <ai-restore-release>] \
      --decisions <optional-user-business-decisions.json> \
      --output <workspace>/functional-domain \
      --author-agent <stable-agent-id>
    ```
-3. Read [input-contract.md](references/input-contract.md), [frontend-semantics.md](references/frontend-semantics.md), [capability-synthesis.md](references/capability-synthesis.md), [package-contract.md](references/package-contract.md), and [reviewer-gates.md](references/reviewer-gates.md). Read each page's semantics and identify its interaction closures; the architecture is context evidence, never a capability generator.
-4. For each closure, author one capability's intent, operations, schemas, entities, relationships, rules, permissions, consistency, presentation, failures, and executable acceptance from traceable evidence, and disposition every interaction control. Read each anchored `design:<id>` export with vision and write the design's semantics — each mode's interface, fields, states, and flow — into the owning closure, anchoring `design:<id>`; a complete capability grounds both evidence axes (intent and anchor). The release is the implementation baseline. Architecture or design gaps are context for Agent judgment and may be completed with evidence-backed designed controls or flows; only a complete product-identity mismatch is an automatic blocker.
+3. Read [input-contract.md](references/input-contract.md), [frontend-semantics.md](references/frontend-semantics.md), [capability-synthesis.md](references/capability-synthesis.md), [package-contract.md](references/package-contract.md), and [reviewer-gates.md](references/reviewer-gates.md). In `release-backed`, read each released page and identify its interaction closures. In `design-led`, use vision to read every finalized design and author the page regions, controls, states, intended interactions, and control mappings before authoring capabilities. The scripts do not infer these semantics for you.
+4. For each closure, author one capability's intent, operations, schemas, entities, relationships, rules, permissions, consistency, presentation, failures, and executable acceptance from traceable evidence, and disposition every interaction control. A release is the implementation baseline when present. Without a release, the finalized designs are presentation intent and PI must implement the frontend; the Agent may add implementation-safe controls and flows needed to complete the product.
 5. Design the complete business behavior of each closure while preserving the immutable release and its semantic anchors.
 6. Mark implementation-safe designed semantics `complete`; use reachable `planned` contracts for insufficient but non-contradictory semantics; reserve blockers for contradictions requiring an authoritative decision.
 7. Record planned reasons and blockers in `unresolved-items.json`.
 8. Validate artifact structure, then have a distinct reviewer Agent read the source evidence and judge omitted or incorrectly merged closures:
    ```bash
    node <skill-dir>/scripts/validate-package.mjs <workspace>/functional-domain
+   node <skill-dir>/scripts/review-package.mjs --package <workspace>/functional-domain --reviewer-agent <independent-agent-id> --prepare-semantic-review
+   # The independent reviewer reads semantic-review-request.json and authors semantic-review.json.
    node <skill-dir>/scripts/review-package.mjs --package <workspace>/functional-domain --reviewer-agent <independent-agent-id>
    node <skill-dir>/scripts/validate-package.mjs <workspace>/functional-domain --require-approved --check-lock
    ```
 9. Build and independently review the handoff:
    ```bash
-   node <skill-dir>/scripts/build-implementation-handoff.mjs --functional <approved-package> --visual-release <ai-restore-release> --output <handoff> --author-agent <id>
+     node <skill-dir>/scripts/build-implementation-handoff.mjs --functional <approved-package> [--visual-release <ai-restore-release>] --output <handoff> --author-agent <id>
    node <skill-dir>/scripts/review-implementation-handoff.mjs --handoff <handoff> --reviewer-agent <id>
    node <skill-dir>/scripts/validate-implementation-handoff.mjs --handoff <handoff>
    ```
@@ -49,7 +51,7 @@ description: Convert an immutable frontend release, three architecture JSON inpu
 
 ## Schema 2.3 Authoring
 
-Schema 2.3 makes the agent the author and the scripts the index-and-check layer. Generation relies on understanding the page's interaction closures; verification stays deterministic.
+Schema 2.3 makes the Agent the author and the scripts the structure, reference, and digest check layer. Generation relies on Agent understanding; verification does not replace that judgment.
 
 1. Scaffold the evidence workspace:
    ```bash
@@ -87,5 +89,6 @@ Schema 2.3 is the only supported functional-domain and implementation-handoff co
 - Keep the package concise and traceable so downstream implementation never needs product-specific hidden context.
 
 - Declare the concurrency behavior the business and provider require; the validator checks the declaration, not the scheduling choice. Missing visual controls may be designed and added with evidence; the release is a baseline, not a feature ceiling.
+- For external operations, author the evidenced response shape in `providerContract.controlledResponse`. If result quality needs judgment, declare `integrationVerification.resultReview` assertions for a distinct reviewer Agent; scripts only validate and bind the artifacts.
 
 All artifact schemas, evidence levels, synthesis rules, review gates, and handoff requirements live only in the linked references.

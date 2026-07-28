@@ -1,5 +1,6 @@
 {
   "schemaVersion": "2.3",
+  "inputMode": "release-backed",
   "packageType": "functional-domain",
   "projectId": "neutral-submission-22",
   "projectName": "Neutral submission workspace",
@@ -41,7 +42,7 @@
   "controlDispositions": "control-dispositions.json",
   "approval": {
     "method": "independent-agent-review",
-    "reviewerAgentId": "golden-domain-reviewer-23",
-    "reviewedAt": "2026-07-28T11:06:12.480Z"
+    "reviewerAgentId": "golden-reviewer",
+    "reviewedAt": "2026-07-28T12:10:24.482Z"
   }
 }

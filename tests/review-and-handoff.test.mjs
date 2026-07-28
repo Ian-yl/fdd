@@ -10,7 +10,7 @@ const golden = path.join(root, 'assets/golden-approved/functional-domain');
 const handoffFixture = path.join(root, 'test-support/implementation-handoff');
 const readJSON = (file) => JSON.parse(readFileSync(file, 'utf8'));
 const tempCopy = (source) => { const dir = mkdtempSync(path.join(os.tmpdir(), 'fdd-rh-')); cpSync(source, path.join(dir, 'target'), { recursive: true }); return { dir, target: path.join(dir, 'target') }; };
-const reviewPackage = (dir, reviewer) => spawnSync('node', [path.join(root, 'scripts/review-package.mjs'), '--package', dir, '--reviewer-agent', reviewer], { encoding: 'utf8' });
+const reviewPackage = (dir, reviewer) => { const semantic = readJSON(path.join(dir, 'semantic-review.json')); semantic.reviewerAgentId = reviewer; writeFileSync(path.join(dir, 'semantic-review.json'), `${JSON.stringify(semantic, null, 2)}\n`); return spawnSync('node', [path.join(root, 'scripts/review-package.mjs'), '--package', dir, '--reviewer-agent', reviewer], { encoding: 'utf8' }); };
 const validateHandoff = (dir) => spawnSync('node', [path.join(root, 'scripts/validate-implementation-handoff.mjs'), '--handoff', dir], { encoding: 'utf8' });
 
 // ---- review negatives (schema 2.3 functional golden) ----
@@ -58,7 +58,7 @@ test('a tampered functional package lock digest is rejected under --require-appr
     writeFileSync(path.join(target, 'package-lock.json'), `${JSON.stringify(lock, null, 2)}\n`);
     const result = spawnSync('node', [path.join(root, 'scripts/validate-package.mjs'), target, '--require-approved', '--check-lock'], { encoding: 'utf8' });
     assert.notEqual(result.status, 0);
-    assert.match(`${result.stdout}${result.stderr}`, /package lock mismatch/);
+    assert.match(`${result.stdout}${result.stderr}`, /package lock (?:file set )?mismatch/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 

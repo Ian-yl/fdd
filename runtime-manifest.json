@@ -16,6 +16,7 @@
     "scripts/lib/aggregate-submission.mjs",
     "scripts/lib/primary-submit.mjs",
     "scripts/lib/control-dispositions.mjs",
+    "scripts/lib/semantic-review.mjs",
     "scripts/lib/evidence-index.mjs",
     "validators/fdd-2.3.1/validate-package.mjs",
     "validators/handoff-2.3/review-handoff.mjs"

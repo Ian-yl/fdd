@@ -1,5 +1,7 @@
 # Reviewer Gates
 
+The reviewer Agent first runs the review command with `--prepare-semantic-review`, reads the resulting `semantic-review-request.json`, and authors `semantic-review.json`. Each page review accounts for that page's capabilities and control dispositions and records the reviewer's closure and evidence assessments. The signing script verifies only coverage, identities, and input digests; it does not manufacture or judge these semantic conclusions.
+
 Independent review checks semantic closure in addition to structural validity. Approval is rejected when:
 
 - architecture and release page IDs/routes are not an exact, identity-preserving set;
@@ -94,6 +96,7 @@ Before approval, every `primary-trigger` control in `control-dispositions.json` 
 The framework carries four standing guarantees, and no change may weaken any of them:
 
 - **Genericity** — gates activate from contract declarations only; framework code carries no product vocabulary; fixtures stay business-neutral.
+- **External response fidelity** — review confirms that the Agent-authored `controlledResponse` represents the evidenced provider protocol and that declared `resultReview.assertions` express the approved acceptance intent. Scripts validate their input/output shape only and do not make this semantic judgment.
 - **Agent autonomy** — tooling requires that positions are taken; agents decide the positions' content from evidence; reviewers audit honesty. No inference, defaults, or field-name heuristics substitute for an agent's decision.
 - **Completeness** — every evidence item, input, and disposition is accounted for; omissions fail closed; known gaps are registered explicitly, never left silent.
 - **Reliability** — bad input fails closed with a non-zero exit; approvals replay against immutable revision-pinned validators; freezes are drift-checked; every change lands with the full suites green and negative coverage for each new gate.
